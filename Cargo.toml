@@ -1,0 +1,18 @@
+[package]
+name = "dioxus-prototype"
+version = "0.1.0"
+authors = ["David Wallace Croft <david@croftsoft.com>"]
+# Use the categories from https://crates.io/categories
+# categories = ["category-name"]
+description = "Dioxus Prototype"
+edition = "2021"
+homepage = "https://www.croftsoft.com/"
+keywords = ["dioxus"]
+license = "MIT"
+# Remark this line out when you publish to crates.io
+publish = false
+readme = "README.md"
+repository = "https://github.com/david-wallace-croft/dioxus-prototype"
+
+[dependencies]
+dioxus = { version = "0.2.4", features = ["web"] }

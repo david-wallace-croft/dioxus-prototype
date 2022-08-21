@@ -1,0 +1,23 @@
+# https://rust-lang.github.io/rustfmt/
+array_width = 1
+# blank_lines_lower_bound = 1
+chain_width = 80
+fn_args_layout = "Vertical"
+# group_imports = "StdExternalCrate"
+hard_tabs = false
+# imports_layout = "HorizontalVertical"
+match_block_trailing_comma = true
+# https://www.w3.org/WAI/tutorials/page-structure/styling/#line-length
+max_width = 80
+merge_derives = true
+newline_style = "Unix"
+remove_nested_parens = true
+reorder_imports = true
+reorder_modules = true
+single_line_if_else_max_width = 0
+struct_lit_width = 0
+struct_variant_width = 0
+tab_spaces = 2
+use_try_shorthand = true
+# version = "Two"
+# wrap_comments = true
