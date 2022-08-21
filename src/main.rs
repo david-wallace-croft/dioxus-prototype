@@ -1,11 +1,6 @@
-use dioxus::prelude::*;
+use dioxus_prototype::app;
 
 fn main() {
-  dioxus::web::launch(app);
-}
-
-fn app(cx: Scope) -> Element {
-  cx.render(rsx! {
-      div { "hello, wasm!" }
-  })
+  wasm_logger::init(wasm_logger::Config::new(log::Level::Debug));
+  dioxus::web::launch(app)
 }
