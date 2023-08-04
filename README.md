@@ -5,7 +5,9 @@
 ## Usage
 
 - cd dioxus-prototype/
-- trunk serve --open
+- cargo install dioxus-cli
+- dx serve
+- http://localhost:8080/
 
 ## History
 

@@ -1,6 +1,4 @@
 [package]
-name = "dioxus-prototype"
-version = "0.1.0"
 authors = ["David Wallace Croft <david@croftsoft.com>"]
 # Use the categories from https://crates.io/categories
 # categories = ["category-name"]
@@ -9,20 +7,23 @@ edition = "2021"
 homepage = "https://www.croftsoft.com/"
 keywords = ["dioxus"]
 license = "MIT"
+name = "dioxus-prototype"
 # Remark this line out when you publish to crates.io
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
+version = "0.1.1-SNAPSHOT"
 
 [dependencies]
 console_error_panic_hook = "0.1.7"
-dioxus = { version = "0.2.4", features = ["ssr", "web"] }
-gloo-history = "0.1.0"
-log = "0.4.17"
-once_cell = "1.13.1"
-serde = { version = "1.0.144", features = ["derive"] }
-serde_json = "1.0.83"
-wasm-bindgen = { version = "0.2.82", features = ["enable-interning"] }
+dioxus = "0.4.0"
+dioxus-web = "0.4.0"
+gloo-history = "0.1.5"
+log = "0.4.19"
+once_cell = "1.18.0"
+serde = { version = "1.0.175", features = ["derive"] }
+serde_json = "1.0.103"
+wasm-bindgen = { version = "0.2.87", features = ["enable-interning"] }
 wasm-logger = "0.2.0"
 
 [profile.release]
