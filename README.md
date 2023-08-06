@@ -6,8 +6,12 @@
 
 - cd dioxus-prototype/
 - cargo install dioxus-cli
-- dx serve
-- http://localhost:8080/
+- tailwindcss -i ./input.css -o ./public/tailwind.css --watch
+- Open another terminal
+- dx serve --hot reload
+- Open your browser to http://localhost:8080/
+- Make changes to the HTML or Tailwind CSS in src/lib.rs
+- Note that the changes are updated in your browser as soon as you save
 
 ## History
 

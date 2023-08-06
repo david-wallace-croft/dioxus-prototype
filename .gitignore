@@ -1,3 +1,4 @@
 /dist
+/public/tailwind.css
 /prerender.html
 /target
