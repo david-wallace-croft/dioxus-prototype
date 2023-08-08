@@ -1,9 +1,10 @@
 use dioxus::prelude::*;
 
-pub fn app(cx: Scope) -> Element {
+#[allow(non_snake_case)]
+pub fn App(cx: Scope) -> Element {
   let mut count = use_state(&cx, || 0);
 
-  cx.render(rsx!(
+  render! {
     div {
       class: "justify-center p-2 mt-5",
       h1 {
@@ -22,6 +23,22 @@ pub fn app(cx: Scope) -> Element {
         onclick: move |_| count += 1,
         "Up high!",
       }
+      StoryListing { }
     }
-  ))
+  }
+}
+
+#[allow(non_snake_case)]
+pub fn StoryListing(cx: Scope) -> Element {
+  let title = "title";
+  let by = "author";
+  let score = 0;
+  let time = chrono::Utc::now();
+  let comments = "comments";
+
+  render! {
+    p {
+      "{title} by {by} ({score}) {time} {comments}"
+    }
+  }
 }

@@ -15,6 +15,7 @@ repository = "https://github.com/david-wallace-croft/dioxus-prototype"
 version = "0.1.1-SNAPSHOT"
 
 [dependencies]
+chrono = "0.4.26"
 console_error_panic_hook = "0.1.7"
 dioxus = "0.4.0"
 dioxus-web = "0.4.0"
