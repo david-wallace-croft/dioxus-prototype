@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use dioxus_prototype::App;
+use dioxus_prototype::app;
 use std::io::Write;
 
 fn main() {
