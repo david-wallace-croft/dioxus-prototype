@@ -1,11 +1,10 @@
-use super::high_five::HighFive;
-use super::story_listing::StoryListing;
+use crate::route::Route;
 use dioxus::prelude::*;
+use dioxus_router::prelude::*;
 
 #[allow(non_snake_case)]
 pub fn App(cx: Scope) -> Element {
   render! {
-    HighFive { }
-    StoryListing { }
+    Router::<Route> { }
   }
 }

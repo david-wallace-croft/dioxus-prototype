@@ -1,7 +1,7 @@
 use components::app::App;
 
 pub mod components;
-pub mod router;
+pub mod route;
 
 pub fn launch() {
   wasm_logger::init(wasm_logger::Config::new(log::Level::Debug));
