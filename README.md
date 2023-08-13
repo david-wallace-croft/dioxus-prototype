@@ -11,6 +11,10 @@
 - Make changes to the HTML in src/lib.rs or the CSS in public/stylesheet.css
 - Note that the changes are updated in your browser as soon as you save
 
+## TODO
+
+- CSS for responsive layout
+
 ## History
 
 - Initial release: 2022-08-21

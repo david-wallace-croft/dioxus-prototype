@@ -1,5 +1,6 @@
 pub mod app;
 pub mod blog;
+pub mod footer;
 pub mod high_five;
 pub mod home;
 pub mod nav_bar;
