@@ -5,7 +5,7 @@ pub fn Home(cx: Scope) -> Element {
   render! {
     h1 {
       class: "app-home",
-      "Home Page"
+      "CroftSoft Dioxus Prototype"
     }
     p {
       class: "app-home",
