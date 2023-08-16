@@ -5,7 +5,8 @@ pub fn Footer(cx: Scope) -> Element {
   render! {
     footer {
       class: "app-footer box",
-    "Copyright 2023 "
+      dangerous_inner_html: "&copy;",
+    " 2023 "
     a {
       href: "https://www.CroftSoft.com/",
       target: "_blank",
