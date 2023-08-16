@@ -5,7 +5,7 @@ pub fn HighFive(cx: Scope) -> Element {
   let mut count = use_state(&cx, || 0);
   render! {
     div {
-      class: "app-high-five",
+      class: "app-high-five box",
       h1 {
         "High-Five counter: {count}",
       }
