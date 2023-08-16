@@ -22,12 +22,6 @@ div.app-nav ul li {
   list-style-type: none;
 }
 
-footer.app-footer {
-  margin-top: 4rem;
-  text-align: center;
-  width: 100%;
-}
-
 h1.app-home {
   text-align: center;
 }
@@ -64,16 +58,19 @@ body {
 .col-1 {
   display: grid;
   grid-row-gap: 1rem;
+  grid-row: 2;
 }
 
 .col-2 {
   display: grid;
   grid-row-gap: 1rem;
+  grid-row: 1;
 }
 
 .col-3 {
   display: grid;
   grid-row-gap: 1rem;
+  grid-row: 3;
 }
 
 .frame {

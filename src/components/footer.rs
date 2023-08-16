@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 pub fn Footer(cx: Scope) -> Element {
   render! {
     footer {
-      class: "app-footer box",
+      class: "box",
       dangerous_inner_html: "&copy;",
     " 2023 "
     a {
