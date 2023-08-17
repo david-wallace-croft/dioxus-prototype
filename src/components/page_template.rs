@@ -27,12 +27,6 @@ pub fn PageTemplate(cx: Scope) -> Element {
     }
     li {
     Link {
-      to: Route::Blog {},
-      "Blog",
-    }
-    }
-    li {
-    Link {
       to: Route::HighFive {},
       "High Five",
     }
@@ -41,6 +35,12 @@ pub fn PageTemplate(cx: Scope) -> Element {
     Link {
       to: Route::StoryListing {},
       "Story Listing",
+    }
+    }
+    li {
+    Link {
+      to: Route::Colophon {},
+      "Colophon",
     }
     }
     }

@@ -1,4 +1,4 @@
-use crate::components::blog::Blog;
+use crate::components::colophon::Colophon;
 use crate::components::high_five::HighFive;
 use crate::components::home::Home;
 use crate::components::page_not_found::PageNotFound;
@@ -13,8 +13,8 @@ pub enum Route {
   #[layout(PageTemplate)]
     #[route("/")]
     Home {},
-    #[route("/blog")]
-    Blog {},
+    #[route("/colophon")]
+    Colophon {},
     #[route("/high-five")]
     HighFive {},
     #[route("/story-listing")]
