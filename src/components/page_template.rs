@@ -18,30 +18,28 @@ pub fn PageTemplate(cx: Scope) -> Element {
     }
     nav {
       class: "app-nav",
-    ul {
-    li {
+    p {
     Link {
       to: Route::Home {},
       "Home",
     }
     }
-    li {
+    p {
     Link {
       to: Route::HighFive {},
       "High Five",
     }
     }
-    li {
+    p {
     Link {
       to: Route::StoryListing {},
       "Story Listing",
     }
     }
-    li {
+    p {
     Link {
       to: Route::Colophon {},
       "Colophon",
-    }
     }
     }
     }
