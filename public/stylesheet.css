@@ -36,7 +36,7 @@ body {
   color: black;
   font-family: Georgia;
   margin: 0 auto;
-  padding: 0 0;
+  padding: 1rem;
 }
 
 .box {
@@ -57,32 +57,32 @@ body {
 
 .col-1 {
   display: grid;
-  grid-row-gap: 1rem;
+  grid-column: 1;
   grid-row: 2;
 }
 
 .col-2 {
   display: grid;
-  grid-row-gap: 1rem;
+  grid-column: 1;
   grid-row: 1;
 }
 
 .col-3 {
   display: grid;
-  grid-row-gap: 1rem;
+  grid-column: 1;
   grid-row: 3;
 }
 
 .frame {
   background: black;
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
+  border-radius: 1rem;
   box-sizing: border-box;
   display: grid;
-  grid-column-gap: 0.5rem;
+  grid-column-gap: 1rem;
   grid-row-gap: 2rem;
   grid-template-columns: minmax(auto, calc(600px + 4rem));
   margin: 0 auto;
+  min-width: 16rem;
   max-width: calc(600px + 4rem);
   padding: 1rem;
 }
@@ -102,11 +102,11 @@ ul li {
   margin-top: 0.5rem;
 }
 
-@media (min-width: calc(600px + 42rem)) {
+@media (min-width: calc(600px + 24rem)) {
 
   .frame {
-    grid-template-columns: auto 36rem;
-    max-width: calc(600px + 41rem);
+    grid-template-columns: 24rem auto;
+    max-width: calc(600px + 48rem);
   }
 
   .col-1 {
@@ -125,11 +125,11 @@ ul li {
   }
 }
 
-@media (min-width: calc(600px + 79rem)) {
+@media (min-width: calc(600px + 48rem)) {
 
   .frame {
-    grid-template-columns: 36rem calc(600px + 2rem) 36rem;
-    max-width: calc(600px + 78rem);
+    grid-template-columns: 24rem auto 24rem;
+    max-width: calc(600px + 48rem);
   }
 
   .col-1 {
