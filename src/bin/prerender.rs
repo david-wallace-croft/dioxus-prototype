@@ -36,6 +36,7 @@ async fn main() {
             <meta name="viewport" content="width=device-width,
             initial-scale=1.0">
             <title>CroftSoft Dioxus Prototype</title>
+            <link rel="stylesheet" href="/stylesheet.css">
         </head>
         <body>"#
         .to_string(),
