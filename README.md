@@ -1,5 +1,9 @@
 # Dioxus Prototype
 
+[![MIT licensed][mit-badge]][mit-url]
+
+[mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+
 - My first Dioxus application
 
 ## Usage
