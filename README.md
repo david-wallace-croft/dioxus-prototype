@@ -16,9 +16,12 @@
 - Make changes to the HTML in src/lib.rs or the CSS in public/stylesheet.css
 - Note that the changes are updated in your browser as soon as you save
 
-## TODO
+## Prerender
 
-- CSS for responsive layout
+- cd dioxus-prototype/
+- cargo run --bin prerender
+- cd static/
+- npx http-server static -o
 
 ## History
 
