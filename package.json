@@ -3,7 +3,11 @@
   "version": "0.1.1-SNAPSHOT",
   "description": "CroftSoft Dioxus Prototype",
   "scripts": {
-    "start": "prettier static --ignore-path .prettierignore --write"
+    "prerender": "cargo run --bin prerender",
+    "prettier": "prettier static --ignore-path .prettierignore --write",
+    "serve": "http-server static -o",
+    "start": "npm run prerender && npm run prettier && npm run static && npm run serve",
+    "static": "cp -r public/* static"
   },
   "repository": {
     "type": "git",
@@ -19,6 +23,7 @@
   },
   "homepage": "https://github.com/david-wallace-croft/dioxus-prototype#readme",
   "devDependencies": {
+    "http-server": "^14.1.1",
     "prettier": "3.0.2"
   }
 }

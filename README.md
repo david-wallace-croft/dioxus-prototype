@@ -26,10 +26,8 @@
   - Unremark the dependencies dioxus-ssr and tokio
 - Add the "ssr" feature to dioxus-router in Cargo.toml
   - Remove it when done because it currently breaks dx serve
-- cargo run --bin prerender
-- TODO: optionally run a command-line tool to format the generated HTML
-- cp -r public/* static
-- npx http-server static -o
+- npm start
+  - This will prerender, prettify, copy static files, serve, and open browser
 - Revert the temporary changes to Cargo.toml
 
 ## History
