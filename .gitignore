@@ -1,5 +1,4 @@
 /dist
-/public/tailwind.css
-/prerender.html
+/node_modules
 /static
 /target

@@ -1,0 +1,24 @@
+{
+  "name": "dioxus-prototype",
+  "version": "0.1.1-SNAPSHOT",
+  "description": "CroftSoft Dioxus Prototype",
+  "scripts": {
+    "start": "prettier static --ignore-path .prettierignore --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/david-wallace-croft/dioxus-prototype.git"
+  },
+  "keywords": [
+    "Dioxus"
+  ],
+  "author": "David Wallace Croft <david@CroftSoft.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/david-wallace-croft/dioxus-prototype/issues"
+  },
+  "homepage": "https://github.com/david-wallace-croft/dioxus-prototype#readme",
+  "devDependencies": {
+    "prettier": "3.0.2"
+  }
+}

@@ -1,0 +1,5 @@
+# .prettierrc.toml
+bracketSameLine = true
+htmlWhitespaceSensitivity = "ignore"
+parser = "html"
+singleAttributePerLine = true
