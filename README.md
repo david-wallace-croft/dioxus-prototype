@@ -23,7 +23,7 @@
   - These temporary changes enable prerendering but break dx serve
   - Remark out dependency dioxus-router with has no features enabled
   - Unremark dependency dioxus-router with features enabled
-  - Unremark the dependencies dioxus-ssr and tokio
+  - Unremark the dependency dioxus-ssr
 - Add the "ssr" feature to dioxus-router in Cargo.toml
   - Remove it when done because it currently breaks dx serve
 - npm start
