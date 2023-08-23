@@ -28,6 +28,7 @@ wasm-bindgen = { version = "0.2.87", features = ["enable-interning"] }
 wasm-logger = "0.2.0"
 
 [features]
+# https://github.com/DioxusLabs/dioxus/issues/1330
 prerender = ["dioxus-router/ssr", "dioxus-ssr", "tokio"]
 
 [profile.release]
