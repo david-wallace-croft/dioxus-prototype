@@ -1,4 +1,5 @@
 use crate::components::footer::Footer;
+use crate::components::nav::Nav;
 use crate::route::Route;
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
@@ -10,40 +11,7 @@ pub fn PageTemplate(cx: Scope) -> Element {
       class: "frame",
     div {
       class: "col-1",
-    div {
-      class: "app-nav box",
-    span {
-      class: "app-nav",
-      "Navigation Sidebar",
-    }
-    nav {
-      class: "app-nav",
-    p {
-    Link {
-      to: Route::Home {},
-      "Home",
-    }
-    }
-    p {
-    Link {
-      to: Route::HighFive {},
-      "High Five",
-    }
-    }
-    p {
-    Link {
-      to: Route::StoryListing {},
-      "Story Listing",
-    }
-    }
-    p {
-    Link {
-      to: Route::Colophon {},
-      "Colophon",
-    }
-    }
-    }
-    }
+    Nav { }
     }
     div {
       class: "col-2",
