@@ -393,6 +393,7 @@ dependencies = [
  "chrono",
  "console_error_panic_hook",
  "dioxus",
+ "dioxus-hooks",
  "dioxus-router",
  "dioxus-ssr",
  "dioxus-web",
