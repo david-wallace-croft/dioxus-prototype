@@ -26,6 +26,12 @@ pub fn Nav(cx: Scope) -> Element {
     }
     }
     p {
+    a {
+      href: "/manual/",
+      "Manual"
+    }
+    }
+    p {
     Link {
       to: Route::StoryListing {},
       "Story Listing",
