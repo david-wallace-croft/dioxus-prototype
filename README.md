@@ -7,7 +7,7 @@
 
 - My first Dioxus application
 
-## Usage
+## Hot Reload
 
 - cd dioxus-prototype/
 - cargo install dioxus-cli
@@ -16,19 +16,12 @@
 - Make changes to the HTML in src/lib.rs or the CSS in public/stylesheet.css
 - Note that the changes are updated in your browser as soon as you save
 
-## Prerender
+## Static Site Generation
 
 - cd dioxus-prototype/
-- Temporarily make the following changes to Cargo.toml
-  - These temporary changes enable prerendering but break dx serve
-  - Remark out dependency dioxus-router with has no features enabled
-  - Unremark dependency dioxus-router with features enabled
-  - Unremark the dependency dioxus-ssr
-- Add the "ssr" feature to dioxus-router in Cargo.toml
-  - Remove it when done because it currently breaks dx serve
+- npm install
 - npm start
-  - This will prerender, prettify, copy static files, serve, and open browser
-- Revert the temporary changes to Cargo.toml
+  - This will prerender, format, copy static files, serve, and open your browser
 
 ## History
 
