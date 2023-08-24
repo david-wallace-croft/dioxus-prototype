@@ -6,7 +6,9 @@ use dioxus::prelude::*;
 pub fn Home(cx: Scope) -> Element {
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/useeffect.rs
-  use_effect(cx, (), |()| async {});
+  use_effect(cx, (), |()| async {
+    log::info!("logging test");
+  });
   render! {
     div {
       class: "box",
