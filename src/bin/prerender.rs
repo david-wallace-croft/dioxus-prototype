@@ -1,5 +1,3 @@
-#![allow(non_snake_case)]
-
 use dioxus_prototype::route::Route;
 use dioxus_router::prelude::*;
 use dioxus_ssr::incremental::{DefaultRenderer, IncrementalRendererConfig};
