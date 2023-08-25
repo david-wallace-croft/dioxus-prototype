@@ -16,6 +16,7 @@ name = "prerender"
 required-features = ["prerender"]
 
 [dependencies]
+async-std = "1.12.0"
 chrono = "0.4.26"
 console_error_panic_hook = "0.1.7"
 dioxus = "0.4.0"
@@ -27,6 +28,24 @@ log = "0.4.19"
 tokio = { version = "1.32.0", optional = true }
 wasm-bindgen = { version = "0.2.87", features = ["enable-interning"] }
 wasm-logger = "0.2.0"
+
+[dependencies.web-sys]
+features = [
+  "CanvasRenderingContext2d",
+  "Document",
+  "DomRect",
+  "Element",
+  "Event",
+  "HtmlCanvasElement",
+  "HtmlCollection",
+  "HtmlDivElement",
+  "HtmlInputElement",
+  "MouseEvent",
+  "Performance",
+  "Window",
+  "console",
+]
+version = "0.3.64"
 
 [features]
 # https://github.com/DioxusLabs/dioxus/issues/1330
