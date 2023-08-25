@@ -28,13 +28,17 @@ async fn main() {
     &mut renderer,
     &DefaultRenderer {
       before_body: r#"<!DOCTYPE html>
-        <html lang="en">
+        <html
+          lang="en">
         <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width,
-            initial-scale=1.0">
-            <title>CroftSoft Dioxus Prototype</title>
-            <link rel="stylesheet" href="/stylesheet.css">
+          <meta
+            charset="UTF-8">
+          <title>
+            CroftSoft Dioxus Prototype
+          </title>
+          <link
+            href="/stylesheet.css"
+            rel="stylesheet">
         </head>
         <body>"#
         .to_string(),
