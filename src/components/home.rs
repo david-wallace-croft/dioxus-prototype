@@ -30,16 +30,18 @@ pub fn Home(cx: Scope) -> Element {
     let canvas_width: f64 = html_canvas_element.width() as f64;
     let mut rng = rand::thread_rng();
     let die = Uniform::from(0..=255);
+    let mut duration: f64 = 1.;
     loop {
       let r: u8 = die.sample(&mut rng);
       let g: u8 = die.sample(&mut rng);
       let b: u8 = die.sample(&mut rng);
-      log::info!("rgb({r}, {g}, {b})");
       let rgb: String = format!("rgb({r}, {g}, {b})");
+      log::info!("{rgb}");
       let fill_style: JsValue = JsValue::from_str(&rgb);
       canvas_context.set_fill_style(&fill_style);
       canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
-      async_std::task::sleep(Duration::from_millis(1_000)).await;
+      async_std::task::sleep(Duration::from_millis(duration as u64)).await;
+      duration *= 1.1;
     }
   });
   render! {
