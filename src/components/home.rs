@@ -1,7 +1,10 @@
 use dioxus::prelude::*;
+use rand::distributions::Distribution;
+use rand::distributions::Uniform;
 use std::time::Duration;
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement};
+
 // https://docs.rs/dioxus-hooks/latest/dioxus_hooks/
 // use dioxus::hooks::*;
 
@@ -25,9 +28,15 @@ pub fn Home(cx: Scope) -> Element {
       .unwrap();
     let canvas_height: f64 = html_canvas_element.height() as f64;
     let canvas_width: f64 = html_canvas_element.width() as f64;
-    let fill_style: JsValue = JsValue::from_str("blue");
+    let mut rng = rand::thread_rng();
+    let die = Uniform::from(0..=255);
     loop {
-      log::info!("logging test");
+      let r: u8 = die.sample(&mut rng);
+      let g: u8 = die.sample(&mut rng);
+      let b: u8 = die.sample(&mut rng);
+      log::info!("rgb({r}, {g}, {b})");
+      let rgb: String = format!("rgb({r}, {g}, {b})");
+      let fill_style: JsValue = JsValue::from_str(&rgb);
       canvas_context.set_fill_style(&fill_style);
       canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
       async_std::task::sleep(Duration::from_millis(1_000)).await;

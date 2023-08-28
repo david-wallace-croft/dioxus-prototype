@@ -25,9 +25,14 @@ dioxus-router = "0.4.1"
 dioxus-ssr = { version = "0.4.0", optional = true }
 dioxus-web = "0.4.0"
 log = "0.4.19"
+rand = "0.8.5"
 tokio = { version = "1.32.0", optional = true }
 wasm-bindgen = { version = "0.2.87", features = ["enable-interning"] }
 wasm-logger = "0.2.0"
+
+[dependencies.getrandom]
+features = ["js"]
+version = "0.2.10"
 
 [dependencies.web-sys]
 features = [
