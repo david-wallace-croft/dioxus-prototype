@@ -58,7 +58,7 @@ pub fn Home(cx: Scope) -> Element {
     canvas {
       height: "600",
       id: "game-of-life-canvas",
-      style: "cursor: crosshair",
+      style: "background-color: black; cursor: crosshair",
       width: "600",
     }
     }
