@@ -1,12 +1,15 @@
 use dioxus::prelude::*;
 use rand::distributions::Distribution;
 use rand::distributions::Uniform;
+use rand::rngs::ThreadRng;
 use std::time::Duration;
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement};
 
 // https://docs.rs/dioxus-hooks/latest/dioxus_hooks/
 // use dioxus::hooks::*;
+
+const CANVAS_ID: &str = "home-page-canvas";
 
 #[allow(non_snake_case)]
 pub fn Home(cx: Scope) -> Element {
@@ -16,7 +19,7 @@ pub fn Home(cx: Scope) -> Element {
     let window = window().expect("global window does not exists");
     let document = window.document().expect("expecting a document on window");
     let html_canvas_element = document
-      .get_element_by_id("game-of-life-canvas")
+      .get_element_by_id(CANVAS_ID)
       .expect("expecting a canvas in the document")
       .dyn_into::<HtmlCanvasElement>()
       .unwrap();
@@ -28,8 +31,8 @@ pub fn Home(cx: Scope) -> Element {
       .unwrap();
     let canvas_height: f64 = html_canvas_element.height() as f64;
     let canvas_width: f64 = html_canvas_element.width() as f64;
-    let mut rng = rand::thread_rng();
-    let die = Uniform::from(0..=255);
+    let mut rng: ThreadRng = rand::thread_rng();
+    let die: Uniform<u8> = Uniform::from(0..=255);
     let mut duration: f64 = 1.;
     loop {
       let r: u8 = die.sample(&mut rng);
@@ -56,9 +59,10 @@ pub fn Home(cx: Scope) -> Element {
       "This is the home page."
     }
     canvas {
+      background_color: "black",
+      cursor: "crosshair",
       height: "600",
-      id: "game-of-life-canvas",
-      style: "background-color: black; cursor: crosshair",
+      id: CANVAS_ID,
       width: "600",
     }
     }
