@@ -63,6 +63,7 @@ pub fn Home(cx: Scope) -> Element {
       cursor: "crosshair",
       height: "600",
       id: CANVAS_ID,
+      onclick: move |event| log::info!("Clicked! Event: {event:?}"),
       width: "600",
     }
     }
