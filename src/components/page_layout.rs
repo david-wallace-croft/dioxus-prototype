@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 use dioxus_router::prelude::*;
 
 #[allow(non_snake_case)]
-pub fn PageTemplate(cx: Scope) -> Element {
+pub fn PageLayout(cx: Scope) -> Element {
   render! {
     div {
       class: "frame",
