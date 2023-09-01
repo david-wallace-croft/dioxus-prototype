@@ -39,7 +39,7 @@ pub fn Home(cx: Scope) -> Element {
       let g: u8 = die.sample(&mut rng);
       let b: u8 = die.sample(&mut rng);
       let rgb: String = format!("rgb({r}, {g}, {b})");
-      log::info!("{rgb}");
+      // log::info!("{rgb}");
       let fill_style: JsValue = JsValue::from_str(&rgb);
       canvas_context.set_fill_style(&fill_style);
       canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
@@ -63,7 +63,16 @@ pub fn Home(cx: Scope) -> Element {
       cursor: "crosshair",
       height: "600",
       id: CANVAS_ID,
-      onclick: move |event| log::info!("Clicked! Event: {event:?}"),
+      // https://docs.rs/dioxus/latest/dioxus/events/index.html
+      onblur: move |event| log::info!("onblur Event: {event:?}"),
+      onclick: move |event| log::info!("onclick Event: {event:?}"),
+      onfocus: move |event| log::info!("onfocus Event: {event:?}"),
+      onfocusin: move |event| log::info!("onfocusin Event: {event:?}"),
+      onfocusout: move |event| log::info!("onfocusout Event: {event:?}"),
+      onkeydown: move |event| log::info!("onkeydown Event: {event:?}"),
+      onkeypress: move |event| log::info!("onkeypress Event: {event:?}"),
+      onkeyup: move |event| log::info!("onkeyup Event: {event:?}"),
+      onwheel: move |event| log::info!("onwheel Event: {event:?}"),
       width: "600",
     }
     }
