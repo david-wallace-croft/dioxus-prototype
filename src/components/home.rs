@@ -32,19 +32,38 @@ pub fn Home(cx: Scope) -> Element {
     let canvas_height: f64 = html_canvas_element.height() as f64;
     let canvas_width: f64 = html_canvas_element.width() as f64;
     let mut rng: ThreadRng = rand::thread_rng();
-    let die: Uniform<u8> = Uniform::from(0..=255);
-    let mut duration: f64 = 1.;
+    let d256: Uniform<u8> = Uniform::from(0..=255);
+    let duration: f64 = 1.;
+    let mut r: u8 = d256.sample(&mut rng);
+    let mut g: u8 = d256.sample(&mut rng);
+    let mut b: u8 = d256.sample(&mut rng);
+    let d3: Uniform<u8> = Uniform::from(0..=2);
     loop {
-      let r: u8 = die.sample(&mut rng);
-      let g: u8 = die.sample(&mut rng);
-      let b: u8 = die.sample(&mut rng);
       let rgb: String = format!("rgb({r}, {g}, {b})");
       // log::info!("{rgb}");
       let fill_style: JsValue = JsValue::from_str(&rgb);
       canvas_context.set_fill_style(&fill_style);
       canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
       async_std::task::sleep(Duration::from_millis(duration as u64)).await;
-      duration *= 1.1;
+      // duration *= 1.1;
+      let delta = d3.sample(&mut rng);
+      if delta == 0 {
+        r = r.saturating_sub(1);
+      } else if delta == 2 {
+        r = r.saturating_add(1);
+      }
+      let delta = d3.sample(&mut rng);
+      if delta == 0 {
+        g = g.saturating_sub(1);
+      } else if delta == 2 {
+        g = g.saturating_add(1);
+      }
+      let delta = d3.sample(&mut rng);
+      if delta == 0 {
+        b = b.saturating_sub(1);
+      } else if delta == 2 {
+        b = b.saturating_add(1);
+      }
     }
   });
   render! {
