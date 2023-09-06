@@ -2,6 +2,7 @@ use dioxus::prelude::*;
 use rand::distributions::Distribution;
 use rand::distributions::Uniform;
 use rand::rngs::ThreadRng;
+use std::ops::RangeInclusive;
 use std::time::Duration;
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement};
@@ -33,37 +34,19 @@ pub fn Home(cx: Scope) -> Element {
     let canvas_width: f64 = html_canvas_element.width() as f64;
     let mut rng: ThreadRng = rand::thread_rng();
     let d256: Uniform<u8> = Uniform::from(0..=255);
-    let duration: f64 = 1.;
     let mut r: u8 = d256.sample(&mut rng);
     let mut g: u8 = d256.sample(&mut rng);
     let mut b: u8 = d256.sample(&mut rng);
-    let d3: Uniform<u8> = Uniform::from(0..=2);
     loop {
       let rgb: String = format!("rgb({r}, {g}, {b})");
       // log::info!("{rgb}");
       let fill_style: JsValue = JsValue::from_str(&rgb);
       canvas_context.set_fill_style(&fill_style);
       canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
-      async_std::task::sleep(Duration::from_millis(duration as u64)).await;
-      // duration *= 1.1;
-      let delta = d3.sample(&mut rng);
-      if delta == 0 {
-        r = r.saturating_sub(1);
-      } else if delta == 2 {
-        r = r.saturating_add(1);
-      }
-      let delta = d3.sample(&mut rng);
-      if delta == 0 {
-        g = g.saturating_sub(1);
-      } else if delta == 2 {
-        g = g.saturating_add(1);
-      }
-      let delta = d3.sample(&mut rng);
-      if delta == 0 {
-        b = b.saturating_sub(1);
-      } else if delta == 2 {
-        b = b.saturating_add(1);
-      }
+      async_std::task::sleep(Duration::from_millis(1u64)).await;
+      r = drift(r);
+      g = drift(g);
+      b = drift(b);
     }
   });
   render! {
@@ -96,4 +79,12 @@ pub fn Home(cx: Scope) -> Element {
     }
     }
   }
+}
+
+fn drift(primary_color: u8) -> u8 {
+  let range: RangeInclusive<i8> = -1..=1;
+  let die: Uniform<i8> = Uniform::from(range);
+  let mut rng: ThreadRng = rand::thread_rng();
+  let delta: i8 = die.sample(&mut rng);
+  primary_color.saturating_add_signed(delta)
 }
