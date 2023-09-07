@@ -43,7 +43,7 @@ pub fn Home(cx: Scope) -> Element {
       let fill_style: JsValue = JsValue::from_str(&rgb);
       canvas_context.set_fill_style(&fill_style);
       canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
-      async_std::task::sleep(Duration::from_millis(1u64)).await;
+      async_std::task::sleep(Duration::from_millis(17u64)).await;
       r = drift(r);
       g = drift(g);
       b = drift(b);
@@ -66,15 +66,10 @@ pub fn Home(cx: Scope) -> Element {
       height: "600",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onblur: move |event| log::info!("onblur Event: {event:?}"),
-      onclick: move |event| log::info!("onclick Event: {event:?}"),
-      onfocus: move |event| log::info!("onfocus Event: {event:?}"),
-      onfocusin: move |event| log::info!("onfocusin Event: {event:?}"),
-      onfocusout: move |event| log::info!("onfocusout Event: {event:?}"),
-      onkeydown: move |event| log::info!("onkeydown Event: {event:?}"),
-      onkeypress: move |event| log::info!("onkeypress Event: {event:?}"),
-      onkeyup: move |event| log::info!("onkeyup Event: {event:?}"),
-      onwheel: move |event| log::info!("onwheel Event: {event:?}"),
+      onclick: move |event| on_click(event),
+      onmouseenter: move |event| on_mouse_enter(event),
+      onmouseout: move |event| on_mouse_out(event),
+      onwheel: move |event| on_wheel(event),
       width: "600",
     }
     }
@@ -87,4 +82,20 @@ fn drift(primary_color: u8) -> u8 {
   let mut rng: ThreadRng = rand::thread_rng();
   let delta: i8 = die.sample(&mut rng);
   primary_color.saturating_add_signed(delta)
+}
+
+fn on_click(event: Event<MouseData>) {
+  log::info!("onclick Event: {event:?}");
+}
+
+fn on_mouse_enter(event: Event<MouseData>) {
+  log::info!("onmouseenter Event: {event:?}");
+}
+
+fn on_mouse_out(event: Event<MouseData>) {
+  log::info!("onmouseout Event: {event:?}");
+}
+
+fn on_wheel(event: Event<WheelData>) {
+  log::info!("onwheel Event: {event:?}");
 }
