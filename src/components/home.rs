@@ -34,22 +34,18 @@ impl Color {
 
 #[allow(non_snake_case)]
 pub fn Home(cx: Scope) -> Element {
-  let fill_style: &UseState<JsValue> =
-    use_state(cx, || generate_random_fill_style());
-  let click_count: &UseState<i32> = use_state(cx, || 0);
+  let click_count_state: &UseState<i32> = use_state(cx, || 0);
+  let color_state: &UseState<Color> = use_state(cx, || generate_random_color());
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/useeffect.rs
   use_effect(cx, (), |()| {
-    to_owned![fill_style];
-    to_owned![click_count];
+    to_owned![color_state];
     async move {
-      let mut color: Color = generate_random_color();
       loop {
-        click_count += 1;
-        // let fill_style: JsValue = background_color.to_fill_style();
-        paint_background(&fill_style.current());
+        let fill_style: JsValue = color_state.current().to_fill_style();
+        paint_background(&fill_style);
         async_std::task::sleep(Duration::from_millis(17u64)).await;
-        drift_color(&mut color);
+        color_state.set(drift_color(&color_state.current()));
       }
     }
   });
@@ -70,7 +66,7 @@ pub fn Home(cx: Scope) -> Element {
       height: "600",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onclick: move |event| on_click(event, click_count, fill_style),
+      onclick: move |event| on_click(event, click_count_state, color_state),
       onmouseenter: move |event| on_mouse_enter(event),
       onmouseout: move |event| on_mouse_out(event),
       onwheel: move |event| on_wheel(event),
@@ -80,10 +76,12 @@ pub fn Home(cx: Scope) -> Element {
   }
 }
 
-fn drift_color(color: &mut Color) {
-  color.blue = drift_primary_color(color.blue);
-  color.green = drift_primary_color(color.green);
-  color.red = drift_primary_color(color.red);
+fn drift_color(color: &Color) -> Color {
+  Color {
+    blue: drift_primary_color(color.blue),
+    green: drift_primary_color(color.green),
+    red: drift_primary_color(color.red),
+  }
 }
 
 fn drift_primary_color(primary_color: u8) -> u8 {
@@ -107,21 +105,16 @@ fn generate_random_color() -> Color {
   }
 }
 
-fn generate_random_fill_style() -> JsValue {
-  let color: Color = generate_random_color();
-  color.to_fill_style()
-}
-
 fn on_click(
   event: Event<MouseData>,
-  mut click_count: &UseState<i32>,
-  fill_style: &UseState<JsValue>,
+  mut click_count_state: &UseState<i32>,
+  color_state: &UseState<Color>,
 ) {
   log::info!("onclick Event: {event:?}");
-  click_count += 1;
-  let current_value = *click_count.current();
+  click_count_state += 1;
+  let current_value = *click_count_state.current();
   log::info!("click count: {current_value:?}");
-  fill_style.set(generate_random_fill_style());
+  color_state.set(generate_random_color());
 }
 
 fn on_mouse_enter(event: Event<MouseData>) {
