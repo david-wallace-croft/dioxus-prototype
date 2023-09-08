@@ -33,6 +33,7 @@ impl Color {
 
 #[allow(non_snake_case)]
 pub fn Home(cx: Scope) -> Element {
+  let click_count: &UseState<i32> = use_state(cx, || 0);
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/useeffect.rs
   use_effect(cx, (), |()| async {
@@ -61,7 +62,7 @@ pub fn Home(cx: Scope) -> Element {
       height: "600",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onclick: move |event| on_click(event),
+      onclick: move |event| on_click(event, click_count),
       onmouseenter: move |event| on_mouse_enter(event),
       onmouseout: move |event| on_mouse_out(event),
       onwheel: move |event| on_wheel(event),
@@ -98,8 +99,14 @@ fn generate_random_color() -> Color {
   }
 }
 
-fn on_click(event: Event<MouseData>) {
+fn on_click(
+  event: Event<MouseData>,
+  mut click_count: &UseState<i32>,
+) {
   log::info!("onclick Event: {event:?}");
+  click_count += 1;
+  let current_value = *click_count.current();
+  log::info!("click count: {current_value:?}");
 }
 
 fn on_mouse_enter(event: Event<MouseData>) {
