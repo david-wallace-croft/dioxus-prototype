@@ -19,6 +19,7 @@ struct Color {
 }
 
 impl Color {
+  // TODO: Use From or Into
   fn to_fill_style(&self) -> JsValue {
     let Color {
       blue,
@@ -33,16 +34,23 @@ impl Color {
 
 #[allow(non_snake_case)]
 pub fn Home(cx: Scope) -> Element {
+  let fill_style: &UseState<JsValue> =
+    use_state(cx, || generate_random_fill_style());
   let click_count: &UseState<i32> = use_state(cx, || 0);
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/useeffect.rs
-  use_effect(cx, (), |()| async {
-    let mut color: Color = generate_random_color();
-    loop {
-      let fill_style: JsValue = color.to_fill_style();
-      paint_background(&fill_style);
-      async_std::task::sleep(Duration::from_millis(17u64)).await;
-      drift_color(&mut color);
+  use_effect(cx, (), |()| {
+    to_owned![fill_style];
+    to_owned![click_count];
+    async move {
+      let mut color: Color = generate_random_color();
+      loop {
+        click_count += 1;
+        // let fill_style: JsValue = background_color.to_fill_style();
+        paint_background(&fill_style.current());
+        async_std::task::sleep(Duration::from_millis(17u64)).await;
+        drift_color(&mut color);
+      }
     }
   });
   render! {
@@ -62,7 +70,7 @@ pub fn Home(cx: Scope) -> Element {
       height: "600",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onclick: move |event| on_click(event, click_count),
+      onclick: move |event| on_click(event, click_count, fill_style),
       onmouseenter: move |event| on_mouse_enter(event),
       onmouseout: move |event| on_mouse_out(event),
       onwheel: move |event| on_wheel(event),
@@ -99,14 +107,21 @@ fn generate_random_color() -> Color {
   }
 }
 
+fn generate_random_fill_style() -> JsValue {
+  let color: Color = generate_random_color();
+  color.to_fill_style()
+}
+
 fn on_click(
   event: Event<MouseData>,
   mut click_count: &UseState<i32>,
+  fill_style: &UseState<JsValue>,
 ) {
   log::info!("onclick Event: {event:?}");
   click_count += 1;
   let current_value = *click_count.current();
   log::info!("click count: {current_value:?}");
+  fill_style.set(generate_random_fill_style());
 }
 
 fn on_mouse_enter(event: Event<MouseData>) {
