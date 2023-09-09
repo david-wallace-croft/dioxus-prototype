@@ -1,3 +1,5 @@
+use crate::components::home::WheelDelta::Lines;
+use dioxus::html::geometry::WheelDelta;
 use dioxus::prelude::*;
 use rand::distributions::Distribution;
 use rand::distributions::Uniform;
@@ -35,7 +37,7 @@ impl Color {
 #[allow(non_snake_case)]
 pub fn Home(cx: Scope) -> Element {
   let click_count_state: &UseState<i32> = use_state(cx, || 0);
-  let color_state: &UseState<Color> = use_state(cx, || generate_random_color());
+  let color_state: &UseState<Color> = use_state(cx, generate_random_color);
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/useeffect.rs
   use_effect(cx, (), |()| {
@@ -63,14 +65,15 @@ pub fn Home(cx: Scope) -> Element {
     canvas {
       background_color: "black",
       cursor: "crosshair",
-      height: "600",
+      // height: "600",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
       onclick: move |event| on_click(event, click_count_state, color_state),
       onkeydown: move |event| on_key_down(event, color_state),
-      onmouseenter: move |event| on_mouse_enter(event),
-      onmouseout: move |event| on_mouse_out(event),
-      onwheel: move |event| on_wheel(event),
+      onmouseenter: on_mouse_enter,
+      onmouseout: on_mouse_out,
+      onwheel: move |event| on_wheel(event, color_state),
+      // style: "overscroll-behavior: none",
       tabindex: 0,
       width: "600",
     }
@@ -135,8 +138,18 @@ fn on_mouse_out(event: Event<MouseData>) {
   log::info!("onmouseout Event: {event:?}");
 }
 
-fn on_wheel(event: Event<WheelData>) {
-  log::info!("onwheel Event: {event:?}");
+fn on_wheel(
+  event: Event<WheelData>,
+  color_state: &UseState<Color>,
+) {
+  // log::info!("onwheel Event: {event:?}");
+  let wheel_delta: WheelDelta = event.delta();
+  let Lines(lines_vector) = wheel_delta else {
+    return;
+  };
+  let delta = lines_vector.y.clamp(-128., 127.) as i8;
+  color_state.set(shift_color(&color_state.current(), delta));
+  // event.stop_propagation();
 }
 
 fn paint_background(fill_style: &JsValue) {
@@ -155,6 +168,24 @@ fn paint_background(fill_style: &JsValue) {
     .unwrap();
   let canvas_height: f64 = html_canvas_element.height() as f64;
   let canvas_width: f64 = html_canvas_element.width() as f64;
-  canvas_context.set_fill_style(&fill_style);
+  canvas_context.set_fill_style(fill_style);
   canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
+}
+
+fn shift_color(
+  color: &Color,
+  delta: i8,
+) -> Color {
+  Color {
+    blue: shift_primary_color(color.blue, delta),
+    green: shift_primary_color(color.green, delta),
+    red: shift_primary_color(color.red, delta),
+  }
+}
+
+fn shift_primary_color(
+  primary_color: u8,
+  delta: i8,
+) -> u8 {
+  primary_color.saturating_add_signed(delta)
 }

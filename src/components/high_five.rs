@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
 pub fn HighFive(cx: Scope) -> Element {
-  let mut count = use_state(&cx, || 0);
+  let mut count = use_state(cx, || 0);
   render! {
     div {
       class: "app-high-five box",
