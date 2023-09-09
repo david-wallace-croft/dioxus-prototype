@@ -67,9 +67,11 @@ pub fn Home(cx: Scope) -> Element {
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
       onclick: move |event| on_click(event, click_count_state, color_state),
+      onkeydown: move |event| on_key_down(event, color_state),
       onmouseenter: move |event| on_mouse_enter(event),
       onmouseout: move |event| on_mouse_out(event),
       onwheel: move |event| on_wheel(event),
+      tabindex: 0,
       width: "600",
     }
     }
@@ -114,6 +116,14 @@ fn on_click(
   click_count_state += 1;
   let current_value = *click_count_state.current();
   log::info!("click count: {current_value:?}");
+  color_state.set(generate_random_color());
+}
+
+fn on_key_down(
+  event: Event<KeyboardData>,
+  color_state: &UseState<Color>,
+) {
+  log::info!("onkeydown Event: {event:?}");
   color_state.set(generate_random_color());
 }
 
