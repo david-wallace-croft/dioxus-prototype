@@ -38,16 +38,23 @@ impl Color {
 pub fn Home(cx: Scope) -> Element {
   let click_count_state: &UseState<i32> = use_state(cx, || 0);
   let color_state: &UseState<Color> = use_state(cx, generate_random_color);
+  let running_state: &UseState<bool> = use_state(cx, || true);
+  let update_state: &UseState<bool> = use_state(cx, || true);
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/useeffect.rs
   use_effect(cx, (), |()| {
     to_owned![color_state];
+    to_owned![running_state];
+    to_owned![update_state];
     async move {
       loop {
-        let fill_style: JsValue = color_state.current().to_fill_style();
-        paint_background(&fill_style);
+        if *running_state.current() || *update_state.current() {
+          update_state.set(false);
+          color_state.set(drift_color(&color_state.current()));
+          let fill_style: JsValue = color_state.current().to_fill_style();
+          paint_background(&fill_style);
+        }
         async_std::task::sleep(Duration::from_millis(17u64)).await;
-        color_state.set(drift_color(&color_state.current()));
       }
     }
   });
@@ -68,11 +75,13 @@ pub fn Home(cx: Scope) -> Element {
       // height: "600",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onclick: move |event| on_click(event, click_count_state, color_state),
-      onkeydown: move |event| on_key_down(event, color_state),
+      onblur: move |event| on_blur(event, running_state),
+      onclick: move |event| on_click(event, click_count_state, color_state, update_state),
+      onfocus: move |event| on_focus(event, running_state),
+      onkeydown: move |event| on_key_down(event, color_state, update_state),
       onmouseenter: on_mouse_enter,
       onmouseout: on_mouse_out,
-      onwheel: move |event| on_wheel(event, color_state),
+      onwheel: move |event| on_wheel(event, color_state, update_state),
       // style: "overscroll-behavior: none",
       tabindex: 0,
       width: "600",
@@ -90,7 +99,7 @@ fn drift_color(color: &Color) -> Color {
 }
 
 fn drift_primary_color(primary_color: u8) -> u8 {
-  let range: RangeInclusive<i8> = -1..=1;
+  let range: RangeInclusive<i8> = -6..=6;
   let die: Uniform<i8> = Uniform::from(range);
   let mut rng: ThreadRng = rand::thread_rng();
   let delta: i8 = die.sample(&mut rng);
@@ -110,37 +119,58 @@ fn generate_random_color() -> Color {
   }
 }
 
-fn on_click(
-  event: Event<MouseData>,
-  mut click_count_state: &UseState<i32>,
-  color_state: &UseState<Color>,
+fn on_blur(
+  event: Event<FocusData>,
+  running_state: &UseState<bool>,
 ) {
-  log::info!("onclick Event: {event:?}");
+  log::info!("onblur Event: {event:?}");
+  running_state.set(true);
+}
+
+fn on_click(
+  _event: Event<MouseData>,
+  mut click_count_state: &UseState<i32>,
+  _color_state: &UseState<Color>,
+  _update_state: &UseState<bool>,
+) {
+  // log::info!("onclick Event: {event:?}");
   click_count_state += 1;
   let current_value = *click_count_state.current();
   log::info!("click count: {current_value:?}");
-  color_state.set(generate_random_color());
+  // color_state.set(generate_random_color());
+  // update_state.set(true);
+}
+
+fn on_focus(
+  event: Event<FocusData>,
+  running_state: &UseState<bool>,
+) {
+  log::info!("onfocus Event: {event:?}");
+  running_state.set(false);
 }
 
 fn on_key_down(
-  event: Event<KeyboardData>,
+  _event: Event<KeyboardData>,
   color_state: &UseState<Color>,
+  update_state: &UseState<bool>,
 ) {
-  log::info!("onkeydown Event: {event:?}");
-  color_state.set(generate_random_color());
+  // log::info!("onkeydown Event: {event:?}");
+  color_state.set(drift_color(&color_state.current()));
+  update_state.set(true);
 }
 
-fn on_mouse_enter(event: Event<MouseData>) {
-  log::info!("onmouseenter Event: {event:?}");
+fn on_mouse_enter(_event: Event<MouseData>) {
+  // log::info!("onmouseenter Event: {event:?}");
 }
 
-fn on_mouse_out(event: Event<MouseData>) {
-  log::info!("onmouseout Event: {event:?}");
+fn on_mouse_out(_event: Event<MouseData>) {
+  // log::info!("onmouseout Event: {event:?}");
 }
 
 fn on_wheel(
   event: Event<WheelData>,
   color_state: &UseState<Color>,
+  update_state: &UseState<bool>,
 ) {
   // log::info!("onwheel Event: {event:?}");
   let wheel_delta: WheelDelta = event.delta();
@@ -150,6 +180,7 @@ fn on_wheel(
   let delta = lines_vector.y.clamp(-128., 127.) as i8;
   color_state.set(shift_color(&color_state.current(), delta));
   // event.stop_propagation();
+  update_state.set(true);
 }
 
 fn paint_background(fill_style: &JsValue) {
