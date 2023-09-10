@@ -13,6 +13,8 @@ use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement};
 // use dioxus::hooks::*;
 
 const CANVAS_ID: &str = "home-page-canvas";
+const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
+const MESSAGE_START: &str = "Click on or tab to the canvas";
 
 struct Color {
   blue: u8,
@@ -38,12 +40,14 @@ impl Color {
 pub fn Home(cx: Scope) -> Element {
   let click_count_state: &UseState<i32> = use_state(cx, || 0);
   let color_state: &UseState<Color> = use_state(cx, generate_random_color);
+  let message_state: &UseState<&str> = use_state(cx, || MESSAGE_START);
   let running_state: &UseState<bool> = use_state(cx, || true);
   let update_state: &UseState<bool> = use_state(cx, || true);
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/useeffect.rs
   use_effect(cx, (), |()| {
     to_owned![color_state];
+    to_owned![message_state];
     to_owned![running_state];
     to_owned![update_state];
     async move {
@@ -52,7 +56,7 @@ pub fn Home(cx: Scope) -> Element {
           update_state.set(false);
           color_state.set(drift_color(&color_state.current()));
           let fill_style: JsValue = color_state.current().to_fill_style();
-          paint_background(&fill_style);
+          paint(&fill_style, *message_state.current());
         }
         async_std::task::sleep(Duration::from_millis(17u64)).await;
       }
@@ -65,19 +69,15 @@ pub fn Home(cx: Scope) -> Element {
       class: "app-home",
       "CroftSoft Dioxus Prototype"
     }
-    p {
-      class: "app-home",
-      "This is the home page."
-    }
     canvas {
       background_color: "black",
       cursor: "crosshair",
       // height: "600",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onblur: move |event| on_blur(event, running_state),
+      onblur: move |event| on_blur(event, message_state, running_state),
       onclick: move |event| on_click(event, click_count_state, color_state, update_state),
-      onfocus: move |event| on_focus(event, running_state),
+      onfocus: move |event| on_focus(event, message_state, running_state, update_state),
       onkeydown: move |event| on_key_down(event, color_state, update_state),
       onmouseenter: on_mouse_enter,
       onmouseout: on_mouse_out,
@@ -120,10 +120,12 @@ fn generate_random_color() -> Color {
 }
 
 fn on_blur(
-  event: Event<FocusData>,
+  _event: Event<FocusData>,
+  message_state: &UseState<&str>,
   running_state: &UseState<bool>,
 ) {
-  log::info!("onblur Event: {event:?}");
+  // log::info!("onblur Event: {event:?}");
+  message_state.set(MESSAGE_START);
   running_state.set(true);
 }
 
@@ -142,11 +144,15 @@ fn on_click(
 }
 
 fn on_focus(
-  event: Event<FocusData>,
+  _event: Event<FocusData>,
+  message_state: &UseState<&str>,
   running_state: &UseState<bool>,
+  update_state: &UseState<bool>,
 ) {
-  log::info!("onfocus Event: {event:?}");
+  // log::info!("onfocus Event: {event:?}");
+  message_state.set(MESSAGE_CONTROLS);
   running_state.set(false);
+  update_state.set(true);
 }
 
 fn on_key_down(
@@ -183,7 +189,10 @@ fn on_wheel(
   update_state.set(true);
 }
 
-fn paint_background(fill_style: &JsValue) {
+fn paint(
+  fill_style: &JsValue,
+  message: &str,
+) {
   let window = window().expect("global window does not exists");
   let document = window.document().expect("expecting a document on window");
   let html_canvas_element = document
@@ -201,6 +210,9 @@ fn paint_background(fill_style: &JsValue) {
   let canvas_width: f64 = html_canvas_element.width() as f64;
   canvas_context.set_fill_style(fill_style);
   canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
+  canvas_context.set_font("30px Verdana");
+  canvas_context.set_fill_style(&JsValue::from_str("black"));
+  let _ = canvas_context.fill_text(message, 4., 30.);
 }
 
 fn shift_color(
