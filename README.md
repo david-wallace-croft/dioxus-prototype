@@ -7,20 +7,19 @@
 
 - My first Dioxus application
 
-## Hot Reload
+## Serving with Hot Reload
 
 - cd dioxus-prototype/
 - cargo install dioxus-cli
-- dx serve --hot-reload
+- npm install
+- npm start
 - Open your browser to http://localhost:8080/
 - Make changes to the HTML in src/lib.rs or the CSS in public/stylesheet.css
 - Note that the changes are updated in your browser as soon as you save
 
-## Static Site Generation
+## Testing Static Site Generation
 
-- cd dioxus-prototype/
-- npm install
-- npm start
+- npm test
   - This will prerender, format, copy static files, serve, and open your browser
 
 ## History

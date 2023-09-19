@@ -1,4 +1,5 @@
 use crate::components::colophon::Colophon;
+use crate::components::flashcard::Flashcard;
 use crate::components::high_five::HighFive;
 use crate::components::home::Home;
 use crate::components::page_layout::PageLayout;
@@ -15,6 +16,8 @@ pub enum Route {
     Home {},
     #[route("/colophon")]
     Colophon {},
+    #[route("/flashcard")]
+    Flashcard {},
     #[route("/high-five")]
     HighFive {},
     #[route("/story-listing")]

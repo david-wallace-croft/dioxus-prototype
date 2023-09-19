@@ -1,5 +1,6 @@
 pub mod app;
 pub mod colophon;
+pub mod flashcard;
 pub mod footer;
 pub mod high_five;
 pub mod home;
