@@ -1,0 +1,7 @@
+.app-flashcard button {
+  background-color: red;
+}
+
+.app-flashcard button.app-show {
+  background-color: #0cd1e8;
+}

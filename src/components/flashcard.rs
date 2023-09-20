@@ -5,9 +5,10 @@ pub fn Flashcard(cx: Scope) -> Element {
   // let mut count = use_state(cx, || 0);
   render! {
     div {
-      class: "box",
+      class: "app-flashcard box",
     div {
     button {
+      class: "app-show",
     "SHOW"
     }
     }

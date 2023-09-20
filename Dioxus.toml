@@ -33,7 +33,7 @@ watch_path = ["src", "public"]
 [web.resource]
 
 # CSS style file
-style = ["stylesheet.css"]
+style = ["stylesheet.css", "flashcard.css"]
 
 # Javascript code file
 script = []
