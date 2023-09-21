@@ -1,78 +1,35 @@
 [application]
-
-# dioxus project name
-name = "dioxus-prototype"
-
-# default platfrom
-# you can also use `dx serve/build --platform XXX` to use other platform
-# value: web | desktop
+asset_dir = "assets"
 default_platform = "web"
-
-# Web `build` & `serve` dist path
+name = "dioxus-prototype"
 out_dir = "dist"
 
-# resource (static) file folder
-asset_dir = "assets"
-
-[web.app]
-
-# HTML title tag content
-title = "CroftSoft Dioxus Prototype"
-
-[web.watcher]
-
-# when watcher trigger, regenerate the `index.html`
-reload_html = true
-
-# index_on_404 = true
-
-# which files or dirs will be watcher monitoring
-watch_path = ["src", "assets"]
-
-# include `assets` in web platform
-[web.resource]
-
-# CSS style file
-style = ["stylesheet.css", "flashcard.css"]
-
-# Javascript code file
-script = []
-
-[web.resource.dev]
-
-# Javascript code file
-# serve: [dev-server] only
-script = []
-
 [application.plugins]
-
 available = true
-
 required = []
 
 [bundler]
-# Bundle identifier
-identifier = "com.croftsoft.app.dioxus-prototype"
-
-# Bundle publisher
-publisher = "dioxus-prototype"
-
-# Bundle icon
-icon = ["icons/icon.png"]
-
-# Bundle resources
-resources = ["public/*"]
-
-# Bundle copyright
-copyright = "Copyright 2022-2023 CroftSoft Inc"
-
-# Bundle category
 category = "Utility"
-
-# Bundle short description
-short_description = "An amazing dioxus application."
-
-# Bundle long description
+copyright = "Copyright 2022-2023 CroftSoft Inc"
+icon = ["icons/icon.png"]
+identifier = "com.croftsoft.app.dioxus-prototype"
 long_description = """
-An amazing dioxus application.
+CroftSoft Dioxus Prototype
 """
+publisher = "dioxus-prototype"
+resources = ["assets/*"]
+short_description = "CroftSoft Dioxus Prototype"
+
+[web.app]
+title = "CroftSoft Dioxus Prototype"
+
+[web.watcher]
+reload_html = true
+watch_path = ["src", "assets"]
+
+[web.resource]
+script = []
+style = ["stylesheet.css", "flashcard.css"]
+
+[web.resource.dev]
+script = []

@@ -39,6 +39,9 @@ async fn main() {
           <link
             href="/stylesheet.css"
             rel="stylesheet">
+          <link
+            href="/flashcard.css"
+            rel="stylesheet">
         </head>
         <body>"#
         .to_string(),

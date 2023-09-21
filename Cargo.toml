@@ -2,7 +2,7 @@
 authors = ["David Wallace Croft <david@CroftSoft.com>"]
 description = "Dioxus Prototype"
 edition = "2021"
-homepage = "https://www.croftsoft.com/"
+homepage = "https://www.CroftSoft.com/"
 keywords = ["dioxus"]
 license = "MIT"
 name = "dioxus-prototype"
@@ -57,6 +57,6 @@ version = "0.3.64"
 prerender = ["dioxus-router/ssr", "dioxus-ssr", "tokio"]
 
 [profile.release]
-opt-level = "s"
-lto = true
 codegen-units = 1
+lto = true
+opt-level = "s"

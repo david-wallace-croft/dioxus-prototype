@@ -1,4 +1,3 @@
-use dioxus::html::geometry::WheelDelta;
 use dioxus::prelude::*;
 
 #[allow(non_snake_case)]

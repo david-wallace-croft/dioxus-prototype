@@ -7,7 +7,7 @@
     "prettier": "prettier static --ignore-path .prettierignore --write",
     "serve": "http-server static -o",
     "start": "dx serve --hot-reload",
-    "static": "cp -r public/* static",
+    "static": "cp -r assets/* static",
     "test": "npm run prerender && npm run prettier && npm run static && npm run serve"
   },
   "repository": {
