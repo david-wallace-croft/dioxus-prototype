@@ -1,30 +1,34 @@
 {
-  "name": "dioxus-prototype",
-  "version": "0.1.1-SNAPSHOT",
-  "description": "CroftSoft Dioxus Prototype",
-  "scripts": {
-    "prerender": "cargo run --bin prerender --features=prerender",
-    "prettier": "prettier static --ignore-path .prettierignore --write",
-    "serve": "http-server static -o",
-    "start": "dx serve --hot-reload",
-    "static": "cp -r assets/* static",
-    "test": "npm run prerender && npm run prettier && npm run static && npm run serve"
+  "author": "David Wallace Croft <david@CroftSoft.com>",
+  "bugs": {
+    "url": "https://github.com/david-wallace-croft/dioxus-prototype/issues"
   },
+  "description": "CroftSoft Dioxus Prototype",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "prettier": "3.0.3",
+    "rimraf": "^5.0.1"
+  },
+  "homepage": "https://github.com/david-wallace-croft/dioxus-prototype#readme",
+  "keywords": [
+    "Dioxus"
+  ],
+  "license": "MIT",
+  "name": "dioxus-prototype",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/david-wallace-croft/dioxus-prototype.git"
   },
-  "keywords": [
-    "Dioxus"
-  ],
-  "author": "David Wallace Croft <david@CroftSoft.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/david-wallace-croft/dioxus-prototype/issues"
+  "scripts": {
+    "clean": "rimraf dist",
+    "dist": "npm run clean && npm run make",
+    "format": "prettier dist --ignore-path .prettierignore --write",
+    "hydrate": "dx build --features=hydrate --release",
+    "prerender": "cargo run --bin prerender --features=prerender --release",
+    "make": "npm run hydrate && npm run prerender && npm run format",
+    "serve": "http-server dist -o",
+    "start": "dx serve --hot-reload",
+    "test": "npm run dist && npm run serve"
   },
-  "homepage": "https://github.com/david-wallace-croft/dioxus-prototype#readme",
-  "devDependencies": {
-    "http-server": "^14.1.1",
-    "prettier": "3.0.3"
-  }
+  "version": "0.2.0-SNAPSHOT"
 }
