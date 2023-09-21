@@ -21,6 +21,12 @@ pub fn Nav(cx: Scope) -> Element {
     }
     p {
     Link {
+      to: Route::Animation {},
+      "Animation",
+    }
+    }
+    p {
+    Link {
       to: Route::Flashcard {},
       "Flashcard",
     }
