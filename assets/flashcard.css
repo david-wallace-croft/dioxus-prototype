@@ -4,4 +4,8 @@
 
 .app-flashcard button.app-show {
   background-color: #0cd1e8;
+  border-style: none;
+  border-radius: 0.3rem;
+  color: white;
+  padding: 0.5rem;
 }
