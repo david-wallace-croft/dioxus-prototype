@@ -9,6 +9,9 @@ pub fn Home(cx: Scope) -> Element {
       class: "app-home",
       "CroftSoft Dioxus Prototype"
     }
+    p {
+      "This prototype supports static prerendering with static hydration."
+    }
     }
   }
 }
