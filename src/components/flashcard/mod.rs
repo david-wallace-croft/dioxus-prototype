@@ -20,7 +20,8 @@ pub fn Flashcard(cx: Scope) -> Element {
     }
     div {
     AnswerButton {
-      label: "0".to_owned(),
+      label: "0",
+      on_click: move |event| log::info!("Clicked! {event:?}"),
     },
     button {
       class: "app-answer",

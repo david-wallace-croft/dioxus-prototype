@@ -1,14 +1,16 @@
 use dioxus::prelude::*;
 
-#[derive(PartialEq, Props)]
-pub struct Props {
-  pub label: String,
+#[derive(Props)]
+pub struct Props<'a> {
+  label: &'a str,
+  on_click: EventHandler<'a, MouseEvent>,
 }
 
 #[allow(non_snake_case)]
-pub fn AnswerButton(cx: Scope<Props>) -> Element {
+pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
   render! {
   button {
+    onclick: move |event| cx.props.on_click.call(event),
     style: r#"
     appearance: "none";
     background-color: #3880FF;
