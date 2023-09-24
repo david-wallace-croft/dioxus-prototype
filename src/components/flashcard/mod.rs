@@ -20,6 +20,7 @@ pub fn Flashcard(cx: Scope) -> Element {
     }
     div {
     AnswerButton {
+      incorrect: true,
       label: "0",
       on_click: move |event| log::info!("Clicked! {event:?}"),
     },
