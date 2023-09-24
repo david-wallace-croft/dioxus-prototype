@@ -5,6 +5,7 @@ use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
 pub fn Flashcard(cx: Scope) -> Element {
+  let mut incorrect: &UseState<bool> = use_state(cx, || false);
   render! {
     div {
       class: "app-flashcard box",
@@ -20,9 +21,9 @@ pub fn Flashcard(cx: Scope) -> Element {
     }
     div {
     AnswerButton {
-      incorrect: true,
+      incorrect: is_incorrect(incorrect),
       label: "0",
-      on_click: move |event| log::info!("Clicked! {event:?}"),
+      on_click: move |event| on_click(event, incorrect),
     },
     button {
       class: "app-answer",
@@ -63,4 +64,19 @@ pub fn Flashcard(cx: Scope) -> Element {
     }
     }
   }
+}
+
+fn is_incorrect(incorrect: &UseState<bool>) -> bool {
+  let incorrect: bool = *incorrect.get();
+  log::info!("incorrect = {incorrect:?}");
+  incorrect
+}
+
+fn on_click(
+  event: MouseEvent,
+  incorrect: &UseState<bool>,
+) {
+  log::info!("Clicked! {event:?}");
+  event.stop_propagation();
+  incorrect.set(true);
 }
