@@ -3,9 +3,27 @@ mod answer_button;
 use crate::components::flashcard::answer_button::AnswerButton;
 use dioxus::prelude::*;
 
+// struct AnswerData {
+//   incorrect: bool,
+//   label: &str,
+// }
+
+// impl AnswerData {
+//   fn new(label: &str) -> Self {
+//     Self {
+//       incorrect: false,
+//       label,
+//     }
+//   }
+// }
+
 #[allow(non_snake_case)]
 pub fn Flashcard(cx: Scope) -> Element {
-  let mut incorrect: &UseState<bool> = use_state(cx, || false);
+  let answers: [&str; 10] = [
+    "0", "4", "12", "14", "42", "44", "48", "55", "84", "99",
+  ];
+  // let incorrects: [bool; 10] = [false; 10];
+  let mut incorrects: &UseState<[bool; 10]> = use_state(cx, || [false; 10]);
   render! {
     div {
       class: "app-flashcard box",
@@ -20,63 +38,32 @@ pub fn Flashcard(cx: Scope) -> Element {
     "8 x 6 = ?"
     }
     div {
-    AnswerButton {
-      incorrect: is_incorrect(incorrect),
-      label: "0",
-      on_click: move |event| on_click(event, incorrect),
-    },
-    button {
-      class: "app-answer",
-    "4"
-    }
-    button {
-      class: "app-answer",
-    "12"
-    }
-    button {
-      class: "app-answer",
-    "14"
-    }
-    button {
-      class: "app-answer",
-    "42"
-    }
-    button {
-      class: "app-answer",
-    "44"
-    }
-    button {
-      class: "app-answer",
-    "48"
-    }
-    button {
-      class: "app-answer",
-    "55"
-    }
-    button {
-      class: "app-answer",
-    "84"
-    }
-    button {
-      class: "app-answer",
-    "99"
+    for (index, answer) in answers.iter().enumerate() {
+      AnswerButton {
+        incorrect: incorrects[index],
+        label: answer,
+        on_click: move |event| on_click(event, incorrects, index),
+      }
     }
     }
     }
   }
 }
 
-fn is_incorrect(incorrect: &UseState<bool>) -> bool {
-  let incorrect: bool = *incorrect.get();
-  log::info!("incorrect = {incorrect:?}");
-  incorrect
-}
+// fn is_incorrect(incorrect: &UseState<bool>) -> bool {
+//   let incorrect: bool = *incorrect.get();
+//   log::info!("incorrect = {incorrect:?}");
+//   incorrect
+// }
 
 fn on_click(
   event: MouseEvent,
-  incorrect: &UseState<bool>,
+  incorrects: &UseState<[bool; 10]>,
+  index: usize,
 ) {
   log::info!("Clicked! {event:?}");
   event.stop_propagation();
-  incorrect.set(true);
+  let mut incorrects_copy = *incorrects.get();
+  incorrects_copy[index] = true;
+  incorrects.set(incorrects_copy);
 }
