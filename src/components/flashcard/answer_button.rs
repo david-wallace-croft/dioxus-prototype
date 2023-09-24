@@ -1,7 +1,12 @@
 use dioxus::prelude::*;
 
+#[derive(PartialEq, Props)]
+pub struct Props {
+  pub label: String,
+}
+
 #[allow(non_snake_case)]
-pub fn AnswerButton(cx: Scope) -> Element {
+pub fn AnswerButton(cx: Scope<Props>) -> Element {
   render! {
   button {
     style: r#"
@@ -44,11 +49,10 @@ pub fn AnswerButton(cx: Scope) -> Element {
     text-decoration-style: solid;
     text-overflow: ellipsis;
     text-rendering: optimizelegibility;
-    text-transform: uppercase;
     visibility: visible;
     white-space: nowrap;
     "#,
-    "123"
+    "{cx.props.label}"
   }
   }
 }

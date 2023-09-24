@@ -19,11 +19,9 @@ pub fn Flashcard(cx: Scope) -> Element {
     "8 x 6 = ?"
     }
     div {
-    AnswerButton { },
-    button {
-      class: "app-answer",
-    "0"
-    }
+    AnswerButton {
+      label: "0".to_owned(),
+    },
     button {
       class: "app-answer",
     "4"
