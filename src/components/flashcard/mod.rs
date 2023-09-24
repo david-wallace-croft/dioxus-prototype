@@ -3,27 +3,12 @@ mod answer_button;
 use crate::components::flashcard::answer_button::AnswerButton;
 use dioxus::prelude::*;
 
-// struct AnswerData {
-//   incorrect: bool,
-//   label: &str,
-// }
-
-// impl AnswerData {
-//   fn new(label: &str) -> Self {
-//     Self {
-//       incorrect: false,
-//       label,
-//     }
-//   }
-// }
-
 #[allow(non_snake_case)]
 pub fn Flashcard(cx: Scope) -> Element {
   let answers: [&str; 10] = [
     "0", "4", "12", "14", "42", "44", "48", "55", "84", "99",
   ];
-  // let incorrects: [bool; 10] = [false; 10];
-  let mut incorrects: &UseState<[bool; 10]> = use_state(cx, || [false; 10]);
+  let incorrects: &UseState<[bool; 10]> = use_state(cx, || [false; 10]);
   render! {
     div {
       class: "app-flashcard box",
@@ -49,12 +34,6 @@ pub fn Flashcard(cx: Scope) -> Element {
     }
   }
 }
-
-// fn is_incorrect(incorrect: &UseState<bool>) -> bool {
-//   let incorrect: bool = *incorrect.get();
-//   log::info!("incorrect = {incorrect:?}");
-//   incorrect
-// }
 
 fn on_click(
   event: MouseEvent,
