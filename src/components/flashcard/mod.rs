@@ -1,8 +1,10 @@
+mod answer_button;
+
+use crate::components::flashcard::answer_button::AnswerButton;
 use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
 pub fn Flashcard(cx: Scope) -> Element {
-  // let mut count = use_state(cx, || 0);
   render! {
     div {
       class: "app-flashcard box",
@@ -17,6 +19,7 @@ pub fn Flashcard(cx: Scope) -> Element {
     "8 x 6 = ?"
     }
     div {
+    AnswerButton { },
     button {
       class: "app-answer",
     "0"
