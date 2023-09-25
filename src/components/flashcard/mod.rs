@@ -8,6 +8,8 @@ pub fn Flashcard(cx: Scope) -> Element {
   let answers: [&str; 10] = [
     "0", "4", "12", "14", "42", "44", "48", "55", "84", "99",
   ];
+  const CORRECT_ANSWER_INDEX: usize = 6;
+  let corrects: &UseState<[bool; 10]> = use_state(cx, || [false; 10]);
   let incorrects: &UseState<[bool; 10]> = use_state(cx, || [false; 10]);
   render! {
     div {
@@ -25,9 +27,10 @@ pub fn Flashcard(cx: Scope) -> Element {
     div {
     for (index, answer) in answers.iter().enumerate() {
       AnswerButton {
+        correct: corrects[index],
         incorrect: incorrects[index],
         label: answer,
-        on_click: move |event| on_click(event, incorrects, index),
+        on_click: move |event| on_click(CORRECT_ANSWER_INDEX, corrects, event, incorrects, index),
       }
     }
     }
@@ -36,13 +39,21 @@ pub fn Flashcard(cx: Scope) -> Element {
 }
 
 fn on_click(
+  correct_answer_index: usize,
+  corrects: &UseState<[bool; 10]>,
   event: MouseEvent,
   incorrects: &UseState<[bool; 10]>,
   index: usize,
 ) {
   log::info!("Clicked! {event:?}");
   event.stop_propagation();
-  let mut incorrects_copy = *incorrects.get();
-  incorrects_copy[index] = true;
-  incorrects.set(incorrects_copy);
+  if index == correct_answer_index {
+    let mut corrects_copy = *corrects.get();
+    corrects_copy[index] = true;
+    corrects.set(corrects_copy);
+  } else {
+    let mut incorrects_copy = *incorrects.get();
+    incorrects_copy[index] = true;
+    incorrects.set(incorrects_copy);
+  }
 }

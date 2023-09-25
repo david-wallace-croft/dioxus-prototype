@@ -2,6 +2,7 @@ use dioxus::prelude::*;
 
 #[derive(Props)]
 pub struct Props<'a> {
+  correct: bool,
   incorrect: bool,
   label: &'a str,
   on_click: EventHandler<'a, MouseEvent>,
@@ -11,7 +12,7 @@ pub struct Props<'a> {
 pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
   render! {
   button {
-    background_color: if cx.props.incorrect { "#f04141" } else { "#3880FF" },
+    background_color: if cx.props.incorrect { "#f04141" } else if cx.props.correct { "#19dc60" } else { "#3880FF" },
     cursor: if cx.props.incorrect { "not-allowed" } else { "pointer" },
     disabled: cx.props.incorrect,
     onclick: move |event| cx.props.on_click.call(event),
