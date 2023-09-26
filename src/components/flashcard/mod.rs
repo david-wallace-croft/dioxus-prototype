@@ -1,8 +1,10 @@
 mod answer_button;
-mod question;
+mod question_text;
+mod show_button;
 
 use crate::components::flashcard::answer_button::AnswerButton;
-use crate::components::flashcard::question::Question;
+use crate::components::flashcard::question_text::QuestionText;
+use crate::components::flashcard::show_button::ShowButton;
 use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
@@ -16,15 +18,10 @@ pub fn Flashcard(cx: Scope) -> Element {
   render! {
     div {
       class: "app-flashcard box",
+    ShowButton { }
     div {
-    button {
-      class: "app-show",
-    "SHOW"
-    }
-    }
-    div {
-      margin: "1rem 0",
-    Question {
+      margin: "2rem 0",
+    QuestionText {
       text: "8 x 6 = ?"
     }
     }

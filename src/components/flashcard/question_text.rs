@@ -6,7 +6,7 @@ pub struct Props<'a> {
 }
 
 #[allow(non_snake_case)]
-pub fn Question<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
+pub fn QuestionText<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
   render! {
     span {
       style: r#"
