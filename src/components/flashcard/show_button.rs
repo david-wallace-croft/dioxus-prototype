@@ -19,7 +19,7 @@ pub fn ShowButton(cx: Scope) -> Element {
       display: block;
       font-family: "Roboto", "Helvetica Neue", san-serif;
       font-kerning: auto;
-      font-size: 19.6px;
+      font-size: 1.5rem;
       font-style: normal;
       font-weight: 500;
       height: 36px;

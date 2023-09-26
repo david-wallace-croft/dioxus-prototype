@@ -31,7 +31,7 @@ pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
     contain: layout style;
     font-family: "Roboto", "Helvetica Neue", san-serif;
     font-kerning: auto;
-    font-size: 19.6px;
+    font-size: 1.5rem;
     font-style: normal;
     font-weight: 500;
     height: 36px;
