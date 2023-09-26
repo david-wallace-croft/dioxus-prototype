@@ -15,9 +15,10 @@ pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
     background_color: if cx.props.incorrect { "#f04141" }
       else if cx.props.correct { "#19dc60" }
       else { "#3880FF" },
-    cursor: if cx.props.incorrect { "not-allowed" } else { "pointer" },
+    cursor: if cx.props.incorrect { "default" } else { "pointer" },
     disabled: cx.props.incorrect,
     onclick: move |event| cx.props.on_click.call(event),
+    opacity: if cx.props.incorrect { "0.5" } else { "1.0" },
     style: r#"
     appearance: "none";
     border-radius: 0.3rem;
@@ -37,7 +38,6 @@ pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
     letter-spacing: 0.84px;
     line-height: 19.6px;
     margin: 0;
-    opacity: 1;
     outline-color: white;
     outline-style: none;
     outline-width: 0;
@@ -56,7 +56,6 @@ pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
     text-decoration-style: solid;
     text-overflow: ellipsis;
     text-rendering: optimizelegibility;
-    visibility: visible;
     white-space: nowrap;
     "#,
     "{cx.props.label}"

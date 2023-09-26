@@ -1,6 +1,8 @@
 mod answer_button;
+mod question;
 
 use crate::components::flashcard::answer_button::AnswerButton;
+use crate::components::flashcard::question::Question;
 use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
@@ -21,8 +23,10 @@ pub fn Flashcard(cx: Scope) -> Element {
     }
     }
     div {
-      class: "app-question",
-    "8 x 6 = ?"
+      margin: "1rem 0",
+    Question {
+      text: "8 x 6 = ?"
+    }
     }
     div {
     for (index, answer) in answers.iter().enumerate() {
