@@ -26,6 +26,9 @@ pub fn Flashcard(cx: Scope) -> Element {
     }
     }
     div {
+      display: "flex",
+      flex_wrap: "wrap",
+      gap: "1rem",
     for (index, answer) in answers.iter().enumerate() {
       AnswerButton {
         correct: corrects[index],
