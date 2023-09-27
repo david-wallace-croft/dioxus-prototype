@@ -9,10 +9,12 @@ use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
 pub fn Flashcard(cx: Scope) -> Element {
+  // TODO: change to Vec
   let answers: [&str; 10] = [
     "0", "4", "12", "14", "42", "44", "48", "55", "84", "99",
   ];
   const CORRECT_ANSWER_INDEX: usize = 6;
+  // TODO: change to Vec
   let modes: &UseState<[Mode; 10]> = use_state(cx, || [Mode::Untouched; 10]);
   render! {
     div {
@@ -44,20 +46,18 @@ fn on_click(
   correct_answer_index: usize,
   event: MouseEvent,
   index: usize,
-  modes: &UseState<[Mode; 10]>,
+  modes_state: &UseState<[Mode; 10]>,
 ) {
   log::info!("Clicked! {event:?}");
+  // TODO: Necessary?
   event.stop_propagation();
   if index == correct_answer_index {
-    let mut modes_copy = *modes.get();
-    for index in 0..modes_copy.len() {
-      modes_copy[index] = Mode::Disabled;
-    }
-    modes_copy[index] = Mode::Correct;
-    modes.set(modes_copy);
+    let mut modes = [Mode::Disabled; 10];
+    modes[index] = Mode::Correct;
+    modes_state.set(modes);
   } else {
-    let mut modes_copy = *modes.get();
-    modes_copy[index] = Mode::Incorrect;
-    modes.set(modes_copy);
+    let mut modes = *modes_state.get();
+    modes[index] = Mode::Incorrect;
+    modes_state.set(modes);
   }
 }

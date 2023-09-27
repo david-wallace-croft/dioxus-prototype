@@ -31,10 +31,7 @@ pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
     Mode::Correct | Mode::Untouched => "pointer",
     _ => "default",
   };
-  let disabled = match cx.props.mode {
-    Mode::Disabled | Mode::Incorrect => true,
-    _ => false,
-  };
+  let disabled = matches!(cx.props.mode, Mode::Disabled | Mode::Incorrect);
   let opacity = match cx.props.mode {
     Mode::Disabled | Mode::Incorrect => "0.5",
     _ => "1.0",
