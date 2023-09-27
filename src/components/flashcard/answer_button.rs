@@ -1,24 +1,52 @@
 use dioxus::prelude::*;
 
+#[derive(Clone, Copy)]
+pub enum Mode {
+  Correct,
+  Disabled,
+  Incorrect,
+  Untouched,
+}
+
 #[derive(Props)]
 pub struct Props<'a> {
-  correct: bool,
-  incorrect: bool,
   label: &'a str,
+  mode: Mode,
   on_click: EventHandler<'a, MouseEvent>,
 }
 
 #[allow(non_snake_case)]
 pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
+  let background_color = match cx.props.mode {
+    Mode::Correct => "#19dc60",
+    Mode::Disabled => "#FFF",
+    Mode::Incorrect => "#f04141",
+    Mode::Untouched => "#3880FF",
+  };
+  let color = match cx.props.mode {
+    Mode::Disabled => "black",
+    _ => "white",
+  };
+  let cursor = match cx.props.mode {
+    Mode::Correct | Mode::Untouched => "pointer",
+    _ => "default",
+  };
+  let disabled = match cx.props.mode {
+    Mode::Disabled | Mode::Incorrect => true,
+    _ => false,
+  };
+  let opacity = match cx.props.mode {
+    Mode::Disabled | Mode::Incorrect => "0.5",
+    _ => "1.0",
+  };
   render! {
   button {
-    background_color: if cx.props.incorrect { "#f04141" }
-      else if cx.props.correct { "#19dc60" }
-      else { "#3880FF" },
-    cursor: if cx.props.incorrect { "default" } else { "pointer" },
-    disabled: cx.props.incorrect,
+    background_color: background_color,
+    color: color,
+    cursor: cursor,
+    disabled: disabled,
     onclick: move |event| cx.props.on_click.call(event),
-    opacity: if cx.props.incorrect { "0.5" } else { "1.0" },
+    opacity: opacity,
     style: r#"
     appearance: "none";
     border-radius: 0.3rem;
@@ -27,7 +55,6 @@ pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
       rgba(0, 0, 0, 0.14) 0 2px 2px 0,
       rgba(0, 0, 0, 0.12) 0 1px 5px 0;
     box-sizing: border-box;
-    color: white;
     contain: layout style;
     font-family: "Roboto", "Helvetica Neue", san-serif;
     font-kerning: auto;
