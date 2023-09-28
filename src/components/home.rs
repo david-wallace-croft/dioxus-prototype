@@ -1,4 +1,4 @@
-use crate::components::flashcard::Flashcard;
+use crate::components::flashcard::flashcard::Flashcard;
 use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
