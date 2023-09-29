@@ -1,9 +1,19 @@
 use dioxus::prelude::*;
 
+#[derive(Props)]
+pub struct Props<'a> {
+  disabled: bool,
+  on_click: EventHandler<'a, MouseEvent>,
+}
+
 #[allow(non_snake_case)]
-pub fn ShowButton(cx: Scope) -> Element {
+pub fn ShowButton<'a>(cx: Scope<'a, Props<'a>>) -> Element {
   render! {
   button {
+    cursor: if cx.props.disabled { "default" } else { "pointer" },
+    disabled: cx.props.disabled,
+    onclick: move |event| cx.props.on_click.call(event),
+    opacity: if cx.props.disabled { "0.5" } else { "1.0" },
     style: r#"
       appearance: none;
       background-color: #0cd1e8;
@@ -15,7 +25,6 @@ pub fn ShowButton(cx: Scope) -> Element {
       box-sizing: border-box;
       color: white;
       contain: layout style;
-      cursor: pointer;
       display: block;
       font-family: "Roboto", "Helvetica Neue", san-serif;
       font-kerning: auto;
@@ -26,7 +35,6 @@ pub fn ShowButton(cx: Scope) -> Element {
       letter-spacing: 0.84px;
       line-height: 19.6px;
       margin: 0;
-      opacity: 1;
       outline-color: white;
       outline-style: none;
       outline-width: 0;
