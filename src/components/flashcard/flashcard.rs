@@ -64,6 +64,11 @@ fn on_click_answer_button(
   // TODO: Necessary?
   event.stop_propagation();
   if index == correct_answer_index {
+    let modes: [Mode; 10] = *modes_state.get();
+    if let Mode::Correct = modes[index] {
+      reset(modes_state, show_button_disabled_state);
+      return;
+    }
     let mut modes = [Mode::Disabled; 10];
     modes[index] = Mode::Correct;
     modes_state.set(modes);
@@ -88,4 +93,13 @@ fn on_click_show_button(
   modes[correct_answer_index] = Mode::Correct;
   modes_state.set(modes);
   show_button_disabled_state.set(true);
+}
+
+fn reset(
+  modes_state: &UseState<[Mode; 10]>,
+  show_button_disabled_state: &UseState<bool>,
+) {
+  let modes = [Mode::Untouched; 10];
+  modes_state.set(modes);
+  show_button_disabled_state.set(false);
 }
