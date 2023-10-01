@@ -10,7 +10,7 @@ pub enum Mode {
 
 #[derive(Props)]
 pub struct Props<'a> {
-  label: &'a str,
+  label: String,
   mode: Mode,
   on_click: EventHandler<'a, MouseEvent>,
 }
