@@ -29,6 +29,6 @@ pub enum Route {
   #[end_layout]
   #[route("/:..route")]
   PageNotFound {
-      route: Vec<String>,
+    route: Vec<String>,
   },
 }
