@@ -46,6 +46,7 @@ pub fn Flashcard(cx: Scope) -> Element {
         show_button_disabled_state,
       ),
     }
+    // TODO: LinkButton
     div {
       margin: "2rem 0",
     QuestionText {
