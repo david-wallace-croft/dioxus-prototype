@@ -91,9 +91,7 @@ fn on_click_answer_button(
       return;
     }
     modes_state.with_mut(|modes| {
-      for i in 0..modes.len() {
-        modes[i] = Mode::Disabled;
-      }
+      modes.fill(Mode::Disabled);
       modes[index] = Mode::Correct;
     });
     show_button_disabled_state.set(true);
@@ -112,9 +110,7 @@ fn on_click_show_button(
   // TODO: Necessary?
   event.stop_propagation();
   modes_state.with_mut(|modes| {
-    for i in 0..modes.len() {
-      modes[i] = Mode::Disabled;
-    }
+    modes.fill(Mode::Disabled);
     modes[correct_answer_index] = Mode::Correct;
   });
   show_button_disabled_state.set(true);
@@ -124,10 +120,6 @@ fn reset(
   modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
-  modes_state.with_mut(|modes| {
-    for i in 0..modes.len() {
-      modes[i] = Mode::Untouched;
-    }
-  });
+  modes_state.with_mut(|modes| modes.fill(Mode::Untouched));
   show_button_disabled_state.set(false);
 }
