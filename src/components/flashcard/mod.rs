@@ -31,8 +31,8 @@ impl Default for Card {
 #[allow(non_snake_case)]
 pub fn Flashcard(cx: Scope) -> Element {
   let card = Card::default();
-  let modes: &UseState<Vec<Mode>> =
-    use_state(cx, || vec![Mode::Untouched; card.answers.len()]);
+  let modes: &UseRef<Vec<Mode>> =
+    use_ref(cx, || vec![Mode::Untouched; card.answers.len()]);
   let show_button_disabled_state: &UseState<bool> = use_state(cx, || false);
   render! {
     div {
@@ -59,7 +59,7 @@ pub fn Flashcard(cx: Scope) -> Element {
     for (index, answer) in card.answers.into_iter().enumerate() {
       AnswerButton {
         label: answer,
-        mode: modes[index],
+        mode: modes.with(|modes| modes[index]),
         on_click: move |event| on_click_answer_button(
           card.correct_answer_index,
           event,
@@ -78,49 +78,55 @@ fn on_click_answer_button(
   correct_answer_index: usize,
   event: MouseEvent,
   index: usize,
-  modes_state: &UseState<Vec<Mode>>,
+  modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
   log::info!("Clicked! {event:?}");
   // TODO: Necessary?
   event.stop_propagation();
   if index == correct_answer_index {
-    if let Mode::Correct = modes_state.get()[index] {
+    if let Mode::Correct = modes_state.with(|modes| modes[index]) {
       reset(modes_state, show_button_disabled_state);
       return;
     }
-    let mut modes = vec![Mode::Disabled; modes_state.get().len()];
-    modes[index] = Mode::Correct;
-    modes_state.set(modes);
+    modes_state.with_mut(|modes| {
+      for i in 0..modes.len() {
+        modes[i] = Mode::Disabled;
+      }
+      modes[index] = Mode::Correct;
+    });
     show_button_disabled_state.set(true);
   } else {
-    let mut modes: Vec<Mode> =
-      modes_state.get().iter().map(|mode| *mode).collect();
-    modes[index] = Mode::Incorrect;
-    modes_state.set(modes);
+    modes_state.with_mut(|modes| modes[index] = Mode::Incorrect);
   }
 }
 
 fn on_click_show_button(
   correct_answer_index: usize,
   event: MouseEvent,
-  modes_state: &UseState<Vec<Mode>>,
+  modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
   log::info!("Clicked! {event:?}");
   // TODO: Necessary?
   event.stop_propagation();
-  let mut modes = vec![Mode::Disabled; modes_state.get().len()];
-  modes[correct_answer_index] = Mode::Correct;
-  modes_state.set(modes);
+  modes_state.with_mut(|modes| {
+    for i in 0..modes.len() {
+      modes[i] = Mode::Disabled;
+    }
+    modes[correct_answer_index] = Mode::Correct;
+  });
   show_button_disabled_state.set(true);
 }
 
 fn reset(
-  modes_state: &UseState<Vec<Mode>>,
+  modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
-  let modes = vec![Mode::Untouched; modes_state.get().len()];
-  modes_state.set(modes);
+  modes_state.with_mut(|modes| {
+    for i in 0..modes.len() {
+      modes[i] = Mode::Untouched;
+    }
+  });
   show_button_disabled_state.set(false);
 }
