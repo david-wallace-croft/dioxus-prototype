@@ -1,8 +1,10 @@
 mod answer_button;
+mod link_button;
 mod question_text;
 mod show_button;
 
 use crate::components::flashcard::answer_button::{AnswerButton, Mode};
+use crate::components::flashcard::link_button::LinkButton;
 use crate::components::flashcard::question_text::QuestionText;
 use crate::components::flashcard::show_button::ShowButton;
 use dioxus::prelude::*;
@@ -31,22 +33,34 @@ impl Default for Card {
 #[allow(non_snake_case)]
 pub fn Flashcard(cx: Scope) -> Element {
   let card = Card::default();
+  let link_button_disabled_state: &UseState<bool> = use_state(cx, || true);
   let modes: &UseRef<Vec<Mode>> =
     use_ref(cx, || vec![Mode::Untouched; card.answers.len()]);
   let show_button_disabled_state: &UseState<bool> = use_state(cx, || false);
   render! {
     div {
       class: "app-flashcard box",
+    div {
+      display: "flex",
+      flex_wrap: "wrap",
+      gap: "1rem",
     ShowButton {
       disabled: *show_button_disabled_state.get(),
       on_click: move |event| on_click_show_button(
         card.correct_answer_index,
         event,
+        link_button_disabled_state,
         modes,
         show_button_disabled_state,
       ),
     }
-    // TODO: LinkButton
+    LinkButton {
+      disabled: *link_button_disabled_state.get(),
+      on_click: move |event| on_click_link_button(
+        event,
+      ),
+    }
+    }
     div {
       margin: "2rem 0",
     QuestionText {
@@ -65,6 +79,7 @@ pub fn Flashcard(cx: Scope) -> Element {
           card.correct_answer_index,
           event,
           index,
+          link_button_disabled_state,
           modes,
           show_button_disabled_state,
         ),
@@ -79,6 +94,7 @@ fn on_click_answer_button(
   correct_answer_index: usize,
   event: MouseEvent,
   index: usize,
+  link_button_disabled_state: &UseState<bool>,
   modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
@@ -87,22 +103,34 @@ fn on_click_answer_button(
   event.stop_propagation();
   if index == correct_answer_index {
     if let Mode::Correct = modes_state.with(|modes| modes[index]) {
-      reset(modes_state, show_button_disabled_state);
+      reset(
+        link_button_disabled_state,
+        modes_state,
+        show_button_disabled_state,
+      );
       return;
     }
     modes_state.with_mut(|modes| {
       modes.fill(Mode::Disabled);
       modes[index] = Mode::Correct;
     });
+    link_button_disabled_state.set(false);
     show_button_disabled_state.set(true);
   } else {
     modes_state.with_mut(|modes| modes[index] = Mode::Incorrect);
   }
 }
 
+fn on_click_link_button(event: MouseEvent) {
+  log::info!("Clicked! {event:?}");
+  // TODO: Necessary?
+  event.stop_propagation();
+}
+
 fn on_click_show_button(
   correct_answer_index: usize,
   event: MouseEvent,
+  link_button_disabled_state: &UseState<bool>,
   modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
@@ -113,13 +141,16 @@ fn on_click_show_button(
     modes.fill(Mode::Disabled);
     modes[correct_answer_index] = Mode::Correct;
   });
+  link_button_disabled_state.set(false);
   show_button_disabled_state.set(true);
 }
 
 fn reset(
+  link_button_disabled_state: &UseState<bool>,
   modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
+  link_button_disabled_state.set(true);
   modes_state.with_mut(|modes| modes.fill(Mode::Untouched));
   show_button_disabled_state.set(false);
 }

@@ -7,7 +7,7 @@ pub struct Props<'a> {
 }
 
 #[allow(non_snake_case)]
-pub fn ShowButton<'a>(cx: Scope<'a, Props<'a>>) -> Element {
+pub fn LinkButton<'a>(cx: Scope<'a, Props<'a>>) -> Element {
   render! {
   button {
     cursor: if cx.props.disabled { "default" } else { "pointer" },
@@ -56,7 +56,7 @@ pub fn ShowButton<'a>(cx: Scope<'a, Props<'a>>) -> Element {
       visibility: visible;
       white-space: nowrap;
       "#,
-    "SHOW"
+    "LINK"
   }
   }
 }
