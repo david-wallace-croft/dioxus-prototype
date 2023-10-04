@@ -10,14 +10,19 @@
 }
 
 .app-nav ul li a {
-  border-radius: 1rem;
-  color: black;
+  border-radius: 0.5rem;
+  color: blue;
   display: block;
+  margin: 0.5rem 0;
   padding: 0.5rem 1rem;
   text-decoration: none;
 }
 
 .app-nav ul li a:hover {
-  background-color: #555;
+  background-color: blue;
   color: white;
+}
+
+.app-nav ul li a.app-nav-active {
+  border: 2px solid #b7410e;
 }

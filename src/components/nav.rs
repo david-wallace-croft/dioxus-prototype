@@ -11,24 +11,28 @@ pub fn Nav(cx: Scope) -> Element {
     ul {
     li {
     Link {
+      active_class: "app-nav-active",
       to: Route::Home {},
       "Home",
     }
     }
     li {
     Link {
+      active_class: "app-nav-active",
       to: Route::Animation {},
       "Animation",
     }
     }
     li {
     Link {
+      active_class: "app-nav-active",
       to: Route::Flashcard {},
       "Flashcard",
     }
     }
     li {
     Link {
+      active_class: "app-nav-active",
       to: Route::HighFive {},
       "High Five",
     }
@@ -41,12 +45,14 @@ pub fn Nav(cx: Scope) -> Element {
     }
     li {
     Link {
+      active_class: "app-nav-active",
       to: Route::StoryListing {},
       "Story Listing",
     }
     }
     li {
     Link {
+      active_class: "app-nav-active",
       to: Route::Colophon {},
       "Colophon",
     }
