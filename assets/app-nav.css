@@ -1,0 +1,16 @@
+.app-nav {
+  text-align: center;
+}
+
+.app-nav span {
+  font-weight: bold;
+}
+
+.app-nav ul {
+  padding: 0;
+}
+
+.app-nav ul li {
+  list-style-type: none;
+  margin-top: 0.5rem;
+}

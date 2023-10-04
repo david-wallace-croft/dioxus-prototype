@@ -10,18 +10,6 @@ div.app-high-five button.app-high-five {
   padding: 1rem;
 }
 
-div.app-nav {
-  text-align: center;
-}
-
-div.app-nav span {
-  font-weight: bold;
-}
-
-div.app-nav ul li {
-  list-style-type: none;
-}
-
 h1.app-home {
   text-align: center;
 }
@@ -92,18 +80,8 @@ body {
 }
 
 footer,
-header,
-nav {
+header {
   text-align: center;
-}
-
-ul {
-  padding: 0;
-}
-
-ul li {
-  list-style-type: none;
-  margin-top: 0.5rem;
 }
 
 @media (min-width: calc(600px + 24rem)) {

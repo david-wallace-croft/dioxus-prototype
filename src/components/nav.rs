@@ -8,51 +8,51 @@ pub fn Nav(cx: Scope) -> Element {
     div {
       class: "app-nav box",
     span {
-      class: "app-nav",
       "Navigation Sidebar",
     }
     nav {
-      class: "app-nav",
-    p {
+    ul {
+    li {
     Link {
       to: Route::Home {},
       "Home",
     }
     }
-    p {
+    li {
     Link {
       to: Route::Animation {},
       "Animation",
     }
     }
-    p {
+    li {
     Link {
       to: Route::Flashcard {},
       "Flashcard",
     }
     }
-    p {
+    li {
     Link {
       to: Route::HighFive {},
       "High Five",
     }
     }
-    p {
+    li {
     a {
       href: "/manual/",
       "Manual"
     }
     }
-    p {
+    li {
     Link {
       to: Route::StoryListing {},
       "Story Listing",
     }
     }
-    p {
+    li {
     Link {
       to: Route::Colophon {},
       "Colophon",
+    }
     }
     }
     }
