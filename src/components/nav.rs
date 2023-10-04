@@ -7,9 +7,6 @@ pub fn Nav(cx: Scope) -> Element {
   render! {
     div {
       class: "app-nav box",
-    span {
-      "Navigation Sidebar",
-    }
     nav {
     ul {
     li {
