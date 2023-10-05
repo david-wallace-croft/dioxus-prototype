@@ -8,6 +8,7 @@ use crate::components::flashcard::link_button::LinkButton;
 use crate::components::flashcard::question_text::QuestionText;
 use crate::components::flashcard::show_button::ShowButton;
 use dioxus::prelude::*;
+use web_sys::window;
 
 struct Card {
   answers: Vec<String>,
@@ -125,6 +126,10 @@ fn on_click_link_button(event: MouseEvent) {
   log::info!("Clicked! {event:?}");
   // TODO: Necessary?
   event.stop_propagation();
+  let _ = window().unwrap().open_with_url_and_target(
+    "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "_blank",
+  );
 }
 
 fn on_click_show_button(
