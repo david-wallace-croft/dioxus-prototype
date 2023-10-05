@@ -3,7 +3,6 @@
 }
 
 .app-nav ul {
-  /* background-color: #F1F1F1; */
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -11,15 +10,16 @@
 
 .app-nav ul li a {
   border-radius: 0.5rem;
-  color: blue;
+  color: #b7410e;
   display: block;
+  font-size: larger;
   margin: 0.5rem 0;
   padding: 0.5rem 1rem;
   text-decoration: none;
 }
 
 .app-nav ul li a:hover {
-  background-color: blue;
+  background-color: #b7410e;
   color: white;
 }
 

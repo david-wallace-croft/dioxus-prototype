@@ -5,9 +5,8 @@ use dioxus_router::prelude::*;
 #[allow(non_snake_case)]
 pub fn Nav(cx: Scope) -> Element {
   render! {
-    div {
-      class: "app-nav box",
     nav {
+      class: "app-nav box",
     ul {
     li {
     Link {
@@ -55,7 +54,6 @@ pub fn Nav(cx: Scope) -> Element {
       active_class: "app-nav-active",
       to: Route::Colophon {},
       "Colophon",
-    }
     }
     }
     }
