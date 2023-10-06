@@ -86,6 +86,7 @@ pub fn Flashcard(cx: Scope) -> Element {
         ),
       }
     }
+    "Click on an answer button."
     }
     }
   }
