@@ -38,57 +38,62 @@ pub fn Flashcard(cx: Scope) -> Element {
   let modes: &UseRef<Vec<Mode>> =
     use_ref(cx, || vec![Mode::Untouched; card.answers.len()]);
   let show_button_disabled_state: &UseState<bool> = use_state(cx, || false);
+  let message_state: &UseRef<String> =
+    use_ref(cx, || "Click on an answer button.".to_owned());
   render! {
-    div {
-      class: "app-flashcard box",
-    div {
-      display: "flex",
-      flex_wrap: "wrap",
-      gap: "1rem",
-    ShowButton {
-      disabled: *show_button_disabled_state.get(),
-      on_click: move |event| on_click_show_button(
+  div {
+    class: "app-flashcard box",
+  div {
+    display: "flex",
+    flex_wrap: "wrap",
+    gap: "1rem",
+  ShowButton {
+    disabled: *show_button_disabled_state.get(),
+    on_click: move |event| on_click_show_button(
+      card.correct_answer_index,
+      event,
+      link_button_disabled_state,
+      modes,
+      show_button_disabled_state,
+    ),
+  }
+  LinkButton {
+    disabled: *link_button_disabled_state.get(),
+    on_click: move |event| on_click_link_button(
+      event,
+    ),
+  }
+  }
+  div {
+    margin: "2rem 0",
+  QuestionText {
+    text: "8 x 6 = ?"
+  }
+  }
+  div {
+    display: "flex",
+    flex_wrap: "wrap",
+    gap: "1rem",
+  for (index, answer) in card.answers.into_iter().enumerate() {
+    AnswerButton {
+      label: answer,
+      mode: modes.with(|modes| modes[index]),
+      on_click: move |event| on_click_answer_button(
         card.correct_answer_index,
         event,
+        index,
         link_button_disabled_state,
+        message_state,
         modes,
         show_button_disabled_state,
       ),
     }
-    LinkButton {
-      disabled: *link_button_disabled_state.get(),
-      on_click: move |event| on_click_link_button(
-        event,
-      ),
-    }
-    }
-    div {
-      margin: "2rem 0",
-    QuestionText {
-      text: "8 x 6 = ?"
-    }
-    }
-    div {
-      display: "flex",
-      flex_wrap: "wrap",
-      gap: "1rem",
-    for (index, answer) in card.answers.into_iter().enumerate() {
-      AnswerButton {
-        label: answer,
-        mode: modes.with(|modes| modes[index]),
-        on_click: move |event| on_click_answer_button(
-          card.correct_answer_index,
-          event,
-          index,
-          link_button_disabled_state,
-          modes,
-          show_button_disabled_state,
-        ),
-      }
-    }
-    "Click on an answer button."
-    }
-    }
+  }
+  }
+  p {
+    message_state.read().clone()
+  }
+  }
   }
 }
 
@@ -97,6 +102,7 @@ fn on_click_answer_button(
   event: MouseEvent,
   index: usize,
   link_button_disabled_state: &UseState<bool>,
+  message_state: &UseRef<String>,
   modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
@@ -107,6 +113,7 @@ fn on_click_answer_button(
     if let Mode::Correct = modes_state.with(|modes| modes[index]) {
       reset(
         link_button_disabled_state,
+        message_state,
         modes_state,
         show_button_disabled_state,
       );
@@ -118,6 +125,7 @@ fn on_click_answer_button(
     });
     link_button_disabled_state.set(false);
     show_button_disabled_state.set(true);
+    message_state.set("Correct.".to_owned());
   } else {
     modes_state.with_mut(|modes| modes[index] = Mode::Incorrect);
   }
@@ -153,10 +161,12 @@ fn on_click_show_button(
 
 fn reset(
   link_button_disabled_state: &UseState<bool>,
+  message_state: &UseRef<String>,
   modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
   link_button_disabled_state.set(true);
+  message_state.set("Click on an answer button.".to_owned());
   modes_state.with_mut(|modes| modes.fill(Mode::Untouched));
   show_button_disabled_state.set(false);
 }
