@@ -38,11 +38,11 @@ pub fn Flashcard(cx: Scope) -> Element {
   let modes: &UseRef<Vec<Mode>> =
     use_ref(cx, || vec![Mode::Untouched; card.answers.len()]);
   let show_button_disabled_state: &UseState<bool> = use_state(cx, || false);
-  let message_state: &UseRef<String> =
-    use_ref(cx, || "Click on an answer button.".to_owned());
+  let message_state: &UseRef<String> = use_ref(cx, || "".to_owned());
   render! {
   div {
     class: "app-flashcard box",
+    onclick: move |_event| on_click_flashcard(message_state),
   div {
     display: "flex",
     flex_wrap: "wrap",
@@ -106,9 +106,7 @@ fn on_click_answer_button(
   modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
-  log::info!("Clicked! {event:?}");
-  // TODO: Necessary?
-  event.stop_propagation();
+  log::info!("AnswerButton clicked: {event:?}");
   if index == correct_answer_index {
     if let Mode::Correct = modes_state.with(|modes| modes[index]) {
       reset(
@@ -128,7 +126,12 @@ fn on_click_answer_button(
     message_state.set("Correct.".to_owned());
   } else {
     modes_state.with_mut(|modes| modes[index] = Mode::Incorrect);
+    message_state.set("".to_owned());
   }
+}
+
+fn on_click_flashcard(message_state: &UseRef<String>) {
+  message_state.set("Click on an answer button to continue.".to_owned());
 }
 
 fn on_click_link_button(event: MouseEvent) {
@@ -148,9 +151,7 @@ fn on_click_show_button(
   modes_state: &UseRef<Vec<Mode>>,
   show_button_disabled_state: &UseState<bool>,
 ) {
-  log::info!("Clicked! {event:?}");
-  // TODO: Necessary?
-  event.stop_propagation();
+  log::info!("Show button clicked: {event:?}");
   modes_state.with_mut(|modes| {
     modes.fill(Mode::Disabled);
     modes[correct_answer_index] = Mode::Correct;
@@ -166,7 +167,7 @@ fn reset(
   show_button_disabled_state: &UseState<bool>,
 ) {
   link_button_disabled_state.set(true);
-  message_state.set("Click on an answer button.".to_owned());
+  message_state.set("".to_owned());
   modes_state.with_mut(|modes| modes.fill(Mode::Untouched));
   show_button_disabled_state.set(false);
 }
