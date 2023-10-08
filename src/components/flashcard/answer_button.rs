@@ -45,7 +45,7 @@ pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
     onclick: move |event| cx.props.on_click.call(event),
     opacity: opacity,
     style: r#"
-    appearance: "none";
+    appearance: none;
     border-radius: 0.3rem;
     box-shadow:
       rgba(0, 0, 0, 0.2) 0 3px 1px -2px,
@@ -53,7 +53,7 @@ pub fn AnswerButton<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
       rgba(0, 0, 0, 0.12) 0 1px 5px 0;
     box-sizing: border-box;
     contain: layout style;
-    font-family: "Roboto", "Helvetica Neue", san-serif;
+    font-family: 'Roboto', 'Helvetica Neue', san-serif;
     font-kerning: auto;
     font-size: 1.5rem;
     font-style: normal;

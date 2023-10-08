@@ -25,7 +25,7 @@ pub fn ShowButton<'a>(cx: Scope<'a, Props<'a>>) -> Element {
       box-sizing: border-box;
       color: white;
       contain: layout style;
-      font-family: "Roboto", "Helvetica Neue", san-serif;
+      font-family: 'Roboto', 'Helvetica Neue', san-serif;
       font-kerning: auto;
       font-size: 1.5rem;
       font-style: normal;
