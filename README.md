@@ -6,6 +6,12 @@
 [mit-url]: https://github.com/david-wallace-croft/dioxus-prototype/blob/main/LICENSE.txt
 
 - My first Dioxus application
+- Includes static prerendering with client-side hydration
+
+## Online Demonstration
+
+- An online demonstration is available
+  - https://www.persentia.com/
 
 ## Utilities Installation
 

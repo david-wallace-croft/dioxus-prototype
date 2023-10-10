@@ -10,7 +10,7 @@ pub fn Home(cx: Scope) -> Element {
       "CroftSoft Dioxus Prototype"
     }
     p {
-      "This prototype supports static prerendering with static hydration."
+      "This prototype supports static prerendering with client-side hydration."
     }
     }
   }
