@@ -136,8 +136,6 @@ fn on_click_flashcard(message_state: &UseRef<String>) {
 
 fn on_click_link_button(event: MouseEvent) {
   log::info!("Clicked! {event:?}");
-  // TODO: Necessary?
-  event.stop_propagation();
   let _ = window().unwrap().open_with_url_and_target(
     "https://en.wikipedia.org/wiki/Rust_(programming_language)",
     "_blank",
