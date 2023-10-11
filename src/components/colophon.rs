@@ -27,6 +27,18 @@ pub fn Colophon(cx: Scope) -> Element {
     "https://github.com/david-wallace-croft/dioxus-prototype",
     }
     }
+    p {
+    "For a description of how this web application uses "
+    "static prerendering with client-side hydration, "
+    "see the tutorial "
+    a {
+      href: "https://www.croftsoft.com/\
+             library/tutorials/rust-dioxus-project-setup/",
+      target: "_blank",
+      "Rust-Dioxus Project Setup"
+    }
+    "."
+    }
     }
   }
 }

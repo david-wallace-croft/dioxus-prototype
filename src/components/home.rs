@@ -10,7 +10,14 @@ pub fn Home(cx: Scope) -> Element {
       "CroftSoft Dioxus Prototype"
     }
     p {
-      "This prototype supports static prerendering with client-side hydration."
+      "This prototype supports "
+    a {
+      href: "https://www.croftsoft.com/\
+             library/tutorials/rust-dioxus-project-setup/",
+      target: "_blank",
+      "static prerendering with client-side hydration"
+    }
+    "."
     }
     }
   }

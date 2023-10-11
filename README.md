@@ -13,6 +13,11 @@
 - An online demonstration is available
   - https://www.persentia.com/
 
+## Tutorial
+
+- Rust-Dioxus Project Setup
+  - https://www.croftsoft.com/library/tutorials/rust-dioxus-project-setup/
+
 ## Utilities Installation
 
 - Install the Rust command line utility "cargo"
