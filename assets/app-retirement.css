@@ -3,5 +3,8 @@
 }
 
 .app-retirement .app-form {
-  /* TODO */
+  column-gap: 0.25rem;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  row-gap: 1rem;
 }
