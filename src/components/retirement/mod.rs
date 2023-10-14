@@ -13,6 +13,14 @@ pub fn Retirement(cx: Scope) -> Element {
     use_state(cx, || RETIREMENT_INCOME.to_string());
   let investment_years: &UseState<String> =
     use_state(cx, || INVESTMENT_YEARS.to_string());
+  let investment_interest: &UseState<String> =
+    use_state(cx, || INVESTMENT_INTEREST.to_string());
+  let retirement_interest: &UseState<String> =
+    use_state(cx, || RETIREMENT_INTEREST.to_string());
+  let retirement_tax_rate: &UseState<String> =
+    use_state(cx, || RETIREMENT_INTEREST.to_string());
+  let retirement_inflation: &UseState<String> =
+    use_state(cx, || RETIREMENT_INFLATION.to_string());
   render! {
   div {
     class: "app-retirement box",
@@ -25,7 +33,7 @@ pub fn Retirement(cx: Scope) -> Element {
 
   span {
     style: "white-space: pre-line",
-    "Desired annual retirement income\n (present value, after taxes)"
+    "Desired annual retirement income\n(present value, after taxes)"
   }
   input {
     size: "10",
@@ -40,7 +48,7 @@ pub fn Retirement(cx: Scope) -> Element {
 
   span {
     style: "white-space: pre-line",
-    "Years until retirement\n (usually at 67 years of age)"
+    "Years until retirement\n(usually at 67 years of age)"
   }
   input {
     size: "10",
@@ -53,12 +61,84 @@ pub fn Retirement(cx: Scope) -> Element {
     "years"
   }
 
+  span {
+    style: "white-space: pre-line",
+    "Annual investment growth rate\n(before retirement, tax-deferred)"
+  }
+  input {
+    size: "10",
+    oninput: move |evt| investment_interest.set(evt.value.clone()),
+    r#type: "text",
+    value: "{investment_interest}",
+  }
+  span {
+    style: "align-self: center",
+    "percent (%)"
+  }
+
+  span {
+    style: "white-space: pre-line",
+    "Annual interest earned on retirement savings during retirement"
+  }
+  input {
+    size: "10",
+    oninput: move |evt| retirement_interest.set(evt.value.clone()),
+    r#type: "text",
+    value: "{retirement_interest}",
+  }
+  span {
+    style: "align-self: center",
+    "percent (%)"
+  }
+
+  span {
+    style: "white-space: pre-line",
+    "Tax rate during retirement on savings interest"
+  }
+  input {
+    size: "10",
+    oninput: move |evt| retirement_tax_rate.set(evt.value.clone()),
+    r#type: "text",
+    value: "{retirement_tax_rate}",
+  }
+  span {
+    style: "align-self: center",
+    "percent (%)"
+  }
+
+  span {
+    style: "white-space: pre-line",
+    "Estimated annual inflation"
+  }
+  input {
+    size: "10",
+    oninput: move |evt| retirement_inflation.set(evt.value.clone()),
+    r#type: "text",
+    value: "{retirement_inflation}",
+  }
+  span {
+    style: "align-self: center",
+    "percent (%)"
+  }
+
   }
   p {
     "{retirement_income}"
   }
   p {
     "{investment_years}"
+  }
+  p {
+    "{investment_interest}"
+  }
+  p {
+    "{retirement_interest}"
+  }
+  p {
+    "{retirement_tax_rate}"
+  }
+  p {
+    "{retirement_inflation}"
   }
   }
   }
