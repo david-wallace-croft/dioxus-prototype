@@ -3,6 +3,7 @@
 }
 
 .app-retirement .app-form {
+  align-items: start;
   column-gap: 0.25rem;
   display: grid;
   grid-template-columns: auto auto auto;

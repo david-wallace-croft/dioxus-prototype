@@ -42,7 +42,6 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{retirement_income}",
   }
   span {
-    style: "align-self: center",
     "dollars ($)"
   }
 
@@ -57,7 +56,6 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{investment_years}",
   }
   span {
-    style: "align-self: center",
     "years"
   }
 
@@ -72,13 +70,12 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{investment_interest}",
   }
   span {
-    style: "align-self: center",
     "percent (%)"
   }
 
   span {
     style: "white-space: pre-line",
-    "Annual interest earned on retirement savings during retirement"
+    "Annual interest earned on savings\n(during retirement)"
   }
   input {
     size: "10",
@@ -87,13 +84,12 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{retirement_interest}",
   }
   span {
-    style: "align-self: center",
     "percent (%)"
   }
 
   span {
     style: "white-space: pre-line",
-    "Tax rate during retirement on savings interest"
+    "Tax rate on savings interest\n(during retirement)"
   }
   input {
     size: "10",
@@ -102,22 +98,20 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{retirement_tax_rate}",
   }
   span {
-    style: "align-self: center",
     "percent (%)"
   }
 
   span {
     style: "white-space: pre-line",
-    "Estimated annual inflation"
+    "Estimated annual inflation\n(before and during retirement)"
   }
   input {
     size: "10",
     oninput: move |evt| retirement_inflation.set(evt.value.clone()),
-    r#type: "text",
+    r#type: "input",
     value: "{retirement_inflation}",
   }
   span {
-    style: "align-self: center",
     "percent (%)"
   }
 
