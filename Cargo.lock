@@ -362,6 +362,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
 
 [[package]]
+name = "com-croftsoft-core"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1c8081e206f2f31e0c069dacc1af15bd4cf27c769bd8ce34ff1187e279934fc"
+
+[[package]]
 name = "concurrent-queue"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -628,6 +634,7 @@ version = "0.2.0-SNAPSHOT"
 dependencies = [
  "async-std",
  "chrono",
+ "com-croftsoft-core",
  "console_error_panic_hook",
  "dioxus",
  "dioxus-fullstack",
