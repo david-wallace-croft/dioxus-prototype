@@ -22,16 +22,6 @@ pub fn Retirement(cx: Scope) -> Element {
     use_state(cx, || RETIREMENT_INTEREST.to_string());
   let retirement_tax_rate: &UseState<String> =
     use_state(cx, || RETIREMENT_TAX_RATE.to_string());
-  let annual_savings: &UseState<f64> = use_state(cx, || {
-    calculate_required_annual_investment_from_state(
-      investment_interest,
-      investment_years,
-      retirement_income,
-      retirement_inflation,
-      retirement_interest,
-      retirement_tax_rate,
-    )
-  });
   render! {
   div {
     class: "app-retirement box",
