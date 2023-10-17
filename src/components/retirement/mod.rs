@@ -22,6 +22,16 @@ pub fn Retirement(cx: Scope) -> Element {
     use_state(cx, || RETIREMENT_INTEREST.to_string());
   let retirement_tax_rate: &UseState<String> =
     use_state(cx, || RETIREMENT_TAX_RATE.to_string());
+  let annual_savings: &UseState<f64> = use_state(cx, || {
+    calculate_required_annual_investment_from_state(
+      investment_interest,
+      investment_years,
+      retirement_income,
+      retirement_inflation,
+      retirement_interest,
+      retirement_tax_rate,
+    )
+  });
   render! {
   div {
     class: "app-retirement box",
@@ -117,17 +127,32 @@ pub fn Retirement(cx: Scope) -> Element {
   }
 
   }
+  }
+  if calculate_required_annual_investment_from_state(
+      investment_interest,
+      investment_years,
+      retirement_income,
+      retirement_inflation,
+      retirement_interest,
+      retirement_tax_rate,
+    ) < 0. {
+    render! {
+      p {
+        style: "color: red",
+        "The interest rate on retirement savings must exceed the annual \
+        inflation rate."
+      }
+    }
+  }
   p {
-    "You would need to invest "
-    "{calculate_required_annual_investment_from_state(
-        investment_interest,
-        investment_years,
-        retirement_income,
-        retirement_inflation,
-        retirement_interest,
-        retirement_tax_rate,
-      )}"
-    " each year."
+    "You would need to invest {calculate_required_annual_investment_from_state(
+      investment_interest,
+      investment_years,
+      retirement_income,
+      retirement_inflation,
+      retirement_interest,
+      retirement_tax_rate,
+    )} each year."
   }
   p {
     "This calculator does not factor in social security income."
@@ -139,7 +164,6 @@ pub fn Retirement(cx: Scope) -> Element {
       "here"
     }
     " for a calculator that includes social security income."
-  }
   }
   }
 }
