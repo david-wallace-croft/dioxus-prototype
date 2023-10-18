@@ -1,5 +1,7 @@
 use com_croftsoft_core::math::finance_lib::PeriodicSavingsNeeded;
 use dioxus::prelude::*;
+use std::iter::Rev;
+use std::str::Chars;
 
 static INVESTMENT_INTEREST: &str = "10.0";
 static INVESTMENT_YEARS: &str = "50.0";
@@ -128,23 +130,27 @@ pub fn Retirement(cx: Scope) -> Element {
     ) < 0. {
     render! {
       p {
-        style: "color: red",
+        style: "color: #F44",
         "The interest rate on retirement savings must exceed the annual \
         inflation rate."
       }
     }
   }
   p {
-    "You would need to invest {calculate_required_annual_investment_from_state(
+    style: "text-align: center",
+    "You would need to invest {
+      to_dollars(calculate_required_annual_investment_from_state(
       investment_interest,
       investment_years,
       retirement_income,
       retirement_inflation,
       retirement_interest,
       retirement_tax_rate,
-    )} each year."
+    ))
+    } each year."
   }
   p {
+    style: "text-align: center",
     "This calculator does not factor in social security income."
     br {}
     "Click "
@@ -207,4 +213,36 @@ fn calculate_required_annual_investment_from_state(
 
 fn parse(state: &UseState<String>) -> f64 {
   state.get().parse().unwrap_or(0.)
+}
+
+fn to_comma_separated(value: u64) -> String {
+  let value_as_string: String = value.to_string();
+  let reversed_without_commas: Rev<Chars> = value_as_string.chars().rev();
+  let mut reversed_with_commas: String = "".to_string();
+  for (i, c) in reversed_without_commas.enumerate() {
+    if (i > 0) && (i % 3 == 0) {
+      reversed_with_commas.push(',');
+    }
+    reversed_with_commas.push(c);
+  }
+  let comma_separated: String = to_reverse_string(reversed_with_commas);
+  comma_separated
+}
+
+fn to_dollars(amount: f64) -> String {
+  let rounded_amount: f64 = amount.round();
+  let integer_amount: i64 = rounded_amount as i64;
+  let positive_amount: u64 = integer_amount.unsigned_abs();
+  let comma_separated_string: String = to_comma_separated(positive_amount);
+  let mut dollars: String = "".to_owned();
+  if integer_amount.is_negative() {
+    dollars.push('-');
+  }
+  dollars.push('$');
+  dollars += &comma_separated_string;
+  dollars
+}
+
+fn to_reverse_string(s: String) -> String {
+  s.chars().rev().collect::<String>()
 }
