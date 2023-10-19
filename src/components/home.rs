@@ -20,8 +20,9 @@ pub fn Home(cx: Scope) -> Element {
     }
     "."
     }
+
     // TODO: Temporarily putting this on the homepage to make development easier
-    Retirement {}
+    // Retirement {}
     }
   }
 }
