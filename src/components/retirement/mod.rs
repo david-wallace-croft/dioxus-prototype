@@ -1,7 +1,10 @@
+use crate::components::retirement::reset_button::ResetButton;
 use com_croftsoft_core::math::finance_lib::PeriodicSavingsNeeded;
 use dioxus::prelude::*;
 use std::iter::Rev;
 use std::str::Chars;
+
+mod reset_button;
 
 static INVESTMENT_INTEREST: &str = "10.0";
 static INVESTMENT_YEARS: &str = "50.0";
@@ -117,9 +120,8 @@ pub fn Retirement(cx: Scope) -> Element {
   span {
     "percent (%)"
   }
+  }
 
-  }
-  }
   if calculate_required_annual_investment_from_state(
       investment_interest,
       investment_years,
@@ -149,6 +151,23 @@ pub fn Retirement(cx: Scope) -> Element {
     ))
     } each year."
   }
+
+  div {
+    style: "text-align:center",
+  ResetButton {
+    // TODO: Disable when the inputs are pristine
+    disabled: false,
+    on_click: move |_event| on_click_reset_button(
+      investment_interest,
+      investment_years,
+      retirement_income,
+      retirement_inflation,
+      retirement_interest,
+      retirement_tax_rate,
+    ),
+  }
+  }
+
   p {
     style: "text-align: center",
     "This calculator does not factor in social security income."
@@ -160,6 +179,7 @@ pub fn Retirement(cx: Scope) -> Element {
       "here"
     }
     " for a calculator that includes social security income."
+  }
   }
   }
 }
@@ -209,6 +229,22 @@ fn calculate_required_annual_investment_from_state(
     tax_rate,
     inflation_rate,
   )
+}
+
+fn on_click_reset_button(
+  investment_interest: &UseState<String>,
+  investment_years: &UseState<String>,
+  retirement_income: &UseState<String>,
+  retirement_inflation: &UseState<String>,
+  retirement_interest: &UseState<String>,
+  retirement_tax_rate: &UseState<String>,
+) {
+  investment_interest.set(INVESTMENT_INTEREST.to_owned());
+  investment_years.set(INVESTMENT_YEARS.to_owned());
+  retirement_income.set(RETIREMENT_INCOME.to_owned());
+  retirement_inflation.set(RETIREMENT_INFLATION.to_owned());
+  retirement_interest.set(RETIREMENT_INTEREST.to_owned());
+  retirement_tax_rate.set(RETIREMENT_TAX_RATE.to_owned());
 }
 
 fn parse(state: &UseState<String>) -> f64 {

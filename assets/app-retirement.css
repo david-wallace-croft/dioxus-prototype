@@ -9,3 +9,10 @@
   grid-template-columns: auto auto auto;
   row-gap: 1rem;
 }
+
+.app-retirement .app-reset {
+  color: white;
+  background-color: #b7410e;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
