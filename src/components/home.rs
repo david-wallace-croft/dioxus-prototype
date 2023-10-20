@@ -1,4 +1,4 @@
-use crate::components::retirement::Retirement;
+// use crate::components::retirement::Retirement;
 use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
@@ -22,7 +22,7 @@ pub fn Home(cx: Scope) -> Element {
     }
 
     // TODO: Temporarily putting this on the homepage to make development easier
-    Retirement {}
+    // Retirement {}
     }
   }
 }
