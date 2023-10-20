@@ -10,8 +10,10 @@
 
 ## Online Demonstration
 
-- An online demonstration is available
+- An online demonstration is available at this website:
   - https://www.persentia.com/
+
+![CroftSoft Dioxus Prototype 2023-10-20](./media/dioxus-prototype-2023-10-20-a.png)
 
 ## Tutorial
 
