@@ -43,7 +43,7 @@ pub fn Retirement(cx: Scope) -> Element {
   }
   input {
     size: "10",
-    oninput: move |evt| retirement_income.set(evt.value.clone()),
+    oninput: move |event| on_input(event, retirement_income),
     r#type: "text",
     value: "{retirement_income}",
   }
@@ -57,7 +57,7 @@ pub fn Retirement(cx: Scope) -> Element {
   }
   input {
     size: "10",
-    oninput: move |evt| investment_years.set(evt.value.clone()),
+    oninput: move |event| on_input(event, investment_years),
     r#type: "text",
     value: "{investment_years}",
   }
@@ -71,7 +71,7 @@ pub fn Retirement(cx: Scope) -> Element {
   }
   input {
     size: "10",
-    oninput: move |evt| investment_interest.set(evt.value.clone()),
+    oninput: move |event| on_input(event, investment_interest),
     r#type: "text",
     value: "{investment_interest}",
   }
@@ -85,7 +85,7 @@ pub fn Retirement(cx: Scope) -> Element {
   }
   input {
     size: "10",
-    oninput: move |evt| retirement_interest.set(evt.value.clone()),
+    oninput: move |event| on_input(event, retirement_interest),
     r#type: "text",
     value: "{retirement_interest}",
   }
@@ -99,7 +99,7 @@ pub fn Retirement(cx: Scope) -> Element {
   }
   input {
     size: "10",
-    oninput: move |evt| retirement_tax_rate.set(evt.value.clone()),
+    oninput: move |event| on_input(event, retirement_tax_rate),
     r#type: "text",
     value: "{retirement_tax_rate}",
   }
@@ -113,7 +113,7 @@ pub fn Retirement(cx: Scope) -> Element {
   }
   input {
     size: "10",
-    oninput: move |evt| retirement_inflation.set(evt.value.clone()),
+    oninput: move |event| on_input(event, retirement_inflation),
     r#type: "input",
     value: "{retirement_inflation}",
   }
@@ -245,6 +245,19 @@ fn on_click_reset_button(
   retirement_inflation.set(RETIREMENT_INFLATION.to_owned());
   retirement_interest.set(RETIREMENT_INTEREST.to_owned());
   retirement_tax_rate.set(RETIREMENT_TAX_RATE.to_owned());
+}
+
+fn on_input(
+  event: Event<FormData>,
+  state: &UseState<String>,
+) {
+  let value = event.data.value.clone();
+  if value.is_empty() || value.parse::<f64>().is_ok() {
+    state.set(value);
+  } else {
+    let old_value = state.get().clone();
+    state.set(old_value);
+  }
 }
 
 fn parse(state: &UseState<String>) -> f64 {
