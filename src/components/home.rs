@@ -1,4 +1,3 @@
-// use crate::components::retirement::Retirement;
 use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
@@ -21,8 +20,52 @@ pub fn Home(cx: Scope) -> Element {
     "."
     }
 
-    // TODO: Temporarily putting this on the homepage to make development easier
-    // Retirement {}
+    ul {
+    li {
+      "The Animation component demonstrates"
+      ul {
+      li {
+        "animation in a loop"
+      }
+      li {
+        "focus, key, and mouse inputs"
+      }
+      }
+    }
+    li {
+      "The Flashcard component demonstrates"
+      ul {
+      li {
+        "button inputs"
+      }
+      li {
+        "opening an external webpage"
+      }
+      }
+    }
+    li {
+      "The Manual link demonstrates"
+      ul {
+      li {
+        "integrating with pre-existing non-Dioxus webpages"
+      }
+      }
+    }
+    li {
+      "The Retirement component demonstrates"
+      ul {
+      li {
+        "form inputs"
+      }
+      li {
+        "filtering out non-numeric input values"
+      }
+      li {
+        "displaying a value calculated from the inputs"
+      }
+      }
+    }
+    }
     }
   }
 }
