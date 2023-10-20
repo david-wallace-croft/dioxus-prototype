@@ -123,33 +123,36 @@ pub fn Retirement(cx: Scope) -> Element {
   }
 
   if calculate_required_annual_investment_from_state(
-      investment_interest,
-      investment_years,
-      retirement_income,
-      retirement_inflation,
-      retirement_interest,
-      retirement_tax_rate,
-    ) < 0. {
+    investment_interest,
+    investment_years,
+    retirement_income,
+    retirement_inflation,
+    retirement_interest,
+    retirement_tax_rate,
+  ) < 0. {
     render! {
       p {
-        style: "color: #F44",
-        "The interest rate on retirement savings must exceed the annual \
-        inflation rate."
+        style: "color: #F44; text-align: center; white-space: pre-line",
+        "The interest rate on retirement savings\n"
+        "must exceed the annual inflation rate."
       }
     }
-  }
-  p {
-    style: "text-align: center",
-    "You would need to invest {
-      to_dollars(calculate_required_annual_investment_from_state(
-      investment_interest,
-      investment_years,
-      retirement_income,
-      retirement_inflation,
-      retirement_interest,
-      retirement_tax_rate,
-    ))
-    } each year."
+  } else {
+    render! {
+      p {
+        style: "text-align: center",
+        "You would need to invest {
+          to_dollars(calculate_required_annual_investment_from_state(
+          investment_interest,
+          investment_years,
+          retirement_income,
+          retirement_inflation,
+          retirement_interest,
+          retirement_tax_rate,
+        ))
+        } each year."
+      }
+    }
   }
 
   div {
