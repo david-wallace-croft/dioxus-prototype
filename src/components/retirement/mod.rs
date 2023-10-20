@@ -141,7 +141,11 @@ pub fn Retirement(cx: Scope) -> Element {
     render! {
       p {
         style: "text-align: center",
-        "You would need to invest {
+        "You would need to invest this amount each year:"
+        br {}
+        span {
+          style: "font-size: larger",
+        "{
           to_dollars(calculate_required_annual_investment_from_state(
           investment_interest,
           investment_years,
@@ -150,7 +154,8 @@ pub fn Retirement(cx: Scope) -> Element {
           retirement_interest,
           retirement_tax_rate,
         ))
-        } each year."
+        }"
+        }
       }
     }
   }
