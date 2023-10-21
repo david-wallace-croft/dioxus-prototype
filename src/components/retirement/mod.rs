@@ -8,7 +8,7 @@ mod reset_button;
 
 static INVESTMENT_INTEREST: &str = "10.0";
 static INVESTMENT_YEARS: &str = "50.0";
-static RETIREMENT_INCOME: &str = "100000.0";
+static RETIREMENT_INCOME: &str = "100,000.0";
 static RETIREMENT_INFLATION: &str = "1.0";
 static RETIREMENT_INTEREST: &str = "10.0";
 static RETIREMENT_TAX_RATE: &str = "10.0";
@@ -223,12 +223,12 @@ fn calculate_required_annual_investment_from_state(
   retirement_interest: &UseState<String>,
   retirement_tax_rate: &UseState<String>,
 ) -> f64 {
-  let desired_savings_interest_income: f64 = parse(retirement_income);
-  let years_of_saving: f64 = parse(investment_years);
-  let investment_interest_rate: f64 = parse(investment_interest) / 100.;
-  let savings_interest: f64 = parse(retirement_interest) / 100.;
-  let tax_rate: f64 = parse(retirement_tax_rate) / 100.;
-  let inflation_rate: f64 = parse(retirement_inflation) / 100.;
+  let desired_savings_interest_income: f64 = parse_state(retirement_income);
+  let years_of_saving: f64 = parse_state(investment_years);
+  let investment_interest_rate: f64 = parse_state(investment_interest) / 100.;
+  let savings_interest: f64 = parse_state(retirement_interest) / 100.;
+  let tax_rate: f64 = parse_state(retirement_tax_rate) / 100.;
+  let inflation_rate: f64 = parse_state(retirement_inflation) / 100.;
   calculate_required_annual_investment(
     desired_savings_interest_income,
     years_of_saving,
@@ -260,7 +260,7 @@ fn on_input(
   state: &UseState<String>,
 ) {
   let value = event.data.value.clone();
-  if value.is_empty() || value.parse::<f64>().is_ok() {
+  if value.is_empty() || parse_input(&value).is_some() {
     state.set(value);
   } else {
     let old_value = state.get().clone();
@@ -268,8 +268,12 @@ fn on_input(
   }
 }
 
-fn parse(state: &UseState<String>) -> f64 {
-  state.get().parse().unwrap_or(0.)
+fn parse_input(value: &str) -> Option<f64> {
+  value.replace(",", "").parse().ok()
+}
+
+fn parse_state(state: &UseState<String>) -> f64 {
+  parse_input(state.get()).unwrap_or(0.)
 }
 
 fn to_comma_separated(value: u64) -> String {
