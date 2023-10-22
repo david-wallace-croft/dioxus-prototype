@@ -122,7 +122,22 @@ pub fn Retirement(cx: Scope) -> Element {
   }
   }
 
-  if calculate_required_annual_investment_from_state(
+  if input_is_empty(
+    investment_interest,
+    investment_years,
+    retirement_income,
+    retirement_inflation,
+    retirement_interest,
+    retirement_tax_rate,
+  ) {
+    render! {
+      p {
+        style: "color: #F44; text-align: center; white-space: pre-line",
+        "One or more of the inputs is invalid.\n"
+        "Click Reset for the default values."
+      }
+    }
+  } else if calculate_required_annual_investment_from_state(
     investment_interest,
     investment_years,
     retirement_income,
@@ -144,7 +159,6 @@ pub fn Retirement(cx: Scope) -> Element {
         "You would need to invest this amount each year:"
         br {}
         span {
-          style: "font-size: larger",
         "{
           to_dollars(calculate_required_annual_investment_from_state(
           investment_interest,
@@ -237,6 +251,22 @@ fn calculate_required_annual_investment_from_state(
     tax_rate,
     inflation_rate,
   )
+}
+
+fn input_is_empty(
+  investment_interest: &UseState<String>,
+  investment_years: &UseState<String>,
+  retirement_income: &UseState<String>,
+  retirement_inflation: &UseState<String>,
+  retirement_interest: &UseState<String>,
+  retirement_tax_rate: &UseState<String>,
+) -> bool {
+  parse_input(investment_interest).is_none()
+    || parse_input(investment_years).is_none()
+    || parse_input(retirement_income).is_none()
+    || parse_input(retirement_inflation).is_none()
+    || parse_input(retirement_interest).is_none()
+    || parse_input(retirement_tax_rate).is_none()
 }
 
 fn on_click_reset_button(
