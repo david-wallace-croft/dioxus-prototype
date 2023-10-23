@@ -1,4 +1,6 @@
 use dioxus::prelude::*;
+use dioxus_free_icons::icons::fa_solid_icons::FaLink;
+use dioxus_free_icons::Icon;
 
 #[derive(Props)]
 pub struct Props<'a> {
@@ -15,6 +17,10 @@ pub fn LinkButton<'a>(cx: Scope<'a, Props<'a>>) -> Element {
     disabled: cx.props.disabled,
     onclick: move |event| cx.props.on_click.call(event),
     opacity: if cx.props.disabled { "0.5" } else { "1.0" },
+    Icon {
+      class: "app-link-icon",
+      icon: FaLink,
+    }
     "LINK"
   }
   }

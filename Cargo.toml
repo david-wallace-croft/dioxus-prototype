@@ -32,6 +32,12 @@ tokio = { version = "1.32.0", features = ["full"], optional = true }
 wasm-bindgen = { version = "0.2.87", features = ["enable-interning"] }
 wasm-logger = "0.2.0"
 
+[dependencies.dioxus-free-icons]
+# https://github.com/dioxus-community/dioxus-free-icons/issues/26
+# features = ["material-design-icons-action"]
+features = ["font-awesome-regular", "font-awesome-solid"]
+version = "0.7.0"
+
 [dependencies.getrandom]
 features = ["js"]
 version = "0.2.10"

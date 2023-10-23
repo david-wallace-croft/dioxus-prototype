@@ -80,6 +80,11 @@
   white-space: nowrap;
 }
 
+.app-flashcard .app-link-icon {
+  margin-right: 0.5rem;
+  vertical-align: bottom;
+}
+
 .app-flashcard .app-question-text {
   color: rgb(34, 36, 40);
   font-family: 'Roboto', 'Helvetica Neue', sans-serif;
@@ -130,4 +135,9 @@
   text-transform: uppercase;
   visibility: visible;
   white-space: nowrap;
+}
+
+.app-flashcard .app-show-icon {
+  margin-right: 0.5rem;
+  vertical-align: bottom;
 }
