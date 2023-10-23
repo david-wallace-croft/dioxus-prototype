@@ -1,4 +1,6 @@
+use crate::route::Route;
 use dioxus::prelude::*;
+use dioxus_router::prelude::Link;
 
 #[allow(non_snake_case)]
 pub fn Home(cx: Scope) -> Element {
@@ -22,7 +24,12 @@ pub fn Home(cx: Scope) -> Element {
 
     ul {
     li {
-      "The Animation component demonstrates"
+      "The "
+      Link {
+        to: Route::Animation {},
+        "Animation"
+      }
+      " component demonstrates"
       ul {
       li {
         "animation in a loop"
@@ -33,7 +40,12 @@ pub fn Home(cx: Scope) -> Element {
       }
     }
     li {
-      "The Flashcard component demonstrates"
+      "The "
+      Link {
+        to: Route::Flashcard {},
+        "Flashcard"
+      }
+      " component demonstrates"
       ul {
       li {
         "button inputs"
@@ -41,10 +53,18 @@ pub fn Home(cx: Scope) -> Element {
       li {
         "opening an external webpage"
       }
+      li {
+        "SVG icons"
+      }
       }
     }
     li {
-      "The Manual link demonstrates"
+      "The "
+      a {
+        href: "/manual/",
+        "Manual"
+      }
+      " link demonstrates"
       ul {
       li {
         "integrating with pre-existing non-Dioxus webpages"
@@ -52,7 +72,12 @@ pub fn Home(cx: Scope) -> Element {
       }
     }
     li {
-      "The Retirement component demonstrates"
+      "The "
+      Link {
+        to: Route::Retirement {},
+        "Retirement"
+      }
+      " component demonstrates"
       ul {
       li {
         "form inputs"
