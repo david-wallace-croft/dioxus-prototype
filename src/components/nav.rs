@@ -45,6 +45,13 @@ pub fn Nav(cx: Scope) -> Element {
     li {
     Link {
       active_class: "app-nav-active",
+      to: Route::Slideshow {},
+      "Slideshow",
+    }
+    }
+    li {
+    Link {
+      active_class: "app-nav-active",
       to: Route::Colophon {},
       "Colophon",
     }

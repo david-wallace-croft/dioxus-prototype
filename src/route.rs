@@ -5,6 +5,7 @@ use crate::components::home::Home;
 use crate::components::page_layout::PageLayout;
 use crate::components::page_not_found::PageNotFound;
 use crate::components::retirement::Retirement;
+use crate::components::slideshow::Slideshow;
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -23,6 +24,8 @@ pub enum Route {
     Flashcard {},
     #[route("/retirement")]
     Retirement {},
+    #[route("/slideshow")]
+    Slideshow {},
   #[end_layout]
   #[route("/:..route")]
   PageNotFound {
