@@ -33,6 +33,7 @@ style = [
   "/app-flashcard.css",
   "/app-nav.css",
   "/app-retirement.css",
+  "/app-slideshow.css",
   "/stylesheet.css",
 ]
 

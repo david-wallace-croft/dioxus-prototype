@@ -90,6 +90,19 @@ pub fn Home(cx: Scope) -> Element {
       }
       }
     }
+    li {
+      "The "
+      Link {
+        to: Route::Slideshow {},
+        "Slideshow"
+      }
+      " component demonstrates"
+      ul {
+      li {
+        "loading image assets"
+      }
+      }
+    }
     }
     }
   }
