@@ -2,7 +2,9 @@ use async_std::task::sleep;
 use dioxus::prelude::*;
 use std::time::Duration;
 
-static IMAGE_PATH_PREFIX: &str = "slideshow/";
+const DISPLAY_PERIOD: u64 = 5_000u64;
+const POLLING_PERIOD: u64 = 100u64;
+
 static IMAGE_NAMES: [&str; 5] = [
   "nature-a.jpg",
   "nature-b.jpg",
@@ -10,10 +12,12 @@ static IMAGE_NAMES: [&str; 5] = [
   "nature-d.jpg",
   "nature-e.jpg",
 ];
+static IMAGE_PATH_PREFIX: &str = "slideshow/";
 
 struct SlideshowState {
   image_index: usize,
   image_source: String,
+  time_remaining: u64,
 }
 
 #[allow(non_snake_case)]
@@ -22,13 +26,20 @@ pub fn Slideshow(cx: Scope) -> Element {
     use_ref(cx, || SlideshowState {
       image_index: 0,
       image_source: make_image_source(0),
+      time_remaining: DISPLAY_PERIOD,
     });
   use_effect(cx, (), |()| {
     to_owned![slideshow_state_use_ref];
     async move {
       loop {
-        sleep(Duration::from_millis(5_000u64)).await;
-        next_image(&slideshow_state_use_ref);
+        sleep(Duration::from_millis(POLLING_PERIOD)).await;
+        slideshow_state_use_ref.with_mut(|state| {
+          state.time_remaining =
+            state.time_remaining.saturating_sub(POLLING_PERIOD);
+        });
+        if slideshow_state_use_ref.read().time_remaining == 0 {
+          next_image(&slideshow_state_use_ref);
+        }
       }
     }
   });
@@ -63,8 +74,8 @@ fn make_image_source(image_index: usize) -> String {
 
 fn next_image(slideshow_state_use_ref: &UseRef<SlideshowState>) {
   slideshow_state_use_ref.with_mut(|state| {
-    // TODO: reset delay until next image is automatically loaded
     state.image_index = (state.image_index + 1) % IMAGE_NAMES.len();
     state.image_source = make_image_source(state.image_index);
+    state.time_remaining = DISPLAY_PERIOD;
   });
 }

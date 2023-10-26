@@ -101,6 +101,9 @@ pub fn Home(cx: Scope) -> Element {
       li {
         "loading image assets"
       }
+      li {
+        "periodic updates"
+      }
       }
     }
     }
