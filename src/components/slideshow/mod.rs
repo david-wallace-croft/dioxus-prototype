@@ -1,5 +1,7 @@
 use async_std::task::sleep;
 use dioxus::prelude::*;
+use dioxus_free_icons::icons::fa_solid_icons::FaForwardStep;
+use dioxus_free_icons::Icon;
 use std::time::Duration;
 
 const DISPLAY_PERIOD: u64 = 5_000u64;
@@ -53,8 +55,13 @@ pub fn Slideshow(cx: Scope) -> Element {
     div {
       text_align: "center",
     button {
+      class: "app-skip-button",
       onclick: move |_event| next_image(slideshow_state_use_ref),
-      "Next"
+      title: "Skip",
+    Icon {
+      class: "app-skip-icon",
+      icon: FaForwardStep,
+    }
     }
     }
     br {}
