@@ -1,8 +1,10 @@
 use async_std::task::sleep;
 use dioxus::prelude::*;
+use dioxus_free_icons::icons::fa_solid_icons::FaExpand;
 use dioxus_free_icons::icons::fa_solid_icons::FaForwardStep;
 use dioxus_free_icons::Icon;
 use std::time::Duration;
+use web_sys::Document;
 
 const DISPLAY_PERIOD: u64 = 5_000u64;
 const POLLING_PERIOD: u64 = 100u64;
@@ -55,6 +57,15 @@ pub fn Slideshow(cx: Scope) -> Element {
     div {
       text_align: "center",
     button {
+      class: "app-fullscreen-button",
+      onclick: move |_event| fullscreen(),
+      title: "Fullscreen",
+    Icon {
+      class: "app-fullscreen-icon",
+      icon: FaExpand,
+    }
+    }
+    button {
       class: "app-skip-button",
       onclick: move |_event| next_image(slideshow_state_use_ref),
       title: "Skip",
@@ -69,6 +80,18 @@ pub fn Slideshow(cx: Scope) -> Element {
       src: "{slideshow_state_use_ref.read().image_source}",
     }
     }
+  }
+}
+
+fn fullscreen() {
+  let document: Document = web_sys::window().unwrap().document().unwrap();
+  if !document.fullscreen_enabled() {
+    return;
+  }
+  if document.fullscreen_element().is_some() {
+    document.exit_fullscreen();
+  } else {
+    let _result = document.document_element().unwrap().request_fullscreen();
   }
 }
 

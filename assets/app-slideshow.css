@@ -1,3 +1,4 @@
+.app-slideshow .app-fullscreen-button,
 .app-slideshow .app-skip-button {
   background-color: rgb(63, 81, 181);
   border-style: none;
@@ -7,13 +8,16 @@
     rgba(0, 0, 0, 0.14) 0px 2px 2px 0px,
     rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
   color: white;
+  margin-right: 1rem;
   padding: 0.5rem;
 }
 
+.app-slideshow .app-fullscreen-button:active,
 .app-slideshow .app-skip-button:active {
   box-shadow: none;
 }
 
+.app-slideshow .app-fullscreen-icon,
 .app-slideshow .app-skip-icon {
   margin-left: 0.075rem;
   vertical-align: bottom;
