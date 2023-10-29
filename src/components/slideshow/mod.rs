@@ -1,5 +1,6 @@
 use async_std::task::sleep;
 use dioxus::prelude::*;
+use dioxus_free_icons::icons::fa_solid_icons::FaCompress;
 use dioxus_free_icons::icons::fa_solid_icons::FaExpand;
 use dioxus_free_icons::icons::fa_solid_icons::FaForwardStep;
 use dioxus_free_icons::Icon;
@@ -60,9 +61,20 @@ pub fn Slideshow(cx: Scope) -> Element {
       class: "app-fullscreen-button",
       onclick: move |_event| fullscreen(),
       title: "Fullscreen",
+    if web_sys::window().unwrap().document().unwrap().fullscreen_element().is_some() {
+      render!{
+    Icon {
+      class: "app-skip-icon",
+      icon: FaCompress,
+    }
+    }
+    } else {
+      render!{
     Icon {
       class: "app-fullscreen-icon",
       icon: FaExpand,
+    }
+    }
     }
     }
     button {
