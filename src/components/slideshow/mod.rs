@@ -51,6 +51,7 @@ pub fn Slideshow(cx: Scope) -> Element {
   render! {
     div {
       class: "app-slideshow box",
+      id: "slideshow",
     h1 {
       class: "app-title",
       "Slideshow"
@@ -103,7 +104,10 @@ fn fullscreen() {
   if document.fullscreen_element().is_some() {
     document.exit_fullscreen();
   } else {
-    let _result = document.document_element().unwrap().request_fullscreen();
+    let _result = document
+      .get_element_by_id("slideshow")
+      .unwrap()
+      .request_fullscreen();
   }
 }
 
