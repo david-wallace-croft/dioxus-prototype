@@ -1,11 +1,10 @@
+use crate::components::slideshow::control_panel::ControlPanel;
 use async_std::task::sleep;
 use dioxus::prelude::*;
-use dioxus_free_icons::icons::fa_solid_icons::FaCompress;
-use dioxus_free_icons::icons::fa_solid_icons::FaExpand;
-use dioxus_free_icons::icons::fa_solid_icons::FaForwardStep;
-use dioxus_free_icons::Icon;
 use std::time::Duration;
 use web_sys::Document;
+
+mod control_panel;
 
 const DISPLAY_PERIOD: u64 = 5_000u64;
 const POLLING_PERIOD: u64 = 100u64;
@@ -56,39 +55,11 @@ pub fn Slideshow(cx: Scope) -> Element {
       class: "app-title",
       "Slideshow"
     }
-    div {
-      text_align: "center",
-    button {
-      class: "app-fullscreen-button",
-      onclick: move |_event| fullscreen(),
-      title: "Fullscreen",
-    if web_sys::window().unwrap().document().unwrap().fullscreen_element().is_some() {
-      render!{
-    Icon {
-      class: "app-skip-icon",
-      icon: FaCompress,
+    ControlPanel {
+      on_click_fullscreen: move |_event| fullscreen(),
+      on_click_skip: move |_event| next_image(slideshow_state_use_ref),
     }
-    }
-    } else {
-      render!{
-    Icon {
-      class: "app-fullscreen-icon",
-      icon: FaExpand,
-    }
-    }
-    }
-    }
-    button {
-      class: "app-skip-button",
-      onclick: move |_event| next_image(slideshow_state_use_ref),
-      title: "Skip",
-    Icon {
-      class: "app-skip-icon",
-      icon: FaForwardStep,
-    }
-    }
-    }
-    br {}
+    br { }
     img {
       src: "{slideshow_state_use_ref.read().image_source}",
     }
