@@ -19,6 +19,7 @@ static IMAGE_NAMES: [&str; 5] = [
 static IMAGE_PATH_PREFIX: &str = "slideshow/";
 
 struct SlideshowState {
+  fullscreen: bool,
   image_index: usize,
   image_source: String,
   time_remaining: u64,
@@ -28,6 +29,7 @@ struct SlideshowState {
 pub fn Slideshow(cx: Scope) -> Element {
   let slideshow_state_use_ref: &UseRef<SlideshowState> =
     use_ref(cx, || SlideshowState {
+      fullscreen: false,
       image_index: 0,
       image_source: make_image_source(0),
       time_remaining: DISPLAY_PERIOD,
@@ -57,8 +59,8 @@ pub fn Slideshow(cx: Scope) -> Element {
     div {
       id: "slideshow",
     ControlPanel {
-      fullscreen: false, // slideshow_state_use_ref.read().fullscreen,
-      on_click_fullscreen: move |_event| fullscreen(), // slideshow_state_use_ref),
+      fullscreen: slideshow_state_use_ref.read().fullscreen,
+      on_click_fullscreen: move |_event| fullscreen(slideshow_state_use_ref),
       on_click_skip: move |_event| next_image(slideshow_state_use_ref),
     }
     img {
@@ -69,21 +71,20 @@ pub fn Slideshow(cx: Scope) -> Element {
   }
 }
 
-fn fullscreen() {
-  //slideshow_state_use_ref: &UseRef<SlideshowState>) {
+fn fullscreen(slideshow_state_use_ref: &UseRef<SlideshowState>) {
   let document: Document = web_sys::window().unwrap().document().unwrap();
   if !document.fullscreen_enabled() {
     return;
   }
   if document.fullscreen_element().is_some() {
-    // slideshow_state_use_ref.with_mut(|state| {
-    //   state.fullscreen = false;
-    // });
+    slideshow_state_use_ref.with_mut(|state| {
+      state.fullscreen = false;
+    });
     document.exit_fullscreen();
   } else {
-    // slideshow_state_use_ref.with_mut(|state| {
-    //   state.fullscreen = true;
-    // });
+    slideshow_state_use_ref.with_mut(|state| {
+      state.fullscreen = true;
+    });
     let _result = document
       .get_element_by_id("slideshow")
       .unwrap()
