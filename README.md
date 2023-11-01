@@ -6,7 +6,8 @@
 [mit-url]: https://github.com/david-wallace-croft/dioxus-prototype/blob/main/LICENSE.txt
 
 - My first Dioxus application
-- Includes static prerendering with client-side hydration
+- Makes a Content Delivery Network (CDN)-compatible static HTML distribution
+  - Includes static prerendering with client-side hydration
 
 ## Online Demonstration
 
@@ -49,7 +50,7 @@
 ## Test Static Prerendering with Hydration
 
 - npm test
-  - Deletes the distribution directory dist/ to remove files from a previous run
+  - Deletes the distribution directory dist/ to start clean
   - Makes the index.html page with the hydration code
   - Inserts the prerendered HTML
   - Formats the HTML using the prettier utility
@@ -59,7 +60,7 @@
 ## Other Commands
 
 - npm run clean
-  - Deletes the distribution directory dist/ to remove files from a previous run
+  - Deletes the distribution directory dist/ to start clean
 - npm run dist
   - Same as npm test
   - Except that it does not start http-server and open the browser
