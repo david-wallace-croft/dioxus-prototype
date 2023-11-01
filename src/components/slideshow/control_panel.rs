@@ -14,6 +14,7 @@ pub struct Props<'a> {
 pub fn ControlPanel<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
   render! {
     div {
+      class: "app-control-panel",
       text_align: "center",
     button {
       class: "app-fullscreen-button",

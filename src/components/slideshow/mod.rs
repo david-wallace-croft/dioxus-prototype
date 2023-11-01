@@ -50,18 +50,19 @@ pub fn Slideshow(cx: Scope) -> Element {
   render! {
     div {
       class: "app-slideshow box",
-      id: "slideshow",
     h1 {
       class: "app-title",
       "Slideshow"
     }
+    div {
+      id: "slideshow",
     ControlPanel {
       on_click_fullscreen: move |_event| fullscreen(),
       on_click_skip: move |_event| next_image(slideshow_state_use_ref),
     }
-    br { }
     img {
       src: "{slideshow_state_use_ref.read().image_source}",
+    }
     }
     }
   }
