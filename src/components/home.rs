@@ -99,6 +99,9 @@ pub fn Home(cx: Scope) -> Element {
       " component demonstrates"
       ul {
       li {
+        "fullscreen toggle and change detection"
+      }
+      li {
         "loading image assets"
       }
       li {

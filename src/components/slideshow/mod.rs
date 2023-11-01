@@ -1,6 +1,7 @@
 use crate::components::slideshow::control_panel::ControlPanel;
 use async_std::task::sleep;
 use dioxus::prelude::*;
+use gloo_events::EventListener;
 use std::time::Duration;
 use web_sys::Document;
 
@@ -20,6 +21,7 @@ static IMAGE_PATH_PREFIX: &str = "slideshow/";
 
 struct SlideshowState {
   fullscreen: bool,
+  fullscreen_event_listener_option: Option<EventListener>,
   image_index: usize,
   image_source: String,
   time_remaining: u64,
@@ -30,6 +32,7 @@ pub fn Slideshow(cx: Scope) -> Element {
   let slideshow_state_use_ref: &UseRef<SlideshowState> =
     use_ref(cx, || SlideshowState {
       fullscreen: false,
+      fullscreen_event_listener_option: None,
       image_index: 0,
       image_source: make_image_source(0),
       time_remaining: DISPLAY_PERIOD,
@@ -49,6 +52,28 @@ pub fn Slideshow(cx: Scope) -> Element {
       }
     }
   });
+  let slideshow_state_use_ref_clone = slideshow_state_use_ref.clone();
+  let _future = use_future(cx, (), |_| async move {
+    let document: Document = web_sys::window().unwrap().document().unwrap();
+    if !document.fullscreen_enabled() {
+      return;
+    }
+    let slideshow_element = document.get_element_by_id("slideshow").unwrap();
+    // log::info!("slideshow element: {slideshow_element:?}");
+    let slideshow_state_use_ref_clone_clone =
+      slideshow_state_use_ref_clone.clone();
+    slideshow_state_use_ref_clone.with_mut(|state| {
+      state.fullscreen_event_listener_option = Some(EventListener::new(
+        &slideshow_element,
+        "fullscreenchange",
+        move |_event| {
+          slideshow_state_use_ref_clone_clone.with_mut(|state| {
+            state.fullscreen = document.fullscreen_element().is_some();
+          });
+        },
+      ));
+    });
+  });
   render! {
     div {
       class: "app-slideshow box",
@@ -60,7 +85,7 @@ pub fn Slideshow(cx: Scope) -> Element {
       id: "slideshow",
     ControlPanel {
       fullscreen: slideshow_state_use_ref.read().fullscreen,
-      on_click_fullscreen: move |_event| fullscreen(slideshow_state_use_ref),
+      on_click_fullscreen: move |_event| fullscreen(),
       on_click_skip: move |_event| next_image(slideshow_state_use_ref),
     }
     img {
@@ -71,24 +96,16 @@ pub fn Slideshow(cx: Scope) -> Element {
   }
 }
 
-fn fullscreen(slideshow_state_use_ref: &UseRef<SlideshowState>) {
+fn fullscreen() {
   let document: Document = web_sys::window().unwrap().document().unwrap();
   if !document.fullscreen_enabled() {
     return;
   }
   if document.fullscreen_element().is_some() {
-    slideshow_state_use_ref.with_mut(|state| {
-      state.fullscreen = false;
-    });
     document.exit_fullscreen();
   } else {
-    slideshow_state_use_ref.with_mut(|state| {
-      state.fullscreen = true;
-    });
-    let _result = document
-      .get_element_by_id("slideshow")
-      .unwrap()
-      .request_fullscreen();
+    let slideshow_element = document.get_element_by_id("slideshow").unwrap();
+    let _result = slideshow_element.request_fullscreen();
   }
 }
 
