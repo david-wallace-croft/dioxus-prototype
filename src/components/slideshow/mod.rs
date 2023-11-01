@@ -57,7 +57,8 @@ pub fn Slideshow(cx: Scope) -> Element {
     div {
       id: "slideshow",
     ControlPanel {
-      on_click_fullscreen: move |_event| fullscreen(),
+      fullscreen: false, // slideshow_state_use_ref.read().fullscreen,
+      on_click_fullscreen: move |_event| fullscreen(), // slideshow_state_use_ref),
       on_click_skip: move |_event| next_image(slideshow_state_use_ref),
     }
     img {
@@ -69,13 +70,20 @@ pub fn Slideshow(cx: Scope) -> Element {
 }
 
 fn fullscreen() {
+  //slideshow_state_use_ref: &UseRef<SlideshowState>) {
   let document: Document = web_sys::window().unwrap().document().unwrap();
   if !document.fullscreen_enabled() {
     return;
   }
   if document.fullscreen_element().is_some() {
+    // slideshow_state_use_ref.with_mut(|state| {
+    //   state.fullscreen = false;
+    // });
     document.exit_fullscreen();
   } else {
+    // slideshow_state_use_ref.with_mut(|state| {
+    //   state.fullscreen = true;
+    // });
     let _result = document
       .get_element_by_id("slideshow")
       .unwrap()

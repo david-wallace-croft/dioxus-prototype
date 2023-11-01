@@ -6,6 +6,7 @@ use dioxus_free_icons::Icon;
 
 #[derive(Props)]
 pub struct Props<'a> {
+  fullscreen: bool,
   on_click_fullscreen: EventHandler<'a, MouseEvent>,
   on_click_skip: EventHandler<'a, MouseEvent>,
 }
@@ -20,7 +21,7 @@ pub fn ControlPanel<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
       class: "app-fullscreen-button",
       onclick: move |event| cx.props.on_click_fullscreen.call(event),
       title: "Fullscreen",
-    if web_sys::window().unwrap().document().unwrap().fullscreen_element().is_some() {
+    if cx.props.fullscreen {
       render!{
     Icon {
       class: "app-skip-icon",
