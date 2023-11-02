@@ -1,8 +1,3 @@
-.app-slideshow #slideshow {
-  display: flex;
-  justify-content: center;
-}
-
 .app-slideshow .app-control-panel {
   position: absolute;
   z-index: 1;
@@ -35,4 +30,9 @@
 
 .app-slideshow .app-title {
   text-align: center;
+}
+
+.app-slideshow #slideshow {
+  display: flex;
+  justify-content: center;
 }

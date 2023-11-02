@@ -7,8 +7,9 @@ use web_sys::Document;
 
 mod control_panel;
 
-const DISPLAY_PERIOD: u64 = 5_000u64;
-const POLLING_PERIOD: u64 = 100u64;
+const CONTROL_PANEL_DISPLAY_TIME: u64 = 5 * 1_000;
+const IMAGE_DISPLAY_TIME: u64 = 10 * 60 * 1_000;
+const POLLING_PERIOD: u64 = 100;
 
 static IMAGE_NAMES: [&str; 5] = [
   "nature-a.jpg",
@@ -20,33 +21,46 @@ static IMAGE_NAMES: [&str; 5] = [
 static IMAGE_PATH_PREFIX: &str = "slideshow/";
 
 struct SlideshowState {
+  control_panel_shown: bool,
+  control_panel_time_remaining: u64,
   fullscreen: bool,
   fullscreen_event_listener_option: Option<EventListener>,
   image_index: usize,
   image_source: String,
-  time_remaining: u64,
+  image_time_remaining: u64,
 }
 
 #[allow(non_snake_case)]
 pub fn Slideshow(cx: Scope) -> Element {
   let slideshow_state_use_ref: &UseRef<SlideshowState> =
     use_ref(cx, || SlideshowState {
+      control_panel_shown: true,
+      control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
       fullscreen: false,
       fullscreen_event_listener_option: None,
       image_index: 0,
       image_source: make_image_source(0),
-      time_remaining: DISPLAY_PERIOD,
+      image_time_remaining: IMAGE_DISPLAY_TIME,
     });
+  // TODO: Could this be use_ref?
   use_effect(cx, (), |()| {
     to_owned![slideshow_state_use_ref];
     async move {
       loop {
         sleep(Duration::from_millis(POLLING_PERIOD)).await;
         slideshow_state_use_ref.with_mut(|state| {
-          state.time_remaining =
-            state.time_remaining.saturating_sub(POLLING_PERIOD);
+          state.control_panel_time_remaining = state
+            .control_panel_time_remaining
+            .saturating_sub(POLLING_PERIOD);
+          state.image_time_remaining =
+            state.image_time_remaining.saturating_sub(POLLING_PERIOD);
+          if state.control_panel_shown
+            && state.control_panel_time_remaining == 0
+          {
+            state.control_panel_shown = false;
+          }
         });
-        if slideshow_state_use_ref.read().time_remaining == 0 {
+        if slideshow_state_use_ref.read().image_time_remaining == 0 {
           next_image(&slideshow_state_use_ref);
         }
       }
@@ -83,10 +97,14 @@ pub fn Slideshow(cx: Scope) -> Element {
     }
     div {
       id: "slideshow",
-    ControlPanel {
-      fullscreen: slideshow_state_use_ref.read().fullscreen,
-      on_click_fullscreen: move |_event| fullscreen(),
-      on_click_skip: move |_event| next_image(slideshow_state_use_ref),
+    if slideshow_state_use_ref.read().control_panel_shown {
+      render! {
+        ControlPanel {
+          fullscreen: slideshow_state_use_ref.read().fullscreen,
+          on_click_fullscreen: move |_event| fullscreen(),
+          on_click_skip: move |_event| next_image(slideshow_state_use_ref),
+        }
+      }
     }
     img {
       src: "{slideshow_state_use_ref.read().image_source}",
@@ -120,6 +138,6 @@ fn next_image(slideshow_state_use_ref: &UseRef<SlideshowState>) {
   slideshow_state_use_ref.with_mut(|state| {
     state.image_index = (state.image_index + 1) % IMAGE_NAMES.len();
     state.image_source = make_image_source(state.image_index);
-    state.time_remaining = DISPLAY_PERIOD;
+    state.image_time_remaining = IMAGE_DISPLAY_TIME;
   });
 }
