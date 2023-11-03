@@ -91,6 +91,7 @@ pub fn Slideshow(cx: Scope) -> Element {
   render! {
     div {
       class: "app-slideshow box",
+      onmousemove: move |_event| on_mouse_move(slideshow_state_use_ref),
     h1 {
       class: "app-title",
       "Slideshow"
@@ -139,5 +140,12 @@ fn next_image(slideshow_state_use_ref: &UseRef<SlideshowState>) {
     state.image_index = (state.image_index + 1) % IMAGE_NAMES.len();
     state.image_source = make_image_source(state.image_index);
     state.image_time_remaining = IMAGE_DISPLAY_TIME;
+  });
+}
+
+fn on_mouse_move(slideshow_state_use_ref: &UseRef<SlideshowState>) {
+  slideshow_state_use_ref.with_mut(|state| {
+    state.control_panel_shown = true;
+    state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
   });
 }

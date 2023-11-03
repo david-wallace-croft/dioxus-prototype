@@ -1,4 +1,5 @@
 .app-slideshow .app-control-panel {
+  margin-top: 0.5rem;
   position: absolute;
   z-index: 1;
 }
