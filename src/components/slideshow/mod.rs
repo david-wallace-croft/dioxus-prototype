@@ -21,7 +21,6 @@ static IMAGE_NAMES: [&str; 5] = [
 static IMAGE_PATH_PREFIX: &str = "/slideshow/";
 
 struct SlideshowState {
-  control_panel_shown: bool,
   control_panel_time_remaining: u64,
   fullscreen: bool,
   fullscreen_event_listener_option: Option<EventListener>,
@@ -34,7 +33,6 @@ struct SlideshowState {
 pub fn Slideshow(cx: Scope) -> Element {
   let slideshow_state_use_ref: &UseRef<SlideshowState> =
     use_ref(cx, || SlideshowState {
-      control_panel_shown: true,
       control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
       fullscreen: false,
       fullscreen_event_listener_option: None,
@@ -48,21 +46,16 @@ pub fn Slideshow(cx: Scope) -> Element {
     async move {
       loop {
         sleep(Duration::from_millis(POLLING_PERIOD)).await;
-        slideshow_state_use_ref.with_mut(|state| {
+        slideshow_state_use_ref.with_mut(|state: &mut SlideshowState| {
           state.control_panel_time_remaining = state
             .control_panel_time_remaining
             .saturating_sub(POLLING_PERIOD);
           state.image_time_remaining =
             state.image_time_remaining.saturating_sub(POLLING_PERIOD);
-          if state.control_panel_shown
-            && state.control_panel_time_remaining == 0
-          {
-            state.control_panel_shown = false;
+          if state.image_time_remaining == 0 {
+            next_image(state);
           }
         });
-        if slideshow_state_use_ref.read().image_time_remaining == 0 {
-          next_image(&slideshow_state_use_ref);
-        }
       }
     }
   });
@@ -98,12 +91,15 @@ pub fn Slideshow(cx: Scope) -> Element {
     }
     div {
       id: "slideshow",
-    if slideshow_state_use_ref.read().control_panel_shown {
+    if slideshow_state_use_ref.read().control_panel_time_remaining > 0 {
       render! {
         ControlPanel {
           fullscreen: slideshow_state_use_ref.read().fullscreen,
           on_click_fullscreen: move |_event| fullscreen(),
-          on_click_skip: move |_event| next_image(slideshow_state_use_ref),
+          on_click_skip: move |_event|
+            slideshow_state_use_ref.with_mut(|state: &mut SlideshowState| {
+              next_image(state);
+            }),
         }
       }
     }
@@ -135,17 +131,14 @@ fn make_image_source(image_index: usize) -> String {
   image_source
 }
 
-fn next_image(slideshow_state_use_ref: &UseRef<SlideshowState>) {
-  slideshow_state_use_ref.with_mut(|state| {
-    state.image_index = (state.image_index + 1) % IMAGE_NAMES.len();
-    state.image_source = make_image_source(state.image_index);
-    state.image_time_remaining = IMAGE_DISPLAY_TIME;
-  });
+fn next_image(state: &mut SlideshowState) {
+  state.image_index = (state.image_index + 1) % IMAGE_NAMES.len();
+  state.image_source = make_image_source(state.image_index);
+  state.image_time_remaining = IMAGE_DISPLAY_TIME;
 }
 
 fn on_mouse_move(slideshow_state_use_ref: &UseRef<SlideshowState>) {
   slideshow_state_use_ref.with_mut(|state| {
-    state.control_panel_shown = true;
     state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
   });
 }
