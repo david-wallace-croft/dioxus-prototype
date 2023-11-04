@@ -27,7 +27,7 @@
   - cargo is installed when you install Rust
   - https://www.rust-lang.org/
 - Install the Dioxus Command Line Interface (CLI) "dx"
-  - cargo install dioxus-cli --locked
+  - cargo install dioxus-cli
   - https://github.com/DioxusLabs/dioxus/tree/master/packages/cli
 - Install npm
   - npm installs utilities such as prettier
