@@ -120,6 +120,7 @@ fn fullscreen() {
     document.exit_fullscreen();
   } else {
     let slideshow_element = document.get_element_by_id("slideshow").unwrap();
+    // log::info!("slideshow element: {slideshow_element:?}");
     let _result = slideshow_element.request_fullscreen();
   }
 }
