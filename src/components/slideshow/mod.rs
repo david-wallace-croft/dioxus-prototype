@@ -18,7 +18,7 @@ static IMAGE_NAMES: [&str; 5] = [
   "nature-d.jpg",
   "nature-e.jpg",
 ];
-static IMAGE_PATH_PREFIX: &str = "slideshow/";
+static IMAGE_PATH_PREFIX: &str = "/slideshow/";
 
 struct SlideshowState {
   control_panel_shown: bool,
