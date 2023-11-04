@@ -91,10 +91,10 @@ pub fn Slideshow(cx: Scope) -> Element {
     }
     div {
       id: "slideshow",
-    if slideshow_state_use_ref.read().control_panel_time_remaining > 0 {
+    if slideshow_state_use_ref.with(|state| state.control_panel_time_remaining > 0) {
       render! {
         ControlPanel {
-          fullscreen: slideshow_state_use_ref.read().fullscreen,
+          fullscreen: slideshow_state_use_ref.with(|state| state.fullscreen),
           on_click_fullscreen: move |_event| fullscreen(),
           on_click_skip: move |_event|
             slideshow_state_use_ref.with_mut(|state: &mut SlideshowState| {
@@ -104,7 +104,7 @@ pub fn Slideshow(cx: Scope) -> Element {
       }
     }
     img {
-      src: "{slideshow_state_use_ref.read().image_source}",
+      src: "{slideshow_state_use_ref.with(|state| state.image_source.clone())}",
     }
     }
     }
