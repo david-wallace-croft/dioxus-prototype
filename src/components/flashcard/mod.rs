@@ -59,9 +59,7 @@ pub fn Flashcard(cx: Scope) -> Element {
   }
   LinkButton {
     disabled: *link_button_disabled_state.get(),
-    on_click: move |event| on_click_link_button(
-      event,
-    ),
+    on_click: on_click_link_button,
   }
   }
   div {

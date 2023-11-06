@@ -299,7 +299,7 @@ fn on_input(
 }
 
 fn parse_input(value: &str) -> Option<f64> {
-  value.replace(",", "").parse().ok()
+  value.replace(',', "").parse().ok()
 }
 
 fn parse_state(state: &UseState<String>) -> f64 {
