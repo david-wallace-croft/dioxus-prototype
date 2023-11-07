@@ -5,7 +5,7 @@ pub mod flashcard;
 pub mod footer;
 pub mod home;
 pub mod nav;
-pub mod page_layout;
 pub mod page_not_found;
 pub mod retirement;
 pub mod slideshow;
+pub mod template;
