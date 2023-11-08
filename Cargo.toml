@@ -65,6 +65,9 @@ hydrate = ["dioxus-fullstack/router", "dioxus-web/hydrate"]
 prerender = ["dioxus-fullstack/router", "dioxus-fullstack/ssr", "tokio"]
 
 [profile.release]
+# wasm-strip
+# strip = true
+# inner string debug info
 codegen-units = 1
 lto = true
 opt-level = "s"

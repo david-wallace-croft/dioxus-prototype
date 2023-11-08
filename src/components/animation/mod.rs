@@ -1,6 +1,6 @@
 use dioxus::html::geometry::WheelDelta;
 use dioxus::prelude::*;
-use dioxus_elements::geometry::WheelDelta::Lines;
+use dioxus_elements::geometry::WheelDelta::*;
 use rand::distributions::Distribution;
 use rand::distributions::Uniform;
 use rand::rngs::ThreadRng;
@@ -71,17 +71,13 @@ pub fn Animation(cx: Scope) -> Element {
     canvas {
       background_color: "black",
       cursor: "crosshair",
-      // height: "600",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
       onblur: move |event| on_blur(event, message_state, running_state),
       onclick: move |event| on_click(event, click_count_state, color_state, update_state),
       onfocus: move |event| on_focus(event, message_state, running_state, update_state),
       onkeydown: move |event| on_key_down(event, color_state, update_state),
-      onmouseenter: on_mouse_enter,
-      onmouseout: on_mouse_out,
       onwheel: move |event| on_wheel(event, color_state, update_state),
-      // style: "overscroll-behavior: none",
       tabindex: 0,
       width: "600",
     }
@@ -164,14 +160,6 @@ fn on_key_down(
   update_state.set(true);
 }
 
-fn on_mouse_enter(_event: Event<MouseData>) {
-  // log::info!("onmouseenter Event: {event:?}");
-}
-
-fn on_mouse_out(_event: Event<MouseData>) {
-  // log::info!("onmouseout Event: {event:?}");
-}
-
 fn on_wheel(
   event: Event<WheelData>,
   color_state: &UseState<Color>,
@@ -179,12 +167,13 @@ fn on_wheel(
 ) {
   // log::info!("onwheel Event: {event:?}");
   let wheel_delta: WheelDelta = event.delta();
-  let Lines(lines_vector) = wheel_delta else {
-    return;
+  let delta: f64 = match wheel_delta {
+    Lines(lines_vector) => lines_vector.y,
+    Pages(pages_vector) => pages_vector.y,
+    Pixels(pixels_vector) => pixels_vector.y,
   };
-  let delta = lines_vector.y.clamp(-128., 127.) as i8;
+  let delta: i8 = delta.clamp(-1., 1.) as i8;
   color_state.set(shift_color(&color_state.current(), delta));
-  // event.stop_propagation();
   update_state.set(true);
 }
 
