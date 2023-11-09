@@ -22,8 +22,6 @@ static IMAGE_PATH_PREFIX: &str = "/slideshow/";
 
 struct SlideshowState {
   control_panel_time_remaining: u64,
-  fullscreen: bool,
-  fullscreen_event_listener_option: Option<EventListener>,
   image_index: usize,
   image_source: String,
   image_time_remaining: u64,
@@ -31,11 +29,12 @@ struct SlideshowState {
 
 #[allow(non_snake_case)]
 pub fn Slideshow(cx: Scope) -> Element {
+  let fullscreen_event_listener_option_state: &UseState<Option<EventListener>> =
+    use_state(cx, || None);
+  let fullscreen_state: &UseState<bool> = use_state(cx, || false);
   let slideshow_state_use_ref: &UseRef<SlideshowState> =
     use_ref(cx, || SlideshowState {
       control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
-      fullscreen: false,
-      fullscreen_event_listener_option: None,
       image_index: 0,
       image_source: make_image_source(0),
       image_time_remaining: IMAGE_DISPLAY_TIME,
@@ -59,27 +58,25 @@ pub fn Slideshow(cx: Scope) -> Element {
       }
     }
   });
-  let slideshow_state_use_ref_clone = slideshow_state_use_ref.clone();
-  let _future = use_future(cx, (), |_| async move {
-    let document: Document = web_sys::window().unwrap().document().unwrap();
-    if !document.fullscreen_enabled() {
-      return;
-    }
-    let slideshow_element = document.get_element_by_id("slideshow").unwrap();
-    // log::info!("slideshow element: {slideshow_element:?}");
-    let slideshow_state_use_ref_clone_clone =
-      slideshow_state_use_ref_clone.clone();
-    slideshow_state_use_ref_clone.with_mut(|state| {
-      state.fullscreen_event_listener_option = Some(EventListener::new(
+  let _future = use_future(cx, (), |_| {
+    to_owned![fullscreen_event_listener_option_state];
+    to_owned![fullscreen_state];
+    async move {
+      let document: Document = web_sys::window().unwrap().document().unwrap();
+      if !document.fullscreen_enabled() {
+        return;
+      }
+      let slideshow_element = document.get_element_by_id("slideshow").unwrap();
+      let event_listener = EventListener::new(
         &slideshow_element,
         "fullscreenchange",
         move |_event| {
-          slideshow_state_use_ref_clone_clone.with_mut(|state| {
-            state.fullscreen = document.fullscreen_element().is_some();
-          });
+          let is_fullscreen: bool = document.fullscreen_element().is_some();
+          fullscreen_state.set(is_fullscreen);
         },
-      ));
-    });
+      );
+      fullscreen_event_listener_option_state.set(Some(event_listener));
+    }
   });
   render! {
     div {
@@ -94,7 +91,7 @@ pub fn Slideshow(cx: Scope) -> Element {
     if slideshow_state_use_ref.with(|state| state.control_panel_time_remaining > 0) {
       render! {
         ControlPanel {
-          fullscreen: slideshow_state_use_ref.with(|state| state.fullscreen),
+          fullscreen: *fullscreen_state.get(),
           on_click_fullscreen: move |_event| fullscreen(),
           on_click_skip: move |_event|
             slideshow_state_use_ref.with_mut(|state: &mut SlideshowState| {
