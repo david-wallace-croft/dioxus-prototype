@@ -6,6 +6,9 @@ use dioxus_router::prelude::*;
 
 #[allow(non_snake_case)]
 pub fn Template(cx: Scope) -> Element {
+  let nav = use_navigator(cx);
+  // TODO: Remove this temporary workaround for a prerendering / hydration bug
+  nav.push(Route::Home {});
   render! {
     div {
       class: "frame",
