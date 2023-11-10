@@ -39,8 +39,7 @@ pub fn Slideshow(cx: Scope) -> Element {
       image_source: make_image_source(0),
       image_time_remaining: IMAGE_DISPLAY_TIME,
     });
-  // TODO: Could this be use_ref?
-  use_effect(cx, (), |()| {
+  use_future(cx, (), |_| {
     to_owned![slideshow_state_use_ref];
     async move {
       loop {
@@ -58,7 +57,7 @@ pub fn Slideshow(cx: Scope) -> Element {
       }
     }
   });
-  let _future = use_future(cx, (), |_| {
+  use_future(cx, (), |_| {
     to_owned![fullscreen_event_listener_option_state];
     to_owned![fullscreen_state];
     async move {
