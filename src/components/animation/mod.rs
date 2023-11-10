@@ -44,8 +44,8 @@ pub fn Animation(cx: Scope) -> Element {
   let running_state: &UseState<bool> = use_state(cx, || true);
   let update_state: &UseState<bool> = use_state(cx, || true);
   // https://github.com/DioxusLabs/dioxus/discussions/999
-  // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/useeffect.rs
-  use_effect(cx, (), |()| {
+  // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/use_effect.rs
+  use_future(cx, (), |()| {
     to_owned![color_state];
     to_owned![message_state];
     to_owned![running_state];
