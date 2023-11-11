@@ -7,7 +7,8 @@ use web_sys::Document;
 
 mod control_panel;
 
-const CONTROL_PANEL_DISPLAY_TIME: u64 = 5 * 1_000;
+const CONTROL_PANEL_DISPLAY_TIME: u64 = 10 * 1_000;
+const CONTROL_PANEL_FADE_TIME: u64 = 5 * 1_000;
 const IMAGE_DISPLAY_TIME: u64 = 10 * 60 * 1_000;
 const POLLING_PERIOD: u64 = 100;
 
@@ -90,6 +91,8 @@ pub fn Slideshow(cx: Scope) -> Element {
     if slideshow_state_use_ref.with(|state| state.control_panel_time_remaining > 0) {
       render! {
         ControlPanel {
+          fading: slideshow_state_use_ref.with(|state|
+            state.control_panel_time_remaining < CONTROL_PANEL_FADE_TIME),
           fullscreen: *fullscreen_state.get(),
           on_click_fullscreen: move |_event| fullscreen(),
           on_click_skip: move |_event|

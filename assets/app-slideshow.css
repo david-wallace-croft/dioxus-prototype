@@ -1,3 +1,13 @@
+.app-control-panel {
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.app-control-panel.app-fading {
+  opacity: 0;
+  transition: opacity 5s;
+}
+
 .app-slideshow .app-control-panel {
   margin-top: 0.5rem;
   position: absolute;

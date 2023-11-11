@@ -6,6 +6,7 @@ use dioxus_free_icons::Icon;
 
 #[derive(Props)]
 pub struct Props<'a> {
+  fading: bool,
   fullscreen: bool,
   on_click_fullscreen: EventHandler<'a, MouseEvent>,
   on_click_skip: EventHandler<'a, MouseEvent>,
@@ -15,7 +16,11 @@ pub struct Props<'a> {
 pub fn ControlPanel<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
   render! {
     div {
-      class: "app-control-panel",
+      class: if cx.props.fading {
+        "app-control-panel app-fading"
+        } else {
+          "app-control-panel"
+        },
       text_align: "center",
     button {
       class: "app-fullscreen-button",
