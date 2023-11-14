@@ -1,0 +1,10 @@
+.app-home {
+  animation-duration: 1s;
+  animation-iteration-count: 1;
+  animation-name: app-fade-in;
+}
+
+.app-home h1,
+.app-home p {
+  text-align: center;
+}

@@ -6,9 +6,8 @@ use dioxus_router::prelude::Link;
 pub fn Home(cx: Scope) -> Element {
   render! {
     div {
-      class: "box",
+      class: "app-home box",
     h1 {
-      class: "app-home",
       "CroftSoft Dioxus Prototype"
     }
     p {

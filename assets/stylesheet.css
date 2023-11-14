@@ -1,25 +1,15 @@
+@keyframes app-fade-in {
+  0% {
+    opacity: 0
+  }
+
+  100% {
+    opacity: 1
+  }
+}
+
 a:visited {
   color: #b7410e;
-}
-
-div.app-high-five button.app-high-five {
-  background-color: aquamarine;
-  border: none;
-  border-radius: 0.5rem;
-  margin: 0 1rem;
-  padding: 1rem;
-}
-
-h1.app-home {
-  text-align: center;
-}
-
-.app-animation h1 {
-  text-align: center;
-}
-
-p.app-home {
-  text-align: center;
 }
 
 body {

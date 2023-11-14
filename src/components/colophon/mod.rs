@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 pub fn Colophon(cx: Scope) -> Element {
   render! {
     div {
-      class: "box",
+      class: "app-colophon box",
     h1 {
       style: "text-align: center",
     "Colophon"

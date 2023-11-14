@@ -1,17 +1,7 @@
-@keyframes fadeIn {
-  0% {
-    opacity: 0
-  }
-
-  100% {
-    opacity: 1
-  }
-}
-
 .app-control-panel {
   animation-duration: 1s;
   animation-iteration-count: 1;
-  animation-name: fadeIn;
+  animation-name: app-fade-in;
   opacity: 1;
   transition: opacity 1s;
 }
@@ -24,9 +14,7 @@
 .app-slideshow {
   animation-duration: 1s;
   animation-iteration-count: 1;
-  animation-name: fadeIn;
-  opacity: 1;
-  transition: opacity 1s;
+  animation-name: app-fade-in;
 }
 
 .app-slideshow .app-control-panel {
