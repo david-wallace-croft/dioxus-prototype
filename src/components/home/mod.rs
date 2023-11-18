@@ -79,7 +79,7 @@ pub fn Home(cx: Scope) -> Element {
       " component demonstrates"
       ul {
       li {
-        "internationalization (i18n)"
+        "internationalization (i18n) for static prerendering"
       }
       li {
         "form inputs"

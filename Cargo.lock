@@ -619,7 +619,6 @@ dependencies = [
  "dioxus-fullstack",
  "dioxus-hooks",
  "dioxus-router",
- "dioxus-std",
  "dioxus-web",
  "getrandom",
  "gloo-events 0.2.0",
@@ -695,21 +694,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dioxus-std"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "040f927bfe3eb4c269512d6e21dfea8f4fe47a3cf65d95744d6c66985ae0a82f"
-dependencies = [
- "cfg-if",
- "dioxus",
- "js-sys",
- "serde",
- "serde_json",
- "unic-langid",
- "uuid",
-]
-
-[[package]]
 name = "dioxus-web"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -744,17 +728,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "server_fn_macro",
- "syn 2.0.32",
-]
-
-[[package]]
-name = "displaydoc"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "487585f4d0c6655fe74905e2504d8ad6908e4db67f744eb140876906c2f3175d"
-dependencies = [
- "proc-macro2",
- "quote",
  "syn 2.0.32",
 ]
 
@@ -2307,15 +2280,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tinystr"
-version = "0.7.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83c02bf3c538ab32ba913408224323915f4ef9a6d61c0e85d493f355921c0ece"
-dependencies = [
- "displaydoc",
-]
-
-[[package]]
 name = "tinyvec"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2459,25 +2423,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3528ecfd12c466c6f163363caf2d02a71161dd5e1cc6ae7b34207ea2d42d81ed"
 
 [[package]]
-name = "unic-langid"
-version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "398f9ad7239db44fd0f80fe068d12ff22d78354080332a5077dc6f52f14dcf2f"
-dependencies = [
- "unic-langid-impl",
-]
-
-[[package]]
-name = "unic-langid-impl"
-version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e35bfd2f2b8796545b55d7d3fd3e89a0613f68a0d1c8bc28cb7ff96b411a35ff"
-dependencies = [
- "serde",
- "tinystr",
-]
-
-[[package]]
 name = "unicode-bidi"
 version = "0.3.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2519,16 +2464,6 @@ dependencies = [
  "form_urlencoded",
  "idna",
  "percent-encoding",
-]
-
-[[package]]
-name = "uuid"
-version = "1.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88ad59a7560b41a70d191093a945f0b87bc1deeda46fb237479708a1d6b6cdfc"
-dependencies = [
- "getrandom",
- "wasm-bindgen",
 ]
 
 [[package]]

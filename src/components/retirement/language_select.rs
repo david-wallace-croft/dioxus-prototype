@@ -1,18 +1,22 @@
 use dioxus::prelude::*;
-use dioxus_std::i18n::{use_i18, UseI18};
+
+#[derive(Props)]
+pub struct Props<'a> {
+  on_change: EventHandler<'a, FormEvent>,
+}
 
 #[allow(non_snake_case)]
-pub fn LanguageSelect(cx: Scope) -> Element {
-  let i18: UseI18 = use_i18(cx);
+pub fn LanguageSelect<'a>(cx: Scope<'a, Props<'a>>) -> Element {
   render! {
     select {
+      onchange: move |event| cx.props.on_change.call(event),
       option {
-        onclick: move |_| i18.set_language("en-US".parse().unwrap()),
-        "English"
+        label: "English",
+        value: "en",
       }
       option {
-        onclick: move |_| i18.set_language("es-ES".parse().unwrap()),
-        "Español"
+        label: "Español",
+        value: "es",
       }
     }
   }

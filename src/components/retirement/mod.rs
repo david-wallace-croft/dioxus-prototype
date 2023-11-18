@@ -1,14 +1,14 @@
 use self::language_select::LanguageSelect;
 use self::reset_button::ResetButton;
+use self::translator::Translator;
 use com_croftsoft_core::math::finance_lib::PeriodicSavingsNeeded;
 use dioxus::prelude::*;
-use dioxus_std::i18n::{use_i18, UseI18};
-use dioxus_std::translate;
 use std::iter::Rev;
 use std::str::Chars;
 
 mod language_select;
 mod reset_button;
+mod translator;
 
 static INVESTMENT_INTEREST: &str = "10.0";
 static INVESTMENT_YEARS: &str = "50.0";
@@ -19,7 +19,8 @@ static RETIREMENT_TAX_RATE: &str = "10.0";
 
 #[allow(non_snake_case)]
 pub fn Retirement(cx: Scope) -> Element {
-  let i18: UseI18 = use_i18(cx);
+  // TODO: language selection should be shared state
+  let using_spanish: &UseState<bool> = use_state(cx, || false);
   let investment_interest: &UseState<String> =
     use_state(cx, || INVESTMENT_INTEREST.to_string());
   let investment_years: &UseState<String> =
@@ -38,18 +39,28 @@ pub fn Retirement(cx: Scope) -> Element {
   div {
     margin_bottom: "1rem",
     text_align: "right",
-  LanguageSelect { }
+  LanguageSelect {
+    on_change: move |event: FormEvent| using_spanish.set("es".eq(&event.value)),
+  }
   }
   h1 {
     class: "app-title",
-    translate!(i18, "messages.retirement_title")
+    Translator {
+      en: "Retirement",
+      es: "Jubilación",
+      use_es: *using_spanish.get(),
+    }
   }
   div {
     class: "app-form",
 
   span {
     style: "white-space: pre-line",
-    translate!(i18, "messages.retirement_desired")
+    Translator {
+      en: "Desired annual retirement income\n(present value, after taxes)",
+      es: "Ingresos anuales deseados para la jubilación\n(valor presente, después de impuestos)",
+      use_es: *using_spanish.get(),
+    }
   }
   input {
     size: "10",
@@ -58,7 +69,11 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{retirement_income}",
   }
   span {
-    translate!(i18, "messages.retirement_dollars")
+    Translator {
+      en: "dollars",
+      es: "dólares",
+      use_es: *using_spanish.get(),
+    }
     " ($)"
   }
 
@@ -348,3 +363,12 @@ fn to_dollars(amount: f64) -> String {
 fn to_reverse_string(s: String) -> String {
   s.chars().rev().collect::<String>()
 }
+
+// fn use_spanish(cx: Scope) -> bool {
+//   let use_shared_state_option: Option<&UseSharedState<SharedState>> =
+//     use_shared_state::<SharedState>(cx);
+//   if use_shared_state_option.is_none() {
+//     return false;
+//   }
+//   use_shared_state_option.unwrap().read().spanish
+// }
