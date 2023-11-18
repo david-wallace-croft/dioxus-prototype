@@ -1,9 +1,13 @@
-use crate::components::retirement::reset_button::ResetButton;
+use self::language_select::LanguageSelect;
+use self::reset_button::ResetButton;
 use com_croftsoft_core::math::finance_lib::PeriodicSavingsNeeded;
 use dioxus::prelude::*;
+use dioxus_std::i18n::{use_i18, UseI18};
+use dioxus_std::translate;
 use std::iter::Rev;
 use std::str::Chars;
 
+mod language_select;
 mod reset_button;
 
 static INVESTMENT_INTEREST: &str = "10.0";
@@ -15,6 +19,7 @@ static RETIREMENT_TAX_RATE: &str = "10.0";
 
 #[allow(non_snake_case)]
 pub fn Retirement(cx: Scope) -> Element {
+  let i18: UseI18 = use_i18(cx);
   let investment_interest: &UseState<String> =
     use_state(cx, || INVESTMENT_INTEREST.to_string());
   let investment_years: &UseState<String> =
@@ -30,16 +35,21 @@ pub fn Retirement(cx: Scope) -> Element {
   render! {
   div {
     class: "app-retirement box",
+  div {
+    margin_bottom: "1rem",
+    text_align: "right",
+  LanguageSelect { }
+  }
   h1 {
     class: "app-title",
-    "Retirement"
+    translate!(i18, "messages.retirement_title")
   }
   div {
     class: "app-form",
 
   span {
     style: "white-space: pre-line",
-    "Desired annual retirement income\n(present value, after taxes)"
+    translate!(i18, "messages.retirement_desired")
   }
   input {
     size: "10",
@@ -48,7 +58,8 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{retirement_income}",
   }
   span {
-    "dollars ($)"
+    translate!(i18, "messages.retirement_dollars")
+    " ($)"
   }
 
   span {

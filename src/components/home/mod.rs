@@ -79,6 +79,9 @@ pub fn Home(cx: Scope) -> Element {
       " component demonstrates"
       ul {
       li {
+        "internationalization (i18n)"
+      }
+      li {
         "form inputs"
       }
       li {
