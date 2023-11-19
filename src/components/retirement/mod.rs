@@ -20,7 +20,7 @@ static RETIREMENT_TAX_RATE: &str = "10.0";
 #[allow(non_snake_case)]
 pub fn Retirement(cx: Scope) -> Element {
   // TODO: language selection should be shared state
-  let using_spanish: &UseState<bool> = use_state(cx, || false);
+  let selected_lang: &UseState<String> = use_state(cx, || "en".to_string());
   let investment_interest: &UseState<String> =
     use_state(cx, || INVESTMENT_INTEREST.to_string());
   let investment_years: &UseState<String> =
@@ -40,7 +40,8 @@ pub fn Retirement(cx: Scope) -> Element {
     margin_bottom: "1rem",
     text_align: "right",
   LanguageSelect {
-    on_change: move |event: FormEvent| using_spanish.set("es".eq(&event.value)),
+    on_change: move |event: FormEvent| selected_lang.set(event.value.clone()),
+    selected: selected_lang.get(),
   }
   }
   h1 {
@@ -48,7 +49,7 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "Retirement",
       es: "Jubilación",
-      use_es: *using_spanish.get(),
+      lang: selected_lang.get(),
     }
   }
   div {
@@ -59,7 +60,7 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "Desired annual retirement income\n(present value, after taxes)",
       es: "Ingresos anuales deseados para la jubilación\n(valor presente, después de impuestos)",
-      use_es: *using_spanish.get(),
+      lang: selected_lang.get(),
     }
   }
   input {
@@ -72,7 +73,7 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "dollars",
       es: "dólares",
-      use_es: *using_spanish.get(),
+      lang: selected_lang.get(),
     }
     " ($)"
   }
@@ -363,12 +364,3 @@ fn to_dollars(amount: f64) -> String {
 fn to_reverse_string(s: String) -> String {
   s.chars().rev().collect::<String>()
 }
-
-// fn use_spanish(cx: Scope) -> bool {
-//   let use_shared_state_option: Option<&UseSharedState<SharedState>> =
-//     use_shared_state::<SharedState>(cx);
-//   if use_shared_state_option.is_none() {
-//     return false;
-//   }
-//   use_shared_state_option.unwrap().read().spanish
-// }

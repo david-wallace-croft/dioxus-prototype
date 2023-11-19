@@ -4,12 +4,12 @@ use dioxus::prelude::*;
 pub struct Props<'a> {
   en: &'a str,
   es: &'a str,
-  use_es: bool,
+  lang: &'a str,
 }
 
 #[allow(non_snake_case)]
 pub fn Translator<'a>(cx: Scope<'a, Props<'a>>) -> Element {
-  if cx.props.use_es {
+  if "es".eq(cx.props.lang) {
     render! { "{cx.props.es}" }
   } else {
     render! { "{cx.props.en}" }
