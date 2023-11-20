@@ -4,8 +4,15 @@ use crate::route::Route;
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
 
+pub struct SharedState {
+  pub lang: String,
+}
+
 #[allow(non_snake_case)]
 pub fn Template(cx: Scope) -> Element {
+  use_shared_state_provider(cx, || SharedState {
+    lang: "en".to_string(),
+  });
   render! {
     div {
       class: "frame",

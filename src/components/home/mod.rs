@@ -82,6 +82,9 @@ pub fn Home(cx: Scope) -> Element {
         "internationalization (i18n) for static prerendering"
       }
       li {
+        "shared state for static prerendering"
+      }
+      li {
         "form inputs"
       }
       li {
