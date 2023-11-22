@@ -99,7 +99,11 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{investment_years}",
   }
   span {
-    "years"
+    Translator {
+      en: "years",
+      es: "años",
+      lang: selected_lang.get(),
+    }
   }
 
   span {
@@ -113,7 +117,12 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{investment_interest}",
   }
   span {
-    "percent (%)"
+    Translator {
+      en: "percent",
+      es: "por ciento",
+      lang: selected_lang.get(),
+    }
+    " (%)"
   }
 
   span {
@@ -127,7 +136,12 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{retirement_interest}",
   }
   span {
-    "percent (%)"
+    Translator {
+      en: "percent",
+      es: "por ciento",
+      lang: selected_lang.get(),
+    }
+    " (%)"
   }
 
   span {
@@ -141,7 +155,12 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{retirement_tax_rate}",
   }
   span {
-    "percent (%)"
+    Translator {
+      en: "percent",
+      es: "por ciento",
+      lang: selected_lang.get(),
+    }
+    " (%)"
   }
 
   span {
@@ -155,7 +174,12 @@ pub fn Retirement(cx: Scope) -> Element {
     value: "{retirement_inflation}",
   }
   span {
-    "percent (%)"
+    Translator {
+      en: "percent",
+      es: "por ciento",
+      lang: selected_lang.get(),
+    }
+    " (%)"
   }
   }
 
