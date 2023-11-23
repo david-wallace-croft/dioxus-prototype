@@ -1,15 +1,12 @@
-use self::language_select::LanguageSelect;
 use self::reset_button::ResetButton;
-use self::translator::Translator;
-use super::template::SharedState;
+use super::translator::Translator;
+use crate::components::language_select::LanguageSelector;
 use com_croftsoft_core::math::finance_lib::PeriodicSavingsNeeded;
 use dioxus::prelude::*;
 use std::iter::Rev;
 use std::str::Chars;
 
-mod language_select;
 mod reset_button;
-mod translator;
 
 static INVESTMENT_INTEREST: &str = "10.0";
 static INVESTMENT_YEARS: &str = "50.0";
@@ -20,12 +17,6 @@ static RETIREMENT_TAX_RATE: &str = "10.0";
 
 #[allow(non_snake_case)]
 pub fn Retirement(cx: Scope) -> Element {
-  let use_shared_state_option = use_shared_state::<SharedState>(cx);
-  let shared_state_lang = match use_shared_state_option {
-    Some(use_shared_state) => use_shared_state.read().lang.clone(),
-    None => "en".to_string(),
-  };
-  let selected_lang: &UseState<String> = use_state(cx, || shared_state_lang);
   let investment_interest: &UseState<String> =
     use_state(cx, || INVESTMENT_INTEREST.to_string());
   let investment_years: &UseState<String> =
@@ -44,22 +35,13 @@ pub fn Retirement(cx: Scope) -> Element {
   div {
     margin_bottom: "1rem",
     text_align: "right",
-  LanguageSelect {
-    on_change: move |event: FormEvent| {
-      selected_lang.set(event.value.clone());
-      if let Some(use_shared_state) = use_shared_state_option {
-        *use_shared_state.write() = SharedState { lang: event.value.clone() };
-      }
-    },
-    selected: selected_lang.get(),
-  }
+  LanguageSelector { }
   }
   h1 {
     class: "app-title",
     Translator {
       en: "Retirement",
       es: "Jubilación",
-      lang: selected_lang.get(),
     }
   }
   div {
@@ -69,8 +51,9 @@ pub fn Retirement(cx: Scope) -> Element {
     style: "white-space: pre-line",
     Translator {
       en: "Desired annual retirement income\n(present value, after taxes)",
-      es: "Ingresos anuales deseados para la jubilación\n(valor presente, después de impuestos)",
-      lang: selected_lang.get(),
+      es:
+        r#"Ingresos anuales deseados para la jubilación
+        (valor presente, después de impuestos)"#,
     }
   }
   input {
@@ -83,7 +66,6 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "dollars",
       es: "dólares",
-      lang: selected_lang.get(),
     }
     " ($)"
   }
@@ -102,7 +84,6 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "years",
       es: "años",
-      lang: selected_lang.get(),
     }
   }
 
@@ -120,7 +101,6 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "percent",
       es: "por ciento",
-      lang: selected_lang.get(),
     }
     " (%)"
   }
@@ -139,7 +119,6 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "percent",
       es: "por ciento",
-      lang: selected_lang.get(),
     }
     " (%)"
   }
@@ -158,7 +137,6 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "percent",
       es: "por ciento",
-      lang: selected_lang.get(),
     }
     " (%)"
   }
@@ -177,7 +155,6 @@ pub fn Retirement(cx: Scope) -> Element {
     Translator {
       en: "percent",
       es: "por ciento",
-      lang: selected_lang.get(),
     }
     " (%)"
   }

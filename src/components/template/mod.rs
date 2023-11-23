@@ -1,12 +1,9 @@
 use crate::components::footer::Footer;
 use crate::components::nav::Nav;
+use crate::components::translator::SharedState;
 use crate::route::Route;
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
-
-pub struct SharedState {
-  pub lang: String,
-}
 
 #[allow(non_snake_case)]
 pub fn Template(cx: Scope) -> Element {
