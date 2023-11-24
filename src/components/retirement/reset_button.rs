@@ -1,3 +1,4 @@
+use crate::components::translator::Translator;
 use dioxus::prelude::*;
 
 #[derive(Props)]
@@ -15,7 +16,10 @@ pub fn ResetButton<'a>(cx: Scope<'a, Props<'a>>) -> Element {
     disabled: cx.props.disabled,
     onclick: move |event| cx.props.on_click.call(event),
     opacity: if cx.props.disabled { "0.5" } else { "1.0" },
-    "RESET"
+    Translator {
+      en: "RESET",
+      es: "RESTABLECER",
+    }
   }
   }
 }

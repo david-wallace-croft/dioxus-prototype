@@ -72,7 +72,10 @@ pub fn Retirement(cx: Scope) -> Element {
 
   span {
     style: "white-space: pre-line",
-    "Years until retirement\n(usually at 67 years of age)"
+    Translator {
+      en: "Years until retirement\n(usually at 67 years of age)",
+      es: "Años hasta la jubilación\n(normalmente a los 67 años)",
+    }
   }
   input {
     size: "10",
@@ -89,7 +92,14 @@ pub fn Retirement(cx: Scope) -> Element {
 
   span {
     style: "white-space: pre-line",
-    "Annual investment growth rate\n(before retirement, tax-deferred)"
+    Translator {
+      en:
+        r#"Annual investment growth rate
+        (before retirement, tax-deferred)"#,
+      es:
+        r#"Tasa de crecimiento anual de la inversión
+        (antes de la jubilación, con impuestos diferidos)"#,
+    }
   }
   input {
     size: "10",
@@ -107,7 +117,10 @@ pub fn Retirement(cx: Scope) -> Element {
 
   span {
     style: "white-space: pre-line",
-    "Annual interest earned on savings\n(during retirement)"
+    Translator {
+      en: "Annual interest earned on savings\n(during retirement)",
+      es: "Interés anual ganado sobre ahorros\n(durante la jubilación)",
+    }
   }
   input {
     size: "10",
@@ -125,7 +138,14 @@ pub fn Retirement(cx: Scope) -> Element {
 
   span {
     style: "white-space: pre-line",
-    "Tax rate on savings interest\n(during retirement)"
+    Translator {
+      en:
+        r#"Tax rate on savings interest
+        (during retirement)"#,
+      es:
+        r#"Tasa impositiva sobre los intereses de ahorro
+        (durante la jubilación)"#,
+    }
   }
   input {
     size: "10",
@@ -143,7 +163,10 @@ pub fn Retirement(cx: Scope) -> Element {
 
   span {
     style: "white-space: pre-line",
-    "Estimated annual inflation\n(before and during retirement)"
+    Translator {
+      en: "Estimated annual inflation\n(before and during retirement)",
+      es: "Inflación anual estimada\n(antes y durante la jubilación)",
+    }
   }
   input {
     size: "10",
@@ -171,8 +194,14 @@ pub fn Retirement(cx: Scope) -> Element {
     render! {
       p {
         style: "color: #F44; text-align: center; white-space: pre-line",
-        "One or more of the inputs is invalid.\n"
-        "Click Reset for the default values."
+        Translator {
+          en:
+            r#"One or more of the inputs is invalid.
+            Click Reset for the default values."#,
+          es:
+            r#"Una o más de las entradas no son válidas.
+            Haga clic en Restablecer para ver los valores predeterminados."#,
+        }
       }
     }
   } else if calculate_required_annual_investment_from_state(
@@ -186,15 +215,24 @@ pub fn Retirement(cx: Scope) -> Element {
     render! {
       p {
         style: "color: #F44; text-align: center; white-space: pre-line",
-        "The interest rate on retirement savings\n"
-        "must exceed the annual inflation rate."
+        Translator {
+          en:
+            r#"The interest rate on retirement savings
+            must exceed the annual inflation rate."#,
+          es:
+            r#"La tasa de interés de los ahorros para la jubilación
+            debe exceder la tasa de inflación anual."#,
+        }
       }
     }
   } else {
     render! {
       p {
         style: "text-align: center",
-        "You would need to invest this amount each year:"
+        Translator {
+          en: "You would need to invest this amount each year:",
+          es: "Necesitaría invertir esta cantidad cada año:",
+        }
         br {}
         span {
         "{
@@ -230,15 +268,33 @@ pub fn Retirement(cx: Scope) -> Element {
 
   p {
     style: "text-align: center",
-    "This calculator does not factor in social security income."
+    Translator {
+      en:
+        "This calculator does not factor in social security income.",
+      es:
+        r#"Esta calculadora no tiene en cuenta los ingresos de la seguridad
+        social."#,
+    }
     br {}
-    "Click "
+    Translator {
+      en: "Click ",
+      es: "Haga clic ",
+    }
     a {
       href: "https://www.bankrate.com/retirement/retirement-plan-calculator/",
       target: "_blank",
-      "here"
+      Translator {
+        en: "here",
+        es: "aquí",
+      }
     }
-    " for a calculator that includes social security income."
+    Translator {
+      en:
+        " for a calculator that includes social security income.",
+      es:
+        r#" para obtener una calculadora que incluye los ingresos de la
+        seguridad social."#,
+    }
   }
   }
   }
