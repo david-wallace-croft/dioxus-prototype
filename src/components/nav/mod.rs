@@ -30,6 +30,13 @@ pub fn Nav(cx: Scope) -> Element {
     }
     }
     li {
+    Link {
+      active_class: "app-nav-active",
+      to: Route::Login {},
+      "Login",
+    }
+    }
+    li {
     a {
       href: "/manual/",
       "Manual"

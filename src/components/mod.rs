@@ -5,6 +5,7 @@ pub mod flashcard;
 pub mod footer;
 pub mod home;
 pub mod language_select;
+pub mod login;
 pub mod nav;
 pub mod page_not_found;
 pub mod retirement;

@@ -2,6 +2,7 @@ use crate::components::animation::Animation;
 use crate::components::colophon::Colophon;
 use crate::components::flashcard::Flashcard;
 use crate::components::home::Home;
+use crate::components::login::Login;
 use crate::components::page_not_found::PageNotFound;
 use crate::components::retirement::Retirement;
 use crate::components::slideshow::Slideshow;
@@ -22,6 +23,8 @@ pub enum Route {
     Colophon {},
     #[route("/flashcard")]
     Flashcard {},
+    #[route("/login")]
+    Login {},
     #[route("/retirement")]
     Retirement {},
     #[route("/slideshow")]
