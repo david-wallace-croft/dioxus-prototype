@@ -20,19 +20,19 @@ async-std = "1.12.0"
 com-croftsoft-core = "0.14.0"
 com-croftsoft-lib-string = "0.1.0"
 console_error_panic_hook = "0.1.7"
-dioxus = "0.4.0"
-dioxus-fullstack = { version = "0.4.1", optional = true }
-dioxus-hooks = "0.4.0"
-dioxus-router = "0.4.1"
+dioxus = "=0.4.0"
+dioxus-fullstack = { version = "=0.4.1", optional = true }
+dioxus-hooks = "=0.4.0"
+dioxus-router = "=0.4.1"
 # TODO: Figure out how to get dioxus-std to work with static prerendering
 # dioxus-std = { version = "0.4.1", features = ["i18n"] }
-dioxus-web = "0.4.0"
+dioxus-web = "=0.4.0"
 gloo-events = "0.2.0"
 log = "0.4.20"
 rand = "0.8.5"
-serde = "1.0.192"
-tokio = { version = "1.34.0", features = ["full"], optional = true }
-wasm-bindgen = { version = "0.2.88", features = ["enable-interning"] }
+serde = "1.0.194"
+tokio = { version = "1.35.1", features = ["full"], optional = true }
+wasm-bindgen = { version = "0.2.89", features = ["enable-interning"] }
 wasm-logger = "0.2.0"
 
 [dependencies.dioxus-free-icons]
@@ -61,7 +61,7 @@ features = [
   "Window",
   "console",
 ]
-version = "0.3.65"
+version = "0.3.66"
 
 [features]
 hydrate = ["dioxus-fullstack/router", "dioxus-web/hydrate"]
