@@ -1,7 +1,15 @@
+use self::oidc::init_oidc_client;
 use dioxus::prelude::*;
+
+mod constants;
+mod errors;
+mod oidc;
+mod props;
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
+  let init_client_future =
+    use_future(cx, (), |_| async move { init_oidc_client().await });
   render! {
   div {
     class: "app-login box",

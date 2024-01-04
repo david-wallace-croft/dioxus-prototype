@@ -29,8 +29,11 @@ dioxus-router = "=0.4.1"
 dioxus-web = "=0.4.0"
 gloo-events = "0.2.0"
 log = "0.4.20"
+openidconnect = "3.4.0"
 rand = "0.8.5"
+reqwest = "0.11.23"
 serde = "1.0.194"
+thiserror = "1.0.56"
 tokio = { version = "1.35.1", features = ["full"], optional = true }
 wasm-bindgen = { version = "0.2.89", features = ["enable-interning"] }
 wasm-logger = "0.2.0"
