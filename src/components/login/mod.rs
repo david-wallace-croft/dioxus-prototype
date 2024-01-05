@@ -16,6 +16,24 @@ pub fn Login(cx: Scope) -> Element {
   h1 {
   "Login"
   }
+
+  match init_client_future.value() {
+    Some(client_props) => {
+      rsx! {
+        pre {
+          format!("{:#?}", client_props)
+        }
+      }
+    },
+    None => {
+      rsx! {
+        p {
+        "Loading client, please wait"
+        }
+      }
+    }
+  }
+
   p {
   "Click on the following to log into the application:"
   br { }
