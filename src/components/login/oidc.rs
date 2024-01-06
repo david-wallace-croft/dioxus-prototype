@@ -1,4 +1,5 @@
 use super::props::client::ClientProps;
+use super::types::AliasProviderMetadata;
 use openidconnect::core::{
   CoreAuthDisplay, CoreClaimName, CoreClaimType, CoreClient,
   CoreClientAuthMethod, CoreErrorResponseType, CoreGrantType, CoreIdToken,
@@ -27,24 +28,6 @@ use openidconnect::{
   StandardErrorResponse,
 };
 use serde::{Deserialize, Serialize};
-
-type AliasProviderMetadata = ProviderMetadata<
-  EmptyAdditionalProviderMetadata,
-  CoreAuthDisplay,
-  CoreClientAuthMethod,
-  CoreClaimName,
-  CoreClaimType,
-  CoreGrantType,
-  CoreJweContentEncryptionAlgorithm,
-  CoreJweKeyManagementAlgorithm,
-  CoreJwsSigningAlgorithm,
-  CoreJsonWebKeyType,
-  CoreJsonWebKeyUse,
-  CoreJsonWebKey,
-  CoreResponseMode,
-  CoreResponseType,
-  CoreSubjectIdentifierType,
->;
 
 #[derive(Clone, Debug, Default)]
 pub struct ClientState {

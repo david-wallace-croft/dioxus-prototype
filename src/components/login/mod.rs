@@ -1,10 +1,14 @@
+use crate::components::login::types::AliasClient;
+
 use self::oidc::init_oidc_client;
 use dioxus::prelude::*;
+use openidconnect::ClientId;
 
 mod constants;
 mod errors;
 mod oidc;
 mod props;
+mod types;
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
@@ -18,10 +22,24 @@ pub fn Login(cx: Scope) -> Element {
   }
 
   match init_client_future.value() {
-    Some(client_props) => {
-      rsx! {
-        pre {
-          format!("{:#?}", client_props)
+    Some(client_props) => match client_props {
+      Ok(result_value) => {
+        let client_id: &ClientId = &result_value.0;
+        let client: &AliasClient = &result_value.1;
+        rsx! {
+          pre {
+            format!("{:#?}", client_id)
+          }
+          pre {
+            format!("{:#?}", client)
+          }
+        }
+      }
+      Err(e) => {
+        rsx! {
+          pre {
+            format!("{:#?}", e)
+          }
         }
       }
     },

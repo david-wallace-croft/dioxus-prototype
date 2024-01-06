@@ -27,7 +27,7 @@
     "prerender": "cargo run --bin prerender --features=prerender --release",
     "make": "npm run hydrate && npm run prerender && npm run format",
     "serve": "http-server dist -o",
-    "start": "dx serve --hot-reload",
+    "start": "dx serve --hot-reload --release",
     "test": "npm run dist && npm run serve"
   },
   "version": "0.2.0-SNAPSHOT"

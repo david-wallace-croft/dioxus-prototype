@@ -782,6 +782,7 @@ dependencies = [
  "getrandom",
  "gloo-events 0.2.0",
  "log",
+ "oauth2",
  "openidconnect",
  "rand",
  "reqwest",
