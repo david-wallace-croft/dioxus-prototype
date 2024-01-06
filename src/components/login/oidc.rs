@@ -1,17 +1,11 @@
 use super::props::client::ClientProps;
 use super::types::AliasProviderMetadata;
 use openidconnect::core::{
-  CoreAuthDisplay, CoreClaimName, CoreClaimType, CoreClient,
-  CoreClientAuthMethod, CoreErrorResponseType, CoreGrantType, CoreIdToken,
-  CoreJsonWebKey, CoreJsonWebKeyType, CoreJsonWebKeyUse,
-  CoreJweContentEncryptionAlgorithm, CoreJweKeyManagementAlgorithm,
-  CoreJwsSigningAlgorithm, CoreResponseMode, CoreResponseType,
-  CoreSubjectIdentifierType, CoreTokenResponse,
+  CoreClient, CoreErrorResponseType, CoreIdToken, CoreResponseType,
+  CoreTokenResponse,
 };
-use openidconnect::EmptyAdditionalProviderMetadata;
 use openidconnect::{
   reqwest::async_http_client,
-  url::Url,
   AuthenticationFlow,
   AuthorizationCode,
   ClaimsVerificationError,
