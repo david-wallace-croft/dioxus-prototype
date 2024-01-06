@@ -1,25 +1,14 @@
 use super::props::client::ClientProps;
-use super::types::AliasProviderMetadata;
-use openidconnect::core::{
-  CoreClient, CoreErrorResponseType, CoreIdToken, CoreResponseType,
-  CoreTokenResponse,
-};
 use openidconnect::{
+  core::{
+    CoreClient, CoreErrorResponseType, CoreIdToken, CoreResponseType,
+    CoreTokenResponse,
+  },
   reqwest::async_http_client,
-  AuthenticationFlow,
-  AuthorizationCode,
-  ClaimsVerificationError,
-  ClientId,
-  CsrfToken,
-  IssuerUrl,
-  // LogoutRequest,
-  Nonce,
-  ProviderMetadata,
-  // ProviderMetadataWithLogout,
-  RedirectUrl,
-  RefreshToken,
-  RequestTokenError,
-  StandardErrorResponse,
+  url::Url,
+  AuthenticationFlow, AuthorizationCode, ClaimsVerificationError, ClientId,
+  CsrfToken, IssuerUrl, LogoutRequest, Nonce, ProviderMetadataWithLogout,
+  RedirectUrl, RefreshToken, RequestTokenError, StandardErrorResponse,
 };
 use serde::{Deserialize, Serialize};
 
@@ -77,12 +66,13 @@ pub fn authorize_url(client: CoreClient) -> AuthRequest {
 }
 
 pub async fn init_provider_metadata(
-) -> Result<AliasProviderMetadata, super::errors::Error> {
+) -> Result<ProviderMetadataWithLogout, super::errors::Error> {
   let issuer_url =
     IssuerUrl::new(super::constants::DIOXUS_FRONT_ISSUER_URL.to_string())?;
-  let provider_metadata: AliasProviderMetadata =
-    ProviderMetadata::discover_async(issuer_url, async_http_client).await?;
-  Ok(provider_metadata)
+  Ok(
+    ProviderMetadataWithLogout::discover_async(issuer_url, async_http_client)
+      .await?,
+  )
 }
 
 pub async fn init_oidc_client(
@@ -136,22 +126,22 @@ pub async fn exchange_refresh_token(
     .await
 }
 
-// pub async fn log_out_url(
-//   id_token_hint: CoreIdToken
-// ) -> Result<Url, super::errors::Error> {
-//   let provider_metadata = init_provider_metadata().await?;
-//   let end_session_url = provider_metadata
-//     .additional_metadata()
-//     .clone()
-//     .end_session_endpoint
-//     .unwrap();
-//   let logout_request: LogoutRequest = LogoutRequest::from(end_session_url);
-//   Ok(
-//     logout_request
-//       .set_client_id(ClientId::new(
-//         super::constants::DIOXUS_FRONT_CLIENT_ID.to_string(),
-//       ))
-//       .set_id_token_hint(&id_token_hint)
-//       .http_get_url(),
-//   )
-// }
+pub async fn log_out_url(
+  id_token_hint: CoreIdToken
+) -> Result<Url, super::errors::Error> {
+  let provider_metadata = init_provider_metadata().await?;
+  let end_session_url = provider_metadata
+    .additional_metadata()
+    .clone()
+    .end_session_endpoint
+    .unwrap();
+  let logout_request: LogoutRequest = LogoutRequest::from(end_session_url);
+  Ok(
+    logout_request
+      .set_client_id(ClientId::new(
+        super::constants::DIOXUS_FRONT_CLIENT_ID.to_string(),
+      ))
+      .set_id_token_hint(&id_token_hint)
+      .http_get_url(),
+  )
+}

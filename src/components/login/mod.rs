@@ -1,14 +1,13 @@
-use crate::components::login::types::AliasClient;
-
+use self::aliases::AliasClient;
 use self::oidc::init_oidc_client;
 use dioxus::prelude::*;
 use openidconnect::ClientId;
 
+mod aliases;
 mod constants;
 mod errors;
 mod oidc;
 mod props;
-mod types;
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {

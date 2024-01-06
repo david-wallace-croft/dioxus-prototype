@@ -31,21 +31,3 @@ pub type AliasClient = Client<
   StandardRevocableToken,
   StandardErrorResponse<RevocationErrorResponseType>,
 >;
-
-pub type AliasProviderMetadata = ProviderMetadata<
-  EmptyAdditionalProviderMetadata,
-  CoreAuthDisplay,
-  CoreClientAuthMethod,
-  CoreClaimName,
-  CoreClaimType,
-  CoreGrantType,
-  CoreJweContentEncryptionAlgorithm,
-  CoreJweKeyManagementAlgorithm,
-  CoreJwsSigningAlgorithm,
-  CoreJsonWebKeyType,
-  CoreJsonWebKeyUse,
-  CoreJsonWebKey,
-  CoreResponseMode,
-  CoreResponseType,
-  CoreSubjectIdentifierType,
->;
