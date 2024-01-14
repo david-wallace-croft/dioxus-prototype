@@ -78,7 +78,8 @@ fn make_client_load_element(cx: Scope) -> Element {
     p {
     "Client:"
     br { }
-    pre {
+    p {
+      style: "white-space: pre-wrap",
     format!("{:#?}", client)
     }
     }
