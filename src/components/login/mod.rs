@@ -60,7 +60,7 @@ fn make_client_load_element(cx: Scope) -> Element {
     let error: &Error = result_ref.unwrap_err();
     return render! {
       p {
-      "Error loading client: "
+      "Error loading client:"
       br { }
       pre {
       format!("{:#?}", error)
