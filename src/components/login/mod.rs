@@ -1,10 +1,10 @@
-use self::aliases::AliasClient;
-use self::oidc::init_oidc_client;
+use self::oidc::{init_oidc_client, ClientState};
+use self::props::client::ClientProps;
 use dioxus::prelude::*;
 use errors::Error;
+use openidconnect::core::CoreClient;
 use openidconnect::ClientId;
 
-mod aliases;
 mod constants;
 mod errors;
 mod oidc;
@@ -43,9 +43,19 @@ pub fn Login(cx: Scope) -> Element {
 }
 
 fn make_client_load_element(cx: Scope) -> Element {
-  let init_client_future: &UseFuture<Result<(ClientId, AliasClient), Error>> =
+  let use_state_client_state: &UseState<ClientState> =
+    use_state(cx, || ClientState {
+      oidc_client: None,
+    });
+  if use_state_client_state.oidc_client.is_some() {
+    return make_client_state_element(
+      cx,
+      use_state_client_state.oidc_client.clone().unwrap(),
+    );
+  }
+  let init_client_future: &UseFuture<Result<(ClientId, CoreClient), Error>> =
     use_future(cx, (), |_| async move { init_oidc_client().await });
-  let option: Option<&Result<(ClientId, AliasClient), Error>> =
+  let option: Option<&Result<(ClientId, CoreClient), Error>> =
     init_client_future.value();
   if option.is_none() {
     return render! {
@@ -54,8 +64,8 @@ fn make_client_load_element(cx: Scope) -> Element {
       }
     };
   }
-  let result: &Result<(ClientId, AliasClient), Error> = option.unwrap();
-  let result_ref: Result<&(ClientId, AliasClient), &Error> = result.as_ref();
+  let result: &Result<(ClientId, CoreClient), Error> = option.unwrap();
+  let result_ref: Result<&(ClientId, CoreClient), &Error> = result.as_ref();
   if result.is_err() {
     let error: &Error = result_ref.unwrap_err();
     return render! {
@@ -68,9 +78,15 @@ fn make_client_load_element(cx: Scope) -> Element {
       }
     };
   }
-  let result_value: &(ClientId, AliasClient) = result_ref.unwrap();
+  let result_value: &(ClientId, CoreClient) = result_ref.unwrap();
   let client_id: &ClientId = &result_value.0;
-  let client: &AliasClient = &result_value.1;
+  let client: &CoreClient = &result_value.1;
+  let client_props = ClientProps::new(client_id.clone(), client.clone());
+  let client_props_option: Option<ClientProps> = Some(client_props);
+  let client_state = ClientState {
+    oidc_client: client_props_option,
+  };
+  use_state_client_state.set(client_state);
   return render! {
     p {
     format!("Client loaded with identifier {:?}", client_id)
@@ -81,6 +97,22 @@ fn make_client_load_element(cx: Scope) -> Element {
     p {
       style: "white-space: pre-wrap",
     format!("{:#?}", client)
+    }
+    }
+  };
+}
+
+fn make_client_state_element(
+  cx: Scope,
+  client_props: ClientProps,
+) -> Element {
+  return render! {
+    p {
+    "Client alread loaded:"
+    br { }
+    p {
+      style: "white-space: pre-wrap",
+    format!("{:#?}", client_props)
     }
     }
   };
