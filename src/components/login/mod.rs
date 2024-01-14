@@ -12,16 +12,14 @@ mod props;
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
-  let message: String = make_message(cx);
+  let client_load_element: Element = make_client_load_element(cx);
   render! {
   div {
     class: "app-login box",
   h1 {
   "Login"
   }
-  p {
-    message
-  }
+  client_load_element
   p {
   "Click on the following to log into the application:"
   br { }
@@ -44,22 +42,45 @@ pub fn Login(cx: Scope) -> Element {
   }
 }
 
-fn make_message(cx: Scope) -> String {
+fn make_client_load_element(cx: Scope) -> Element {
   let init_client_future: &UseFuture<Result<(ClientId, AliasClient), Error>> =
     use_future(cx, (), |_| async move { init_oidc_client().await });
   let option: Option<&Result<(ClientId, AliasClient), Error>> =
     init_client_future.value();
   if option.is_none() {
-    return String::from("Loading client; please wait...");
+    return render! {
+      p {
+      "Loading client; please wait..."
+      }
+    };
   }
   let result: &Result<(ClientId, AliasClient), Error> = option.unwrap();
   let result_ref: Result<&(ClientId, AliasClient), &Error> = result.as_ref();
   if result.is_err() {
     let error: &Error = result_ref.unwrap_err();
-    return format!("Error loading client: {:#?}", error);
+    return render! {
+      p {
+      "Error loading client: "
+      br { }
+      pre {
+      format!("{:#?}", error)
+      }
+      }
+    };
   }
   let result_value: &(ClientId, AliasClient) = result_ref.unwrap();
   let client_id: &ClientId = &result_value.0;
   let client: &AliasClient = &result_value.1;
-  format!("Client loaded: {:#?} {:#?}", client_id, client)
+  return render! {
+    p {
+    format!("Client loaded with identifier {:?}", client_id)
+    }
+    p {
+    "Client:"
+    br { }
+    pre {
+    format!("{:#?}", client)
+    }
+    }
+  };
 }
