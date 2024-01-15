@@ -23,7 +23,7 @@ pub struct AuthRequestState {
   pub auth_request: Option<AuthRequest>,
 }
 
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AuthRequest {
   pub nonce: Nonce,
   pub authorize_url: String,

@@ -1,4 +1,6 @@
-use self::oidc::{init_oidc_client, ClientState};
+use crate::components::login::oidc::{authorize_url, AuthRequest};
+
+use self::oidc::{init_oidc_client, AuthRequestState, ClientState};
 use self::props::client::ClientProps;
 use dioxus::prelude::*;
 use errors::Error;
@@ -12,7 +14,21 @@ mod props;
 
 #[allow(non_snake_case)]
 pub fn Login(cx: Scope) -> Element {
-  let client_load_element: Element = make_client_load_element(cx);
+  let use_state_auth_request_state: &UseState<AuthRequestState> =
+    use_state(cx, || AuthRequestState {
+      auth_request: None,
+    });
+  let use_state_client_state: &UseState<ClientState> =
+    use_state(cx, || ClientState {
+      oidc_client: None,
+    });
+  let client_load_element: Element =
+    make_client_load_element(cx, use_state_client_state);
+  let auth_state_element: Element = make_auth_request_state_element(
+    cx,
+    use_state_auth_request_state,
+    use_state_client_state,
+  );
   render! {
   div {
     class: "app-login box",
@@ -20,6 +36,7 @@ pub fn Login(cx: Scope) -> Element {
   "Login"
   }
   client_load_element
+  auth_state_element
   p {
   "Click on the following to log into the application:"
   br { }
@@ -42,11 +59,57 @@ pub fn Login(cx: Scope) -> Element {
   }
 }
 
-fn make_client_load_element(cx: Scope) -> Element {
-  let use_state_client_state: &UseState<ClientState> =
-    use_state(cx, || ClientState {
-      oidc_client: None,
-    });
+fn make_auth_request_element(
+  cx: Scope,
+  auth_request: AuthRequest,
+) -> Element {
+  render! {
+  p {
+    "Auth Request URL:"
+  br {
+  }
+  div {
+  style: "white-space: pre-wrap",
+  format!("{:#?}", auth_request)
+  }
+  }
+  }
+}
+
+fn make_auth_request_state_element<'a>(
+  cx: Scope<'a>,
+  use_state_auth_request_state: &'a UseState<AuthRequestState>,
+  use_state_client_state: &'a UseState<ClientState>,
+) -> Element<'a> {
+  if use_state_auth_request_state.auth_request.is_some() {
+    return make_auth_request_element(
+      cx,
+      use_state_auth_request_state.auth_request.clone().unwrap(),
+    );
+  }
+  if use_state_client_state.oidc_client.is_none() {
+    return render! {
+      p {
+      "Waiting on the client to be loaded before making an Auth Request URL..."
+      }
+    };
+  }
+  let client_props: &ClientProps =
+    use_state_client_state.oidc_client.as_ref().unwrap();
+  let client: &CoreClient = &client_props.client;
+  let auth_request: AuthRequest = authorize_url(client.clone());
+  use_state_auth_request_state.set(AuthRequestState {
+    auth_request: Some(auth_request.clone()),
+  });
+  render! {
+    make_auth_request_element(cx, auth_request)
+  }
+}
+
+fn make_client_load_element<'a>(
+  cx: Scope<'a>,
+  use_state_client_state: &'a UseState<ClientState>,
+) -> Element<'a> {
   if use_state_client_state.oidc_client.is_some() {
     return make_client_state_element(
       cx,
@@ -72,7 +135,8 @@ fn make_client_load_element(cx: Scope) -> Element {
       p {
       "Error loading client:"
       br { }
-      pre {
+      p {
+        style: "white-space: pre-wrap",
       format!("{:#?}", error)
       }
       }
