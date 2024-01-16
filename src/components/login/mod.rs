@@ -1,6 +1,7 @@
-use crate::components::login::oidc::{authorize_url, AuthRequest};
-
-use self::oidc::{init_oidc_client, AuthRequestState, ClientState};
+use self::oidc::{
+  authorize_url, init_oidc_client, AuthRequest, AuthRequestState,
+  AuthTokenState, ClientState,
+};
 use self::props::client::ClientProps;
 use dioxus::prelude::*;
 use errors::Error;
@@ -18,6 +19,11 @@ pub fn Login(cx: Scope) -> Element {
     use_state(cx, || AuthRequestState {
       auth_request: None,
     });
+  let use_state_auth_token_state: &UseState<AuthTokenState> =
+    use_state(cx, || AuthTokenState {
+      id_token: None,
+      refresh_token: None,
+    });
   let use_state_client_state: &UseState<ClientState> =
     use_state(cx, || ClientState {
       oidc_client: None,
@@ -29,6 +35,11 @@ pub fn Login(cx: Scope) -> Element {
     use_state_auth_request_state,
     use_state_client_state,
   );
+  let auth_token_state_element: Element = make_auth_token_element(
+    cx,
+    use_state_auth_request_state,
+    use_state_auth_token_state,
+  );
   render! {
   div {
     class: "app-login box",
@@ -37,6 +48,7 @@ pub fn Login(cx: Scope) -> Element {
   }
   client_load_element
   auth_state_element
+  auth_token_state_element
   p {
   "Click on the following to log into the application:"
   br { }
@@ -103,6 +115,48 @@ fn make_auth_request_state_element<'a>(
   });
   render! {
     make_auth_request_element(cx, auth_request)
+  }
+}
+
+fn make_auth_token_element<'a>(
+  cx: Scope<'a>,
+  use_state_auth_request_state: &'a UseState<AuthRequestState>,
+  use_state_auth_token_state: &'a UseState<AuthTokenState>,
+) -> Element<'a> {
+  if use_state_auth_request_state.auth_request.is_none() {
+    return render! {
+      p {
+      "Waiting on the Auth Request State to be loaded..."
+      }
+    };
+  }
+  if use_state_auth_token_state.id_token.is_none() {
+    let auth_request_ref_option: Option<&AuthRequest> =
+      use_state_auth_request_state.auth_request.as_ref();
+    let auth_request_ref: &AuthRequest = auth_request_ref_option.unwrap();
+    let authorize_url_str: &str = auth_request_ref.authorize_url.as_str();
+    return render! {
+      p {
+      "Login:"
+      a {
+        href: authorize_url_str,
+        target: "_blank",
+        authorize_url_str
+      }
+      }
+    };
+  }
+  let auth_token_state: &AuthTokenState = use_state_auth_token_state;
+  render! {
+  p {
+  "You are logged in.  AuthTokenState:"
+  br {
+  }
+  div {
+  style: "white-space: pre-wrap",
+  format!("{:#?}", auth_token_state)
+  }
+  }
   }
 }
 
