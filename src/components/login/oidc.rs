@@ -1,4 +1,5 @@
 use super::props::client::ClientProps;
+use oauth2::{PkceCodeChallenge, PkceCodeVerifier};
 use openidconnect::{
   core::{
     CoreClient, CoreErrorResponseType, CoreIdToken, CoreResponseType,
@@ -50,15 +51,19 @@ pub fn email(
 }
 
 pub fn authorize_url(client: CoreClient) -> AuthRequest {
+  let (pkce_challenge, _pkce_verifier): (PkceCodeChallenge, PkceCodeVerifier) =
+    PkceCodeChallenge::new_random_sha256();
   let (authorize_url, _csrf_state, nonce) = client
     .authorize_url(
       AuthenticationFlow::<CoreResponseType>::AuthorizationCode,
       CsrfToken::new_random,
       Nonce::new_random,
     )
-    .add_scope(openidconnect::Scope::new("email".to_string()))
-    .add_scope(openidconnect::Scope::new("profile".to_string()))
+    // .add_scope(openidconnect::Scope::new("email".to_string()))
+    // .add_scope(openidconnect::Scope::new("profile".to_string()))
+    .set_pkce_challenge(pkce_challenge)
     .url();
+  // TODO: save pkce_verifier
   AuthRequest {
     authorize_url: authorize_url.to_string(),
     nonce,
@@ -81,8 +86,10 @@ pub async fn init_oidc_client(
     ClientId::new(super::constants::DIOXUS_FRONT_CLIENT_ID.to_string());
   let provider_metadata = init_provider_metadata().await?;
   let client_secret = None;
+  // let redirect_url =
+  //   RedirectUrl::new(format!("{}/login", super::constants::DIOXUS_FRONT_URL))?;
   let redirect_url =
-    RedirectUrl::new(format!("{}/login", super::constants::DIOXUS_FRONT_URL))?;
+    RedirectUrl::new(format!("{}", super::constants::DIOXUS_FRONT_URL))?;
 
   Ok((
     client_id.clone(),
