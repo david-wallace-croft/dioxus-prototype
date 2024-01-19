@@ -1,4 +1,4 @@
-use dioxus_fullstack::prelude::*;
+use ::dioxus_fullstack::prelude::*;
 use dioxus_prototype::route::Route;
 
 #[tokio::main]

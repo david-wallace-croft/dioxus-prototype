@@ -1,7 +1,7 @@
-use ::thiserror::Error;
-use openidconnect::{
+use ::openidconnect::{
   core::CoreErrorResponseType, url, RequestTokenError, StandardErrorResponse,
 };
+use ::thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum Error {

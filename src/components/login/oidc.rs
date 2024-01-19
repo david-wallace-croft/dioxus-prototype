@@ -1,6 +1,6 @@
 use super::props::client::ClientProps;
-use oauth2::{PkceCodeChallenge, PkceCodeVerifier};
-use openidconnect::{
+use ::oauth2::{PkceCodeChallenge, PkceCodeVerifier};
+use ::openidconnect::{
   core::{
     CoreClient, CoreErrorResponseType, CoreIdToken, CoreResponseType,
     CoreTokenResponse,
@@ -11,7 +11,7 @@ use openidconnect::{
   CsrfToken, IssuerUrl, LogoutRequest, Nonce, ProviderMetadataWithLogout,
   RedirectUrl, RefreshToken, RequestTokenError, StandardErrorResponse,
 };
-use serde::{Deserialize, Serialize};
+use ::serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default)]
 pub struct ClientState {

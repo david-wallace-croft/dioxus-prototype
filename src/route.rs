@@ -1,15 +1,15 @@
-use crate::components::animation::Animation;
-use crate::components::colophon::Colophon;
-use crate::components::flashcard::Flashcard;
-use crate::components::home::Home;
-use crate::components::login::Login;
-use crate::components::page_not_found::PageNotFound;
-use crate::components::retirement::Retirement;
-use crate::components::slideshow::Slideshow;
-use crate::components::template::Template;
-use dioxus::prelude::*;
-use dioxus_router::prelude::*;
-use serde::{Deserialize, Serialize};
+use super::components::animation::Animation;
+use super::components::colophon::Colophon;
+use super::components::flashcard::Flashcard;
+use super::components::home::Home;
+use super::components::login::Login;
+use super::components::page_not_found::PageNotFound;
+use super::components::retirement::Retirement;
+use super::components::slideshow::Slideshow;
+use super::components::template::Template;
+use ::dioxus::prelude::*;
+use ::dioxus_router::prelude::*;
+use ::serde::{Deserialize, Serialize};
 
 #[derive(Clone, Routable, Debug, PartialEq, Serialize, Deserialize)]
 #[rustfmt::skip]
