@@ -18,6 +18,7 @@ impl Display for LoginQuerySegments {
 
 impl FromQuery for LoginQuerySegments {
   fn from_query(query: &str) -> Self {
+    log::info!("query: {}", query);
     let mut placeholder_option = None;
     let pairs = ::form_urlencoded::parse(query.as_bytes());
     pairs.for_each(|(key, value)| {

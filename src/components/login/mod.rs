@@ -55,7 +55,7 @@ pub fn Login(cx: Scope<LoginProps>) -> Element {
   }
   h2 {
     "Props:"
-    "{cx.props.query_params}"
+    cx.props.query_params.placeholder.clone()
   }
   client_load_element
   auth_state_element
