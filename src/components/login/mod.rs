@@ -53,6 +53,10 @@ pub fn Login(cx: Scope<LoginProps>) -> Element {
   h1 {
   "Login"
   }
+  h2 {
+    "Props:"
+    "{cx.props.query_params}"
+  }
   client_load_element
   auth_state_element
   auth_token_state_element

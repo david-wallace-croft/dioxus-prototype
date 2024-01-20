@@ -34,7 +34,7 @@ pub fn Nav(cx: Scope) -> Element {
     Link {
       active_class: "app-nav-active",
       to: Route::Login {
-        query_params: LoginQuerySegments { placeholder_option: None},
+        query_params: LoginQuerySegments { placeholder: "123".to_string()},
       },
       "Login",
     }

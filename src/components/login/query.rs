@@ -4,7 +4,7 @@ use ::std::fmt::Display;
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct LoginQuerySegments {
-  pub placeholder_option: Option<String>,
+  pub placeholder: String,
 }
 
 impl Display for LoginQuerySegments {
@@ -12,12 +12,7 @@ impl Display for LoginQuerySegments {
     &self,
     f: &mut std::fmt::Formatter<'_>,
   ) -> std::fmt::Result {
-    write!(
-      f,
-      // "placeholder={}",
-      // self.placeholder_option.as_ref().unwrap_or(&String::new())
-      ""
-    )
+    write!(f, "placeholder={}", self.placeholder)
   }
 }
 
@@ -31,7 +26,7 @@ impl FromQuery for LoginQuerySegments {
       }
     });
     Self {
-      placeholder_option,
+      placeholder: placeholder_option.unwrap_or_default(),
     }
   }
 }

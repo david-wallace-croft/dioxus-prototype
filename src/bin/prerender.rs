@@ -23,12 +23,13 @@ async fn main() {
 
 fn map_path(route: &str) -> PathBuf {
   println!("route: {}", route);
-
+  let query_index_option: Option<usize> = route.find('?');
+  let route2: String = match query_index_option {
+    Some(query_index) => route[..query_index].to_owned(),
+    None => route.to_owned(),
+  };
   let mut path = PathBuf::from(STATIC_DIR);
-  let pattern = [
-    '/', '?',
-  ];
-  for segment in route.split_terminator(pattern) {
+  for segment in route2.split_terminator('/') {
     println!("segment: {}", segment);
     path.push(segment);
   }
