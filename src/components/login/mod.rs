@@ -4,6 +4,7 @@ use self::oidc::{
   AuthTokenState, ClientState,
 };
 use self::props::client::ClientProps;
+use self::query::LoginQuerySegments;
 use ::dioxus::prelude::*;
 use ::openidconnect::core::CoreClient;
 use ::openidconnect::ClientId;
@@ -12,9 +13,15 @@ mod constants;
 mod errors;
 mod oidc;
 mod props;
+pub mod query;
+
+#[derive(PartialEq, Props)]
+pub struct LoginProps {
+  pub query_params: LoginQuerySegments,
+}
 
 #[allow(non_snake_case)]
-pub fn Login(cx: Scope) -> Element {
+pub fn Login(cx: Scope<LoginProps>) -> Element {
   let use_state_auth_request_state: &UseState<AuthRequestState> =
     use_state(cx, || AuthRequestState {
       auth_request: None,
@@ -72,7 +79,7 @@ pub fn Login(cx: Scope) -> Element {
 }
 
 fn make_auth_request_element(
-  cx: Scope,
+  cx: Scope<LoginProps>,
   auth_request: AuthRequest,
 ) -> Element {
   render! {
@@ -89,7 +96,7 @@ fn make_auth_request_element(
 }
 
 fn make_auth_request_state_element<'a>(
-  cx: Scope<'a>,
+  cx: Scope<'a, LoginProps>,
   use_state_auth_request_state: &'a UseState<AuthRequestState>,
   use_state_client_state: &'a UseState<ClientState>,
 ) -> Element<'a> {
@@ -119,7 +126,7 @@ fn make_auth_request_state_element<'a>(
 }
 
 fn make_auth_token_element<'a>(
-  cx: Scope<'a>,
+  cx: Scope<'a, LoginProps>,
   use_state_auth_request_state: &'a UseState<AuthRequestState>,
   use_state_auth_token_state: &'a UseState<AuthTokenState>,
 ) -> Element<'a> {
@@ -161,7 +168,7 @@ fn make_auth_token_element<'a>(
 }
 
 fn make_client_load_element<'a>(
-  cx: Scope<'a>,
+  cx: Scope<'a, LoginProps>,
   use_state_client_state: &'a UseState<ClientState>,
 ) -> Element<'a> {
   if use_state_client_state.oidc_client.is_some() {
@@ -221,7 +228,7 @@ fn make_client_load_element<'a>(
 }
 
 fn make_client_state_element(
-  cx: Scope,
+  cx: Scope<LoginProps>,
   client_props: ClientProps,
 ) -> Element {
   return render! {

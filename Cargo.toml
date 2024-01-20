@@ -27,6 +27,7 @@ dioxus-router = "=0.4.1"
 # TODO: Figure out how to get dioxus-std to work with static prerendering
 # dioxus-std = { version = "0.4.1", features = ["i18n"] }
 dioxus-web = "=0.4.0"
+form_urlencoded = "1.2.1"
 gloo-events = "0.2.0"
 log = "0.4.20"
 oauth2 = "4.4.2"

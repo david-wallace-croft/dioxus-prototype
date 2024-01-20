@@ -1,3 +1,4 @@
+use crate::components::login::query::LoginQuerySegments;
 use crate::route::Route;
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
@@ -32,7 +33,9 @@ pub fn Nav(cx: Scope) -> Element {
     li {
     Link {
       active_class: "app-nav-active",
-      to: Route::Login {},
+      to: Route::Login {
+        query_params: LoginQuerySegments { placeholder_option: None},
+      },
       "Login",
     }
     }
