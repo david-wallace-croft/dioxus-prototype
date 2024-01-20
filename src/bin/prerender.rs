@@ -22,12 +22,16 @@ async fn main() {
 }
 
 fn map_path(route: &str) -> PathBuf {
+  println!("route: {}", route);
+
   let mut path = PathBuf::from(STATIC_DIR);
   let pattern = [
     '/', '?',
   ];
-  for segment in route.split(pattern) {
+  for segment in route.split_terminator(pattern) {
+    println!("segment: {}", segment);
     path.push(segment);
   }
+  println!("path: {}", path.display());
   path
 }

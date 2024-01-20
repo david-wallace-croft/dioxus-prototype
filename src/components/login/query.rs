@@ -14,8 +14,9 @@ impl Display for LoginQuerySegments {
   ) -> std::fmt::Result {
     write!(
       f,
-      "placeholder={}",
-      self.placeholder_option.as_ref().unwrap_or(&String::new())
+      // "placeholder={}",
+      // self.placeholder_option.as_ref().unwrap_or(&String::new())
+      ""
     )
   }
 }
