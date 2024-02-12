@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 #[allow(non_snake_case)]
-#[inline_props]
+#[component]
 pub fn PageNotFound(
   cx: Scope,
   route: Vec<String>,

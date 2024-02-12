@@ -1,4 +1,3 @@
-use crate::components::login::query::LoginQuerySegments;
 use crate::route::Route;
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
@@ -28,15 +27,6 @@ pub fn Nav(cx: Scope) -> Element {
       active_class: "app-nav-active",
       to: Route::Flashcard {},
       "Flashcard",
-    }
-    }
-    li {
-    Link {
-      active_class: "app-nav-active",
-      to: Route::Login {
-        query_params: LoginQuerySegments { placeholder: "123".to_string()},
-      },
-      "Login",
     }
     }
     li {

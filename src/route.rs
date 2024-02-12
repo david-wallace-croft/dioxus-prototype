@@ -2,8 +2,6 @@ use super::components::animation::Animation;
 use super::components::colophon::Colophon;
 use super::components::flashcard::Flashcard;
 use super::components::home::Home;
-use super::components::login::query::LoginQuerySegments;
-use super::components::login::Login;
 use super::components::page_not_found::PageNotFound;
 use super::components::retirement::Retirement;
 use super::components::slideshow::Slideshow;
@@ -24,10 +22,6 @@ pub enum Route {
     Colophon {},
     #[route("/flashcard")]
     Flashcard {},
-    #[route("/login?:query_params")]
-    Login {
-      query_params: LoginQuerySegments,
-    },
     #[route("/retirement")]
     Retirement {},
     #[route("/slideshow")]
