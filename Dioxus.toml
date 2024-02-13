@@ -10,7 +10,7 @@ required = []
 
 [bundler]
 category = "Utility"
-copyright = "Copyright 2022-2023 CroftSoft Inc"
+copyright = "Copyright 2022-2024 CroftSoft Inc"
 icon = ["icons/icon.png"]
 identifier = "com.croftsoft.app.dioxus-prototype"
 long_description = """
@@ -31,6 +31,7 @@ watch_path = ["src", "assets"]
 script = []
 style = [
   "/app-animation.css",
+  "/app-barchart.css",
   "/app-colophon.css",
   "/app-flashcard.css",
   "/app-home.css",

@@ -6,7 +6,7 @@ pub fn Footer(cx: Scope) -> Element {
     footer {
       class: "box",
       dangerous_inner_html: "&copy;",
-    " 2023 "
+    " 2023-2024 "
     a {
       href: "https://www.CroftSoft.com/",
       target: "_blank",

@@ -25,6 +25,13 @@ pub fn Nav(cx: Scope) -> Element {
     li {
     Link {
       active_class: "app-nav-active",
+      to: Route::Barchart {},
+      "Barchart",
+    }
+    }
+    li {
+    Link {
+      active_class: "app-nav-active",
       to: Route::Flashcard {},
       "Flashcard",
     }

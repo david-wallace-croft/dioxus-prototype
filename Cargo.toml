@@ -9,7 +9,7 @@ name = "dioxus-prototype"
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
-version = "0.2.0-SNAPSHOT"
+version = "0.2.0"
 
 [[bin]]
 name = "prerender"
@@ -20,6 +20,7 @@ async-std = "1.12.0"
 com-croftsoft-core = "0.14.0"
 com-croftsoft-lib-string = "0.1.0"
 dioxus = "=0.4.3"
+dioxus-charts = "0.1.3"
 dioxus-fullstack = { version = "=0.4.3", optional = true }
 dioxus-router = "=0.4.3"
 dioxus-web = "=0.4.3"
