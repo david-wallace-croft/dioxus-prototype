@@ -1,3 +1,7 @@
+:root {
+  --app-button-border-color: rgb(227, 227, 227);
+}
+
 @keyframes app-fade-in {
   0% {
     opacity: 0
