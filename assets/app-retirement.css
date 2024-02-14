@@ -19,6 +19,7 @@
 .app-retirement .app-reset {
   color: white;
   background-color: #b7410e;
+  border-color: var(--app-button-border-color);
   border-radius: 0.5rem;
   padding: 0.5rem;
 }
