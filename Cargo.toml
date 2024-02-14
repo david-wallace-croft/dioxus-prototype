@@ -9,7 +9,7 @@ name = "dioxus-prototype"
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
-version = "0.2.1-SNAPSHOT"
+version = "0.2.1"
 
 [[bin]]
 name = "prerender"
