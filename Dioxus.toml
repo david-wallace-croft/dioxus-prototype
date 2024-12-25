@@ -30,15 +30,15 @@ watch_path = ["src", "assets"]
 [web.resource]
 script = []
 style = [
-  "/app-animation.css",
-  "/app-barchart.css",
-  "/app-colophon.css",
-  "/app-flashcard.css",
-  "/app-home.css",
-  "/app-nav.css",
-  "/app-retirement.css",
-  "/app-slideshow.css",
-  "/stylesheet.css",
+  "/assets/app-animation.css",
+  "/assets/app-barchart.css",
+  "/assets/app-colophon.css",
+  "/assets/app-flashcard.css",
+  "/assets/app-home.css",
+  "/assets/app-nav.css",
+  "/assets/app-retirement.css",
+  "/assets/app-slideshow.css",
+  "/assets/stylesheet.css",
 ]
 
 [web.resource.dev]

@@ -1,8 +1,9 @@
-use dioxus::prelude::*;
+use ::dioxus::prelude::*;
 
 #[allow(non_snake_case)]
-pub fn Colophon(cx: Scope) -> Element {
-  render! {
+#[component]
+pub fn Colophon() -> Element {
+  rsx! {
     div {
       class: "app-colophon box",
     h1 {

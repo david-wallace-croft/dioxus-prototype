@@ -1,23 +1,18 @@
-use crate::components::translator::SharedState;
-use dioxus::prelude::*;
+use ::dioxus::prelude::*;
+
+pub static LANGUAGE: GlobalSignal<String> = Signal::global(|| "en".to_string());
 
 #[allow(non_snake_case)]
-pub fn LanguageSelector(cx: Scope) -> Element {
-  let use_shared_state_option = use_shared_state::<SharedState>(cx);
-  let shared_state_lang: String = match use_shared_state_option {
-    Some(use_shared_state) => use_shared_state.read().lang.clone(),
-    None => "en".to_string(),
-  };
-  let selected_en: bool = "en".eq(&shared_state_lang);
-  let selected_es: bool = "es".eq(&shared_state_lang);
-  render! {
+#[component]
+pub fn LanguageSelector() -> Element {
+  let selected_en: bool = "en".eq(LANGUAGE.read().as_str());
+  let selected_es: bool = "es".eq(LANGUAGE.read().as_str());
+  rsx! {
     div {
       class: "app-language-selector",
     select {
       onchange: move |event: FormEvent| {
-        if let Some(use_shared_state) = use_shared_state_option {
-          *use_shared_state.write() = SharedState { lang: event.value.clone() };
-        }
+        *LANGUAGE.write() = event.value();
       },
       option {
         label: "English",

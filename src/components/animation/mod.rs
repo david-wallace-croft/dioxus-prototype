@@ -1,13 +1,13 @@
-use dioxus::html::geometry::WheelDelta;
-use dioxus::prelude::*;
-use dioxus_elements::geometry::WheelDelta::*;
-use rand::distributions::Distribution;
-use rand::distributions::Uniform;
-use rand::rngs::ThreadRng;
-use std::ops::RangeInclusive;
-use std::time::Duration;
-use wasm_bindgen::{JsCast, JsValue};
-use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement};
+use ::dioxus::prelude::*;
+use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
+use ::rand::distributions::Distribution;
+use ::rand::distributions::Uniform;
+use ::rand::rngs::ThreadRng;
+use ::std::ops::RangeInclusive;
+use ::std::time::Duration;
+use ::tracing::info;
+use ::web_sys::wasm_bindgen::{JsCast, JsValue};
+use ::web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement};
 
 // https://docs.rs/dioxus-hooks/latest/dioxus_hooks/
 // use dioxus::hooks::*;
@@ -16,6 +16,7 @@ const CANVAS_ID: &str = "home-page-canvas";
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
 const MESSAGE_START: &str = "Click on or tab to the canvas";
 
+#[derive(Clone, Copy)]
 struct Color {
   blue: u8,
   green: u8,
@@ -37,32 +38,34 @@ impl Color {
 }
 
 #[allow(non_snake_case)]
-pub fn Animation(cx: Scope) -> Element {
-  let click_count_state: &UseState<i32> = use_state(cx, || 0);
-  let color_state: &UseState<Color> = use_state(cx, generate_random_color);
-  let message_state: &UseState<&str> = use_state(cx, || MESSAGE_START);
-  let running_state: &UseState<bool> = use_state(cx, || true);
-  let update_state: &UseState<bool> = use_state(cx, || true);
+#[component]
+pub fn Animation() -> Element {
+  let mut click_count_state: Signal<i32> = use_signal(|| 0);
+  let mut color_state: Signal<Color> = use_signal(generate_random_color);
+  let mut message_state: Signal<&str> = use_signal(|| MESSAGE_START);
+  let mut running_state: Signal<bool> = use_signal(|| true);
+  let mut update_state: Signal<bool> = use_signal(|| true);
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/use_effect.rs
-  use_future(cx, (), |()| {
+  use_future(move || {
     to_owned![color_state];
     to_owned![message_state];
     to_owned![running_state];
     to_owned![update_state];
     async move {
       loop {
-        if *running_state.current() || *update_state.current() {
+        if *running_state.read() || *update_state.read() {
           update_state.set(false);
-          color_state.set(drift_color(&color_state.current()));
-          let fill_style: JsValue = color_state.current().to_fill_style();
-          paint(&fill_style, *message_state.current());
+          let color: Color = *color_state.read();
+          color_state.set(drift_color(&color));
+          let fill_style: JsValue = color_state.read().to_fill_style();
+          paint(&fill_style, *message_state.read());
         }
         async_std::task::sleep(Duration::from_millis(17u64)).await;
       }
     }
   });
-  render! {
+  rsx! {
     div {
       class: "app-animation box",
     h1 {
@@ -73,11 +76,11 @@ pub fn Animation(cx: Scope) -> Element {
       cursor: "crosshair",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onblur: move |event| on_blur(event, message_state, running_state),
-      onclick: move |event| on_click(event, click_count_state, color_state, update_state),
-      onfocus: move |event| on_focus(event, message_state, running_state, update_state),
-      onkeydown: move |event| on_key_down(event, color_state, update_state),
-      onwheel: move |event| on_wheel(event, color_state, update_state),
+      onblur: move |event| on_blur(event, &mut message_state, &mut running_state),
+      onclick: move |event| on_click(event, &mut click_count_state, &mut color_state, &mut update_state),
+      onfocus: move |event| on_focus(event, &mut message_state, &mut running_state, &mut update_state),
+      onkeydown: move |event| on_key_down(event, &mut color_state, &mut update_state),
+      onwheel: move |event| on_wheel(event, &mut color_state, &mut update_state),
       tabindex: 0,
       width: "600",
     }
@@ -116,8 +119,8 @@ fn generate_random_color() -> Color {
 
 fn on_blur(
   _event: Event<FocusData>,
-  message_state: &UseState<&str>,
-  running_state: &UseState<bool>,
+  message_state: &mut Signal<&str>,
+  running_state: &mut Signal<bool>,
 ) {
   // log::info!("onblur Event: {event:?}");
   message_state.set(MESSAGE_START);
@@ -126,23 +129,24 @@ fn on_blur(
 
 fn on_click(
   _event: Event<MouseData>,
-  mut click_count_state: &UseState<i32>,
-  _color_state: &UseState<Color>,
-  _update_state: &UseState<bool>,
+  click_count_state: &mut Signal<i32>,
+  _color_state: &mut Signal<Color>,
+  _update_state: &mut Signal<bool>,
 ) {
   // log::info!("onclick Event: {event:?}");
-  click_count_state += 1;
-  let current_value = *click_count_state.current();
-  log::info!("click count: {current_value:?}");
+  let click_count: i32 = *click_count_state.read();
+  click_count_state.set(click_count + 1);  
+  let current_value: i32 = *click_count_state.read();
+  info!("click count: {current_value:?}");
   // color_state.set(generate_random_color());
   // update_state.set(true);
 }
 
 fn on_focus(
   _event: Event<FocusData>,
-  message_state: &UseState<&str>,
-  running_state: &UseState<bool>,
-  update_state: &UseState<bool>,
+  message_state: &mut Signal<&str>,
+  running_state: &mut Signal<bool>,
+  update_state: &mut Signal<bool>,
 ) {
   // log::info!("onfocus Event: {event:?}");
   message_state.set(MESSAGE_CONTROLS);
@@ -152,18 +156,19 @@ fn on_focus(
 
 fn on_key_down(
   _event: Event<KeyboardData>,
-  color_state: &UseState<Color>,
-  update_state: &UseState<bool>,
+  color_state: &mut Signal<Color>,
+  update_state: &mut Signal<bool>,
 ) {
   // log::info!("onkeydown Event: {event:?}");
-  color_state.set(drift_color(&color_state.current()));
+  let color: Color = *color_state.read();
+  color_state.set(drift_color(&color));
   update_state.set(true);
 }
 
 fn on_wheel(
   event: Event<WheelData>,
-  color_state: &UseState<Color>,
-  update_state: &UseState<bool>,
+  color_state: &mut Signal<Color>,
+  update_state: &mut Signal<bool>,
 ) {
   // log::info!("onwheel Event: {event:?}");
   let wheel_delta: WheelDelta = event.delta();
@@ -173,7 +178,8 @@ fn on_wheel(
     Pixels(pixels_vector) => pixels_vector.y,
   };
   let delta: i8 = delta.clamp(-1., 1.) as i8;
-  color_state.set(shift_color(&color_state.current(), delta));
+  let color: Color = color_state.read().clone();
+  color_state.set(shift_color(&color, delta));
   update_state.set(true);
 }
 

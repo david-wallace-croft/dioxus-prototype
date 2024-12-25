@@ -1,12 +1,9 @@
-use dioxus::prelude::*;
+use ::dioxus::prelude::*;
 
 #[allow(non_snake_case)]
 #[component]
-pub fn PageNotFound(
-  cx: Scope,
-  route: Vec<String>,
-) -> Element {
-  render! {
+pub fn PageNotFound(route: Vec<String>) -> Element {
+  rsx! {
       h1 { "Page not found" }
       p { "We are terribly sorry, but the page you requested doesn't exist." }
       pre {

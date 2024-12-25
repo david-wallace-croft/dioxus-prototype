@@ -3,12 +3,13 @@ mod link_button;
 mod question_text;
 mod show_button;
 
-use crate::components::flashcard::answer_button::{AnswerButton, Mode};
-use crate::components::flashcard::link_button::LinkButton;
-use crate::components::flashcard::question_text::QuestionText;
-use crate::components::flashcard::show_button::ShowButton;
-use dioxus::prelude::*;
-use web_sys::window;
+use super::super::components::flashcard::answer_button::{AnswerButton, Mode};
+use super::super::components::flashcard::link_button::LinkButton;
+use super::super::components::flashcard::question_text::QuestionText;
+use super::super::components::flashcard::show_button::ShowButton;
+use ::dioxus::prelude::*;
+use ::tracing::info;
+use ::web_sys::window;
 
 struct Card {
   answers: Vec<String>,
@@ -32,33 +33,33 @@ impl Default for Card {
 }
 
 #[allow(non_snake_case)]
-pub fn Flashcard(cx: Scope) -> Element {
+#[component]
+pub fn Flashcard() -> Element {
   let card = Card::default();
-  let link_button_disabled_state: &UseState<bool> = use_state(cx, || true);
-  let modes: &UseRef<Vec<Mode>> =
-    use_ref(cx, || vec![Mode::Untouched; card.answers.len()]);
-  let show_button_disabled_state: &UseState<bool> = use_state(cx, || false);
-  let message_state: &UseRef<String> = use_ref(cx, || "".to_owned());
-  render! {
+  let mut link_button_disabled_state: Signal<bool> = use_signal(|| true);
+  let mut modes: Signal<Vec<Mode>> = use_signal(|| vec![Mode::Untouched; card.answers.len()]);
+  let mut show_button_disabled_state: Signal<bool> = use_signal(|| false);
+  let mut message_state: Signal<String> = use_signal(|| "".to_owned());
+  rsx! {
   div {
     class: "app-flashcard box",
-    onclick: move |_event| on_click_flashcard(message_state),
+    onclick: move |_event| on_click_flashcard(&mut message_state),
   div {
     display: "flex",
     flex_wrap: "wrap",
     gap: "1rem",
   ShowButton {
-    disabled: *show_button_disabled_state.get(),
+    disabled: *show_button_disabled_state.read(),
     on_click: move |event| on_click_show_button(
       card.correct_answer_index,
       event,
-      link_button_disabled_state,
-      modes,
-      show_button_disabled_state,
+      &mut link_button_disabled_state,
+      &mut modes,
+      &mut show_button_disabled_state,
     ),
   }
   LinkButton {
-    disabled: *link_button_disabled_state.get(),
+    disabled: *link_button_disabled_state.read(),
     on_click: on_click_link_button,
   }
   }
@@ -80,16 +81,16 @@ pub fn Flashcard(cx: Scope) -> Element {
         card.correct_answer_index,
         event,
         index,
-        link_button_disabled_state,
-        message_state,
-        modes,
-        show_button_disabled_state,
+        &mut link_button_disabled_state,
+        &mut message_state,
+        &mut modes,
+        &mut show_button_disabled_state,
       ),
     }
   }
   }
   p {
-    message_state.read().clone()
+    "{message_state}"
   }
   }
   }
@@ -99,12 +100,12 @@ fn on_click_answer_button(
   correct_answer_index: usize,
   event: MouseEvent,
   index: usize,
-  link_button_disabled_state: &UseState<bool>,
-  message_state: &UseRef<String>,
-  modes_state: &UseRef<Vec<Mode>>,
-  show_button_disabled_state: &UseState<bool>,
+  link_button_disabled_state: &mut Signal<bool>,
+  message_state: &mut Signal<String>,
+  modes_state: &mut Signal<Vec<Mode>>,
+  show_button_disabled_state: &mut Signal<bool>,
 ) {
-  log::info!("AnswerButton clicked: {event:?}");
+  tracing::info!("AnswerButton clicked: {event:?}");
   if index == correct_answer_index {
     if let Mode::Correct = modes_state.with(|modes| modes[index]) {
       reset(
@@ -128,12 +129,12 @@ fn on_click_answer_button(
   }
 }
 
-fn on_click_flashcard(message_state: &UseRef<String>) {
+fn on_click_flashcard(message_state: &mut Signal<String>) {
   message_state.set("Click on an answer button to continue.".to_owned());
 }
 
 fn on_click_link_button(event: MouseEvent) {
-  log::info!("Clicked! {event:?}");
+  info!("Clicked! {event:?}");
   let _ = window().unwrap().open_with_url_and_target(
     "https://en.wikipedia.org/wiki/Rust_(programming_language)",
     "_blank",
@@ -143,11 +144,11 @@ fn on_click_link_button(event: MouseEvent) {
 fn on_click_show_button(
   correct_answer_index: usize,
   event: MouseEvent,
-  link_button_disabled_state: &UseState<bool>,
-  modes_state: &UseRef<Vec<Mode>>,
-  show_button_disabled_state: &UseState<bool>,
+  link_button_disabled_state: &mut Signal<bool>,
+  modes_state: &mut Signal<Vec<Mode>>,
+  show_button_disabled_state: &mut Signal<bool>,
 ) {
-  log::info!("Show button clicked: {event:?}");
+  info!("Show button clicked: {event:?}");
   modes_state.with_mut(|modes| {
     modes.fill(Mode::Disabled);
     modes[correct_answer_index] = Mode::Correct;
@@ -157,10 +158,10 @@ fn on_click_show_button(
 }
 
 fn reset(
-  link_button_disabled_state: &UseState<bool>,
-  message_state: &UseRef<String>,
-  modes_state: &UseRef<Vec<Mode>>,
-  show_button_disabled_state: &UseState<bool>,
+  link_button_disabled_state: &mut Signal<bool>,
+  message_state: &mut Signal<String>,
+  modes_state: &mut Signal<Vec<Mode>>,
+  show_button_disabled_state: &mut Signal<bool>,
 ) {
   link_button_disabled_state.set(true);
   message_state.set("".to_owned());

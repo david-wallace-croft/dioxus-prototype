@@ -8,7 +8,6 @@ use super::components::retirement::Retirement;
 use super::components::slideshow::Slideshow;
 use super::components::template::Template;
 use ::dioxus::prelude::*;
-use ::dioxus_router::prelude::*;
 use ::serde::{Deserialize, Serialize};
 
 #[derive(Clone, Routable, Debug, PartialEq, Serialize, Deserialize)]

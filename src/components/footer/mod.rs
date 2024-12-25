@@ -1,8 +1,9 @@
-use dioxus::prelude::*;
+use ::dioxus::prelude::*;
 
 #[allow(non_snake_case)]
-pub fn Footer(cx: Scope) -> Element {
-  render! {
+#[component]
+pub fn Footer() -> Element {
+  rsx! {
     footer {
       class: "box",
       dangerous_inner_html: "&copy;",

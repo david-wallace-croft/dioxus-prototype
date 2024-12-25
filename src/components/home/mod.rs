@@ -1,10 +1,11 @@
 use crate::route::Route;
-use dioxus::prelude::*;
+use ::dioxus::prelude::*;
 use dioxus_router::prelude::Link;
 
 #[allow(non_snake_case)]
-pub fn Home(cx: Scope) -> Element {
-  render! {
+#[component]
+pub fn Home() -> Element {
+  rsx! {
   div {
     class: "app-home box",
   h1 {

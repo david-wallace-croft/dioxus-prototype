@@ -1,9 +1,9 @@
-use crate::components::slideshow::control_panel::ControlPanel;
-use async_std::task::sleep;
-use dioxus::prelude::*;
-use gloo_events::EventListener;
-use std::time::Duration;
-use web_sys::Document;
+use super::super::components::slideshow::control_panel::ControlPanel;
+use ::dioxus::prelude::*;
+use ::async_std::task::sleep;
+use ::gloo_events::EventListener;
+use ::std::time::Duration;
+use ::web_sys::Document;
 
 mod control_panel;
 
@@ -21,6 +21,7 @@ static IMAGE_NAMES: [&str; 5] = [
 ];
 static IMAGE_PATH_PREFIX: &str = "/slideshow/";
 
+#[derive(Clone)]
 struct SlideshowState {
   control_panel_time_remaining: u64,
   image_index: usize,
@@ -29,18 +30,21 @@ struct SlideshowState {
 }
 
 #[allow(non_snake_case)]
-pub fn Slideshow(cx: Scope) -> Element {
-  let fullscreen_event_listener_option_state: &UseState<Option<EventListener>> =
-    use_state(cx, || None);
-  let fullscreen_state: &UseState<bool> = use_state(cx, || false);
-  let slideshow_state_use_ref: &UseRef<SlideshowState> =
-    use_ref(cx, || SlideshowState {
+#[component]
+pub fn Slideshow() -> Element {
+  let fullscreen_event_listener_option_state: Signal<Option<EventListener>> = use_signal(|| None);
+
+  let fullscreen_state: Signal<bool> = use_signal(|| false);
+
+  let mut slideshow_state_use_ref: Signal<SlideshowState> =
+    use_signal(|| SlideshowState {
       control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
       image_index: 0,
       image_source: make_image_source(0),
       image_time_remaining: IMAGE_DISPLAY_TIME,
     });
-  use_future(cx, (), |_| {
+
+  use_future(move || {
     to_owned![slideshow_state_use_ref];
     async move {
       loop {
@@ -58,7 +62,8 @@ pub fn Slideshow(cx: Scope) -> Element {
       }
     }
   });
-  use_future(cx, (), |_| {
+
+  use_future(move || {
     to_owned![fullscreen_event_listener_option_state];
     to_owned![fullscreen_state];
     async move {
@@ -78,10 +83,11 @@ pub fn Slideshow(cx: Scope) -> Element {
       fullscreen_event_listener_option_state.set(Some(event_listener));
     }
   });
-  render! {
+
+  rsx! {
     div {
       class: "app-slideshow box",
-      onmousemove: move |_event| on_mouse_move(slideshow_state_use_ref),
+      onmousemove: move |_event| on_mouse_move(&mut slideshow_state_use_ref),
     h1 {
       class: "app-title",
       "Slideshow"
@@ -89,17 +95,15 @@ pub fn Slideshow(cx: Scope) -> Element {
     div {
       id: "slideshow",
     if slideshow_state_use_ref.with(|state| state.control_panel_time_remaining > 0) {
-      render! {
-        ControlPanel {
-          fading: slideshow_state_use_ref.with(|state|
-            state.control_panel_time_remaining < CONTROL_PANEL_FADE_TIME),
-          fullscreen: *fullscreen_state.get(),
-          on_click_fullscreen: move |_event| fullscreen(),
-          on_click_skip: move |_event|
-            slideshow_state_use_ref.with_mut(|state: &mut SlideshowState| {
-              next_image(state);
-            }),
-        }
+      ControlPanel {
+        fading: slideshow_state_use_ref.with(|state|
+          state.control_panel_time_remaining < CONTROL_PANEL_FADE_TIME),
+        fullscreen: *fullscreen_state.read(),
+        on_click_fullscreen: move |_event| fullscreen(),
+        on_click_skip: move |_event|
+          slideshow_state_use_ref.with_mut(|state: &mut SlideshowState| {
+            next_image(state);
+          }),
       }
     }
     img {
@@ -137,8 +141,12 @@ fn next_image(state: &mut SlideshowState) {
   state.image_time_remaining = IMAGE_DISPLAY_TIME;
 }
 
-fn on_mouse_move(slideshow_state_use_ref: &UseRef<SlideshowState>) {
-  slideshow_state_use_ref.with_mut(|state| {
-    state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
-  });
+fn on_mouse_move(slideshow_state_use_ref: &mut Signal<SlideshowState>) {
+  // TODO: Can we simplify?
+
+  let mut slideshow_state: SlideshowState = slideshow_state_use_ref.read().clone();
+
+  slideshow_state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
+
+  slideshow_state_use_ref.set(slideshow_state)
 }

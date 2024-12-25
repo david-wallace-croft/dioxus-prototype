@@ -1,16 +1,25 @@
 use ::com_croftsoft_lib_string::to_dollars;
 use ::dioxus::prelude::*;
 use ::dioxus_charts::BarChart;
+// use ::dioxus_elements::optgroup::label;
 
 #[allow(non_snake_case)]
-pub fn Barchart(cx: Scope) -> Element {
+#[component]
+pub fn Barchart() -> Element {
   let labels = vec![
     "GOAL".into(),
     "TOTAL RAISED".into(),
     "CORPORATE PLEDGES".into(),
     "INDIVIDUAL DONATIONS".into(),
   ];
-  render! {
+
+  fn label_interpolation(v: f32) -> String {
+    to_dollars(v as f64)
+  }
+
+  let label_interpolation_option: Option<fn(f32) -> String> = Some(label_interpolation);
+
+  rsx! {
   div {
     class: "app-barchart box",
   h1 {
@@ -23,7 +32,7 @@ pub fn Barchart(cx: Scope) -> Element {
     // height: "50%",
     highest: 50_000.,
     horizontal_bars: true,
-    label_interpolation: |v| to_dollars(v as f64),
+    label_interpolation: label_interpolation_option,
     label_size: 120,
     labels: labels,
     max_ticks: 0,

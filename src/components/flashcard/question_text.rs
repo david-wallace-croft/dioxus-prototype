@@ -1,16 +1,12 @@
-use dioxus::prelude::*;
-
-#[derive(Props)]
-pub struct Props<'a> {
-  text: &'a str,
-}
+use ::dioxus::prelude::*;
 
 #[allow(non_snake_case)]
-pub fn QuestionText<'a>(cx: Scope<'a, Props<'a>>) -> Element<'a> {
-  render! {
+#[component]
+pub fn QuestionText(text: &'static str) -> Element {
+  rsx! {
     span {
       class: "app-question-text",
-    "{cx.props.text}"
+    "{text}"
     }
   }
 }
