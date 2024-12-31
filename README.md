@@ -9,6 +9,13 @@
 - Makes a Content Delivery Network (CDN)-compatible static HTML distribution
   - Includes static prerendering with client-side hydration
 
+## Updated to Dioxus v0.6
+
+- I recently updated the code from Dioxus v0.4 to v0.6
+- Many of the instructions below are now outdated
+- See the script build-serve-dist.sh for the new way to build the project
+- Or see the README.md in my other project dioxus-demo
+
 ## Online Demonstration
 
 - An online demonstration is available at this website:
