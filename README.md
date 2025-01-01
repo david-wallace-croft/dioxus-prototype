@@ -93,4 +93,5 @@
 
 ## History
 
-- Initial release: 2022-08-21
+- 2022-08-21: Initial release
+- 2024-12-30: Updated from Dioxus v0.4 to v0.6
