@@ -7,9 +7,9 @@
   "devDependencies": {
     "http-server": "^14.1.1",
     "prettier": "3.2.5",
-    "rimraf": "^5.0.5"
+    "rimraf": "^6.0.1"
   },
-  "homepage": "https://github.com/david-wallace-croft/dioxus-prototype#readme",
+  "homepage": "https://github.com/david-wallace-croft/dioxus-prototype",
   "keywords": [
     "Dioxus"
   ],
@@ -20,15 +20,17 @@
     "url": "git+https://github.com/david-wallace-croft/dioxus-prototype.git"
   },
   "scripts": {
-    "clean": "rimraf dist",
-    "dist": "npm run clean && npm run make",
+    "build": "dx build --release --ssg",
+    "clean": "rimraf dist/ && rimraf static/ && rimraf target/dx/",
+    "dist": "npm run clean && npm run build && npm run merge",
     "format": "prettier dist --ignore-path .prettierignore --write",
-    "hydrate": "dx build --features=hydrate --release",
-    "prerender": "cargo run --bin prerender --features=prerender --release",
-    "make": "npm run hydrate && npm run prerender && npm run format",
-    "serve": "http-server dist -o",
-    "start": "dx serve --hot-reload --release",
+    "merge": "mkdir dist && npm run merge1 && npm run merge2 && npm run merge3",
+    "merge1": "cp -r target/dx/dioxus-prototype/release/web/public/* dist/",
+    "merge2": "cp -r static/* dist/",
+    "merge3": "cp -r merge/* dist/",
+    "serve": "http-server dist -c-1 -o",
+    "start": "dx serve --open",
     "test": "npm run dist && npm run serve"
   },
-  "version": "0.2.0-SNAPSHOT"
+  "version": "0.6.0-SNAPSHOT"
 }
