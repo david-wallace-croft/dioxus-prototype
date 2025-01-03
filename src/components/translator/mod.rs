@@ -14,7 +14,8 @@ pub fn Translator(
 ) -> Element {
   let language_result = LANGUAGE.try_read();
 
-  let language: String = language_result.map_or("en".to_string(), |lang| lang.clone());
+  let language: String =
+    language_result.map_or("en".to_string(), |lang| lang.clone());
 
   if "es".eq(&language) {
     rsx! { "{es}" }

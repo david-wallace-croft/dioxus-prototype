@@ -1,12 +1,12 @@
-use ::dioxus::prelude::*;
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
+use ::dioxus::prelude::*;
 use ::rand::distributions::Distribution;
 use ::rand::distributions::Uniform;
 use ::rand::rngs::ThreadRng;
 use ::std::ops::RangeInclusive;
 use ::std::time::Duration;
 use ::tracing::info;
-use ::web_sys::wasm_bindgen::{JsCast, JsValue};
+use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement};
 
 // https://docs.rs/dioxus-hooks/latest/dioxus_hooks/
@@ -24,16 +24,14 @@ struct Color {
 }
 
 impl Color {
-  // TODO: Use From or Into
-  fn to_fill_style(&self) -> JsValue {
-    let Color {
+  fn as_fill_style_string(&self) -> String {
+    let &Color {
       blue,
       green,
       red,
     } = self;
-    let rgb: String = format!("rgb({red}, {green}, {blue})");
-    // log::info!("{rgb}");
-    JsValue::from_str(&rgb)
+
+    format!("rgb({red}, {green}, {blue})")
   }
 }
 
@@ -58,7 +56,7 @@ pub fn Animation() -> Element {
           update_state.set(false);
           let color: Color = *color_state.read();
           color_state.set(drift_color(&color));
-          let fill_style: JsValue = color_state.read().to_fill_style();
+          let fill_style: String = color_state.read().as_fill_style_string();
           paint(&fill_style, *message_state.read());
         }
         async_std::task::sleep(Duration::from_millis(17u64)).await;
@@ -135,7 +133,7 @@ fn on_click(
 ) {
   // log::info!("onclick Event: {event:?}");
   let click_count: i32 = *click_count_state.read();
-  click_count_state.set(click_count + 1);  
+  click_count_state.set(click_count + 1);
   let current_value: i32 = *click_count_state.read();
   info!("click count: {current_value:?}");
   // color_state.set(generate_random_color());
@@ -178,13 +176,13 @@ fn on_wheel(
     Pixels(pixels_vector) => pixels_vector.y,
   };
   let delta: i8 = delta.clamp(-1., 1.) as i8;
-  let color: Color = color_state.read().clone();
+  let color: Color = *color_state.read();
   color_state.set(shift_color(&color, delta));
   update_state.set(true);
 }
 
 fn paint(
-  fill_style: &JsValue,
+  fill_style: &str,
   message: &str,
 ) {
   let window = window().expect("global window does not exists");
@@ -202,10 +200,10 @@ fn paint(
     .unwrap();
   let canvas_height: f64 = html_canvas_element.height() as f64;
   let canvas_width: f64 = html_canvas_element.width() as f64;
-  canvas_context.set_fill_style(fill_style);
+  canvas_context.set_fill_style_str(fill_style);
   canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
   canvas_context.set_font("30px Verdana");
-  canvas_context.set_fill_style(&JsValue::from_str("black"));
+  canvas_context.set_fill_style_str("black");
   let _ = canvas_context.fill_text(message, 4., 30.);
 }
 

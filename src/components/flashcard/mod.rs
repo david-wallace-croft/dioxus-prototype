@@ -37,7 +37,8 @@ impl Default for Card {
 pub fn Flashcard() -> Element {
   let card = Card::default();
   let mut link_button_disabled_state: Signal<bool> = use_signal(|| true);
-  let mut modes: Signal<Vec<Mode>> = use_signal(|| vec![Mode::Untouched; card.answers.len()]);
+  let mut modes: Signal<Vec<Mode>> =
+    use_signal(|| vec![Mode::Untouched; card.answers.len()]);
   let mut show_button_disabled_state: Signal<bool> = use_signal(|| false);
   let mut message_state: Signal<String> = use_signal(|| "".to_owned());
   rsx! {

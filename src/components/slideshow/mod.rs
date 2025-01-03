@@ -1,6 +1,6 @@
 use super::super::components::slideshow::control_panel::ControlPanel;
-use ::dioxus::prelude::*;
 use ::async_std::task::sleep;
+use ::dioxus::prelude::*;
 use ::gloo_events::EventListener;
 use ::std::time::Duration;
 use ::web_sys::Document;
@@ -32,7 +32,8 @@ struct SlideshowState {
 #[allow(non_snake_case)]
 #[component]
 pub fn Slideshow() -> Element {
-  let fullscreen_event_listener_option_state: Signal<Option<EventListener>> = use_signal(|| None);
+  let fullscreen_event_listener_option_state: Signal<Option<EventListener>> =
+    use_signal(|| None);
 
   let fullscreen_state: Signal<bool> = use_signal(|| false);
 
@@ -144,7 +145,8 @@ fn next_image(state: &mut SlideshowState) {
 fn on_mouse_move(slideshow_state_use_ref: &mut Signal<SlideshowState>) {
   // TODO: Can we simplify?
 
-  let mut slideshow_state: SlideshowState = slideshow_state_use_ref.read().clone();
+  let mut slideshow_state: SlideshowState =
+    slideshow_state_use_ref.read().clone();
 
   slideshow_state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
 

@@ -331,9 +331,11 @@ fn calculate_required_annual_investment_from_state(
   retirement_interest: &Signal<String>,
   retirement_tax_rate: &Signal<String>,
 ) -> f64 {
-  let desired_savings_interest_income: f64 = parse_signal_or_zero(retirement_income);
+  let desired_savings_interest_income: f64 =
+    parse_signal_or_zero(retirement_income);
   let years_of_saving: f64 = parse_signal_or_zero(investment_years);
-  let investment_interest_rate: f64 = parse_signal_or_zero(investment_interest) / 100.;
+  let investment_interest_rate: f64 =
+    parse_signal_or_zero(investment_interest) / 100.;
   let savings_interest: f64 = parse_signal_or_zero(retirement_interest) / 100.;
   let tax_rate: f64 = parse_signal_or_zero(retirement_tax_rate) / 100.;
   let inflation_rate: f64 = parse_signal_or_zero(retirement_inflation) / 100.;

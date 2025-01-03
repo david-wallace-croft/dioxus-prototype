@@ -10,7 +10,11 @@ pub enum Mode {
 
 #[allow(non_snake_case)]
 #[component]
-pub fn AnswerButton(label: String, mode: Mode, on_click: EventHandler<MouseEvent>) -> Element {
+pub fn AnswerButton(
+  label: String,
+  mode: Mode,
+  on_click: EventHandler<MouseEvent>,
+) -> Element {
   let background_color: &str = match mode {
     Mode::Correct => "#19dc60",
     Mode::Disabled => "#FFF",

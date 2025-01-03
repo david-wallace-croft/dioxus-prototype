@@ -17,7 +17,8 @@ pub fn Barchart() -> Element {
     to_dollars(v as f64)
   }
 
-  let label_interpolation_option: Option<fn(f32) -> String> = Some(label_interpolation);
+  let label_interpolation_option: Option<fn(f32) -> String> =
+    Some(label_interpolation);
 
   rsx! {
   div {
