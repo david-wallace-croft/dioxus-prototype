@@ -58,7 +58,7 @@
   - Serves the files in the distribution directory dist/
   - Automatically opens a browser window
 - npm test
-  - Runs the dist and test scripts
+  - Runs the dist and serve scripts
   - Used to test the SSG distribution prior to hosting on a CDN
 - npm run format
   - Runs the utility prettier to format the generated SSG files
