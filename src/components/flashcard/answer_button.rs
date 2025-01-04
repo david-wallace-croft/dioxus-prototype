@@ -1,12 +1,5 @@
+use super::mode::Mode;
 use ::dioxus::prelude::*;
-
-#[derive(Clone, Copy, PartialEq)]
-pub enum Mode {
-  Correct,
-  Disabled,
-  Incorrect,
-  Untouched,
-}
 
 #[allow(non_snake_case)]
 #[component]
