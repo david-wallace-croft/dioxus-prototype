@@ -310,11 +310,14 @@ fn calculate_required_annual_investment(
 ) -> f64 {
   let savings: f64 = desired_savings_interest_income * (1.0 + inflation_rate)
     / (savings_interest_rate * (1.0 - tax_rate) - inflation_rate);
+
   if years_of_saving == 0.0 {
     return savings;
   }
+
   let future_value_savings =
     savings * (1.0 + inflation_rate).powf(years_of_saving);
+
   PeriodicSavingsNeeded {
     future_value: future_value_savings,
     interest_rate: investment_interest_rate,
@@ -333,17 +336,24 @@ fn calculate_required_annual_investment_from_state(
 ) -> f64 {
   let desired_savings_interest_income: f64 =
     parse_signal_or_zero(retirement_income);
+
   let years_of_saving: f64 = parse_signal_or_zero(investment_years);
+
   let investment_interest_rate: f64 =
     parse_signal_or_zero(investment_interest) / 100.;
-  let savings_interest: f64 = parse_signal_or_zero(retirement_interest) / 100.;
+
+  let savings_interest_rate: f64 =
+    parse_signal_or_zero(retirement_interest) / 100.;
+
   let tax_rate: f64 = parse_signal_or_zero(retirement_tax_rate) / 100.;
+
   let inflation_rate: f64 = parse_signal_or_zero(retirement_inflation) / 100.;
+
   calculate_required_annual_investment(
     desired_savings_interest_income,
     years_of_saving,
     investment_interest_rate,
-    savings_interest,
+    savings_interest_rate,
     tax_rate,
     inflation_rate,
   )

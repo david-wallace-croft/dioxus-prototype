@@ -35,6 +35,11 @@
   - npm can be installed by installing node.js
   - https://nodejs.org/
 
+## Quick Start
+
+- npm install
+- npm test
+
 ## npm scripts
 
 - npm start
