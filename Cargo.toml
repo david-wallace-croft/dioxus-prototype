@@ -1,6 +1,6 @@
 [package]
 authors = ["David Wallace Croft <david@CroftSoft.com>"]
-description = "Dioxus Prototype"
+description = "CroftSoft Dioxus Prototype"
 edition = "2021"
 homepage = "https://www.CroftSoft.com/"
 keywords = ["dioxus"]
@@ -9,25 +9,19 @@ name = "dioxus-prototype"
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
-version = "0.6.0-SNAPSHOT"
+version = "0.6.0"
 
 [dependencies]
 async-std = "1.12.0"
 com-croftsoft-core = "0.14.0"
 com-croftsoft-lib-string = "0.1.0"
-dioxus = { version = "0.6.0", features = ["fullstack", "router"] }
+dioxus = { version = "0.6.1", features = ["fullstack", "router"] }
 dioxus-charts = "0.3.1"
-# dioxus-fullstack = { version = "=0.4.3", optional = true }
-# dioxus-router = "=0.4.3"
-# dioxus-web = "=0.4.3"
+dioxus-logger = "0.6.1"
 gloo-events = "0.2.0"
-# log = "0.4.20"
 rand = "0.8.5"
 serde = "1.0.196"
-# tokio = { version = "1.63.0", features = ["full"], optional = true }
 tracing = "0.1.41"
-# wasm-bindgen = { version = "0.2.91", features = ["enable-interning"] }
-# wasm-logger = "0.2.0"
 
 [dependencies.dioxus-free-icons]
 # https://github.com/dioxus-community/dioxus-free-icons/issues/26
@@ -61,10 +55,6 @@ version = "0.3.68"
 default = ["web"]
 web = ["dioxus/web"]
 
-# [features]
-# hydrate = ["dioxus-fullstack/router", "dioxus-web/hydrate"]
-# prerender = ["dioxus-fullstack/router", "dioxus-fullstack/ssr", "tokio"]
-
 [profile]
 
 [profile.wasm-dev]
@@ -76,11 +66,3 @@ inherits = "dev"
 
 [profile.android-dev]
 inherits = "dev"
-
-# [profile.release]
-# # wasm-strip
-# # strip = true
-# # inner string debug info
-# codegen-units = 1
-# lto = true
-# opt-level = "s"
