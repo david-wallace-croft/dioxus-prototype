@@ -7,7 +7,7 @@ pub fn Footer() -> Element {
     footer {
       class: "box",
       dangerous_inner_html: "&copy;",
-    " 2023-2024 "
+    " 2023-2025 "
     a {
       href: "https://www.CroftSoft.com/",
       target: "_blank",
