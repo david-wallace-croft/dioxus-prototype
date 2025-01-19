@@ -14,7 +14,7 @@
     "merge2": "cp -r static/* dist/",
     "merge3": "cp -r merge/* dist/",
     "serve": "http-server dist -c-1 -o",
-    "start": "dx serve --open",
+    "start": "dx serve --addr=127.0.0.1 --open",
     "test": "npm run dist && npm run serve"
   }
 }
