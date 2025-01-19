@@ -9,10 +9,10 @@ name = "dioxus-prototype"
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
-version = "0.6.1-SNAPSHOT"
+version = "0.6.1"
 
 [dependencies]
-async-std = "1.12.0"
+async-std = "1.13.0"
 com-croftsoft-core = "0.14.0"
 com-croftsoft-lib-string = "0.1.0"
 dioxus = { version = "0.6.1", features = ["fullstack", "router"] }
@@ -20,7 +20,7 @@ dioxus-charts = "0.3.1"
 dioxus-logger = "0.6.1"
 gloo-events = "0.2.0"
 rand = "0.8.5"
-serde = "1.0.196"
+serde = "1.0.217"
 tracing = "0.1.41"
 
 [dependencies.dioxus-free-icons]
@@ -31,7 +31,7 @@ version = "0.9.0"
 
 [dependencies.getrandom]
 features = ["js"]
-version = "0.2.12"
+version = "0.2.15"
 
 [dependencies.web-sys]
 features = [
@@ -49,7 +49,7 @@ features = [
   "Window",
   "console",
 ]
-version = "0.3.68"
+version = "0.3.77"
 
 [features]
 default = ["web"]
