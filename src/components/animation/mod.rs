@@ -38,9 +38,62 @@ pub fn Animation() -> Element {
     to_owned![running_signal];
     to_owned![update_signal];
     async move {
+      let window: Window = window().expect("global window does not exists");
+
+      let document: Document =
+        window.document().expect("expecting a document on window");
+
+      let html_canvas_element = document
+        .get_element_by_id(CANVAS_ID)
+        .expect("expecting a canvas in the document")
+        .dyn_into::<HtmlCanvasElement>()
+        .unwrap();
+
+      let canvas_context: CanvasRenderingContext2d = html_canvas_element
+        .get_context("2d")
+        .unwrap()
+        .unwrap()
+        .dyn_into::<CanvasRenderingContext2d>()
+        .unwrap();
+
+      let canvas_height: f64 = html_canvas_element.height() as f64;
+
+      let canvas_width: f64 = html_canvas_element.width() as f64;
+
+      let square_size: f64 =
+        100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.);
+
+      let mut delta_x: f64 = 1.;
+
+      let mut delta_y: f64 = 1.;
+
+      let mut x: f64 = -delta_x;
+
+      let mut y: f64 = -delta_y;
+
       loop {
         if *running_signal.read() || *update_signal.read() {
           update_signal.set(false);
+
+          if delta_x > 0. {
+            if x + delta_x + square_size > canvas_width {
+              delta_x = -delta_x;
+            }
+          } else if x + delta_x < 0. {
+            delta_x = -delta_x;
+          }
+
+          x += delta_x;
+
+          if delta_y > 0. {
+            if y + delta_y + square_size > canvas_height {
+              delta_y = -delta_y;
+            }
+          } else if y + delta_y < 0. {
+            delta_y = -delta_y;
+          }
+
+          y += delta_y;
 
           let color: Color = *color_signal.read();
 
@@ -50,7 +103,16 @@ pub fn Animation() -> Element {
 
           let fill_style: String = color_signal.read().as_fill_style_string();
 
-          paint(&fill_style, *message_signal.read());
+          paint(
+            &canvas_context,
+            canvas_height,
+            canvas_width,
+            &fill_style,
+            *message_signal.read(),
+            square_size,
+            x,
+            y,
+          );
         }
 
         async_std::task::sleep(Duration::from_millis(17u64)).await;
@@ -169,38 +231,26 @@ fn on_wheel(
 }
 
 fn paint(
+  canvas_context: &CanvasRenderingContext2d,
+  canvas_height: f64,
+  canvas_width: f64,
   fill_style: &str,
   message: &str,
+  square_size: f64,
+  x: f64,
+  y: f64,
 ) {
-  let window: Window = window().expect("global window does not exists");
-
-  let document: Document =
-    window.document().expect("expecting a document on window");
-
-  let html_canvas_element = document
-    .get_element_by_id(CANVAS_ID)
-    .expect("expecting a canvas in the document")
-    .dyn_into::<HtmlCanvasElement>()
-    .unwrap();
-
-  let canvas_context = html_canvas_element
-    .get_context("2d")
-    .unwrap()
-    .unwrap()
-    .dyn_into::<CanvasRenderingContext2d>()
-    .unwrap();
-
-  let canvas_height: f64 = html_canvas_element.height() as f64;
-
-  let canvas_width: f64 = html_canvas_element.width() as f64;
-
-  canvas_context.set_fill_style_str(fill_style);
+  canvas_context.set_fill_style_str("black");
 
   canvas_context.fill_rect(0., 0., canvas_width, canvas_height);
 
+  canvas_context.set_fill_style_str(fill_style);
+
+  canvas_context.fill_rect(x, y, square_size, square_size);
+
   canvas_context.set_font("30px Verdana");
 
-  canvas_context.set_fill_style_str("black");
+  canvas_context.set_fill_style_str("white");
 
   let _ = canvas_context.fill_text(message, 4., 30.);
 }
