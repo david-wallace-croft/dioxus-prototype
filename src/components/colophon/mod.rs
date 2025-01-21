@@ -3,7 +3,12 @@ use ::dioxus::prelude::*;
 #[allow(non_snake_case)]
 #[component]
 pub fn Colophon() -> Element {
+  static CSS: Asset = asset!("/assets/app-colophon.css");
+
   rsx! {
+    document::Stylesheet {
+      href: CSS
+    }
     div {
       class: "app-colophon box",
     h1 {

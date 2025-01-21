@@ -37,6 +37,8 @@ struct SlideshowState {
 #[allow(non_snake_case)]
 #[component]
 pub fn Slideshow() -> Element {
+  static CSS: Asset = asset!("/assets/app-slideshow.css");
+
   let fullscreen_event_listener_option_signal: Signal<Option<EventListener>> =
     use_signal(|| None);
 
@@ -105,6 +107,9 @@ pub fn Slideshow() -> Element {
   });
 
   rsx! {
+    document::Stylesheet {
+      href: CSS
+    }
     div {
       class: "app-slideshow box",
       onmousemove: move |_event| on_mouse_move(&mut slideshow_state_signal),

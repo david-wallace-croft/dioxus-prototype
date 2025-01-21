@@ -6,9 +6,14 @@ use ::dioxus::prelude::*;
 #[allow(non_snake_case)]
 #[component]
 pub fn Template() -> Element {
+  static CSS: Asset = asset!("/assets/stylesheet.css");
+
   static FAVICON: Asset = asset!("/assets/favicon.ico");
 
   rsx! {
+    document::Stylesheet {
+      href: CSS
+    }
     document::Link {
       href: FAVICON,
       rel: "icon",

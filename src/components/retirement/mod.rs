@@ -17,6 +17,8 @@ static RETIREMENT_TAX_RATE: &str = "10.0";
 #[allow(non_snake_case)]
 #[component]
 pub fn Retirement() -> Element {
+  static CSS: Asset = asset!("/assets/app-retirement.css");
+
   let mut investment_interest: Signal<String> =
     use_signal(|| INVESTMENT_INTEREST.to_string());
 
@@ -36,6 +38,9 @@ pub fn Retirement() -> Element {
     use_signal(|| RETIREMENT_TAX_RATE.to_string());
 
   rsx! {
+  document::Stylesheet {
+    href: CSS
+  }
   div {
     class: "app-retirement box",
   div {

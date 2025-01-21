@@ -18,6 +18,8 @@ mod show_button;
 #[allow(non_snake_case)]
 #[component]
 pub fn Flashcard() -> Element {
+  static CSS: Asset = asset!("/assets/app-flashcard.css");
+
   let card = Card::default();
 
   let mut link_button_disabled_signal: Signal<bool> = use_signal(|| true);
@@ -30,6 +32,9 @@ pub fn Flashcard() -> Element {
   let mut message_signal: Signal<String> = use_signal(|| "".to_owned());
 
   rsx! {
+  document::Stylesheet {
+    href: CSS
+  }
   div {
     class: "app-flashcard box",
     onclick: move |_event| on_click_flashcard(&mut message_signal),

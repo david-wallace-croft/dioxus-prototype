@@ -4,7 +4,12 @@ use ::dioxus::prelude::*;
 #[allow(non_snake_case)]
 #[component]
 pub fn Nav() -> Element {
+  static CSS: Asset = asset!("/assets/app-nav.css");
+
   rsx! {
+    document::Stylesheet {
+      href: CSS
+    }
     nav {
       class: "app-nav box",
     ul {

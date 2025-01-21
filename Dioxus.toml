@@ -29,17 +29,7 @@ watch_path = ["src", "assets"]
 
 [web.resource]
 script = []
-style = [
-  "/assets/app-animation.css",
-  "/assets/app-barchart.css",
-  "/assets/app-colophon.css",
-  "/assets/app-flashcard.css",
-  "/assets/app-home.css",
-  "/assets/app-nav.css",
-  "/assets/app-retirement.css",
-  "/assets/app-slideshow.css",
-  "/assets/stylesheet.css",
-]
+style = []
 
 [web.resource.dev]
 script = []

@@ -19,6 +19,8 @@ const MESSAGE_START: &str = "Click on or tab to the canvas";
 #[allow(non_snake_case)]
 #[component]
 pub fn Animation() -> Element {
+  static CSS: Asset = asset!("/assets/app-animation.css");
+
   let mut click_count_signal: Signal<i32> = use_signal(|| 0);
 
   let mut color_signal: Signal<Color> =
@@ -120,6 +122,9 @@ pub fn Animation() -> Element {
     }
   });
   rsx! {
+    document::Stylesheet {
+      href: CSS
+    }
     div {
       class: "app-animation box",
     h1 {
