@@ -16,6 +16,8 @@ const IMAGE_DISPLAY_TIME: u64 = 10 * 60 * 1_000;
 
 const POLLING_PERIOD: u64 = 100;
 
+// TODO: load images using the asset! macro
+
 static IMAGE_NAMES: [&str; 5] = [
   "nature-a.jpg",
   "nature-b.jpg",
