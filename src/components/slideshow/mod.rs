@@ -12,35 +12,31 @@ const CONTROL_PANEL_DISPLAY_TIME: u64 = 10 * 1_000;
 
 const CONTROL_PANEL_FADE_TIME: u64 = 5 * 1_000;
 
-const IMAGE_DISPLAY_TIME: u64 = 10 * 60 * 1_000;
+const IMAGE_DISPLAY_TIME: u64 = 60 * 1_000;
 
 const POLLING_PERIOD: u64 = 100;
 
-// TODO: load images using the asset! macro
+static CSS: Asset = asset!("/assets/app-slideshow.css");
 
-static IMAGE_NAMES: [&str; 5] = [
-  "nature-a.jpg",
-  "nature-b.jpg",
-  "nature-c.jpg",
-  "nature-d.jpg",
-  "nature-e.jpg",
+static IMAGE_ASSETS: [Asset; 5] = [
+  asset!("/assets/slideshow/nature-a.jpg"),
+  asset!("/assets/slideshow/nature-b.jpg"),
+  asset!("/assets/slideshow/nature-c.jpg"),
+  asset!("/assets/slideshow/nature-d.jpg"),
+  asset!("/assets/slideshow/nature-e.jpg"),
 ];
-
-static IMAGE_PATH_PREFIX: &str = "/slideshow/";
 
 #[derive(Clone)]
 struct SlideshowState {
   control_panel_time_remaining: u64,
   image_index: usize,
-  image_source: String,
+  image_source: Asset,
   image_time_remaining: u64,
 }
 
 #[allow(non_snake_case)]
 #[component]
 pub fn Slideshow() -> Element {
-  static CSS: Asset = asset!("/assets/app-slideshow.css");
-
   let fullscreen_event_listener_option_signal: Signal<Option<EventListener>> =
     use_signal(|| None);
 
@@ -50,7 +46,7 @@ pub fn Slideshow() -> Element {
     use_signal(|| SlideshowState {
       control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
       image_index: 0,
-      image_source: make_image_source(0),
+      image_source: IMAGE_ASSETS[0],
       image_time_remaining: IMAGE_DISPLAY_TIME,
     });
 
@@ -155,26 +151,14 @@ fn fullscreen() {
     let slideshow_element: web_sys::Element =
       document.get_element_by_id("slideshow").unwrap();
 
-    // log::info!("slideshow element: {slideshow_element:?}");
-
     let _result: Result<(), JsValue> = slideshow_element.request_fullscreen();
   }
 }
 
-fn make_image_source(image_index: usize) -> String {
-  let image_name: &str = IMAGE_NAMES[image_index];
-
-  let mut image_source: String = IMAGE_PATH_PREFIX.to_string();
-
-  image_source.push_str(image_name);
-
-  image_source
-}
-
 fn next_image(state: &mut SlideshowState) {
-  state.image_index = (state.image_index + 1) % IMAGE_NAMES.len();
+  state.image_index = (state.image_index + 1) % IMAGE_ASSETS.len();
 
-  state.image_source = make_image_source(state.image_index);
+  state.image_source = IMAGE_ASSETS[state.image_index];
 
   state.image_time_remaining = IMAGE_DISPLAY_TIME;
 }
