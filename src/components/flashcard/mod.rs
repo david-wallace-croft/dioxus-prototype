@@ -18,7 +18,7 @@ mod show_button;
 #[allow(non_snake_case)]
 #[component]
 pub fn Flashcard() -> Element {
-  static CSS: Asset = asset!("/assets/app-flashcard.css");
+  static CSS: Asset = asset!("/assets/flashcard/app-flashcard.css");
 
   let card = Card::default();
 

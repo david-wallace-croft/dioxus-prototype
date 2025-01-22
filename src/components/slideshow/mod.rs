@@ -16,7 +16,7 @@ const IMAGE_DISPLAY_TIME: u64 = 60 * 1_000;
 
 const POLLING_PERIOD: u64 = 100;
 
-static CSS: Asset = asset!("/assets/app-slideshow.css");
+static CSS: Asset = asset!("/assets/slideshow/app-slideshow.css");
 
 static IMAGE_ASSETS: [Asset; 5] = [
   asset!("/assets/slideshow/nature-a.jpg"),

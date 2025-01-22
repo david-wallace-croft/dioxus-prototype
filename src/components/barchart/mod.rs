@@ -6,7 +6,7 @@ use ::dioxus_charts::BarChart;
 #[allow(non_snake_case)]
 #[component]
 pub fn Barchart() -> Element {
-  static CSS: Asset = asset!("/assets/app-barchart.css");
+  static CSS: Asset = asset!("/assets/barchart/app-barchart.css");
 
   let labels: Vec<String> = vec![
     "GOAL".into(),

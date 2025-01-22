@@ -5,7 +5,7 @@ use dioxus_router::prelude::Link;
 #[allow(non_snake_case)]
 #[component]
 pub fn Home() -> Element {
-  static CSS: Asset = asset!("/assets/app-home.css");
+  static CSS: Asset = asset!("/assets/home/app-home.css");
 
   rsx! {
   document::Stylesheet {

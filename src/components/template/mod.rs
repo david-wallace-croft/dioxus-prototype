@@ -6,9 +6,9 @@ use ::dioxus::prelude::*;
 #[allow(non_snake_case)]
 #[component]
 pub fn Template() -> Element {
-  static CSS: Asset = asset!("/assets/stylesheet.css");
+  static CSS: Asset = asset!("/assets/template/stylesheet.css");
 
-  static FAVICON: Asset = asset!("/assets/favicon.ico");
+  static FAVICON: Asset = asset!("/assets/template/favicon.ico");
 
   rsx! {
     document::Stylesheet {
