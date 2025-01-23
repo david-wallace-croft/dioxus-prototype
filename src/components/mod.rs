@@ -7,7 +7,6 @@ pub mod footer;
 pub mod home;
 pub mod language_select;
 pub mod nav;
-pub mod page_not_found;
 pub mod retirement;
 pub mod slideshow;
 pub mod template;
