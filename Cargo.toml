@@ -9,7 +9,7 @@ name = "dioxus-prototype"
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
-version = "0.6.2"
+version = "0.6.3-SNAPSHOT"
 
 [dependencies]
 async-std = "1.13.0"
