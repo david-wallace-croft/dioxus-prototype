@@ -9,15 +9,16 @@ name = "dioxus-prototype"
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
-version = "0.6.2-SNAPSHOT"
+version = "0.6.2"
 
 [dependencies]
 async-std = "1.13.0"
 com-croftsoft-core = "0.14.0"
 com-croftsoft-lib-string = "0.1.0"
-dioxus = { version = "0.6.1", features = ["fullstack", "router"] }
+dioxus = { version = "0.6.2", features = ["fullstack", "router"] }
 dioxus-charts = "0.3.1"
-dioxus-logger = "0.6.1"
+dioxus-isrg = "0.6.2"
+dioxus-logger = "0.6.2"
 gloo-events = "0.2.0"
 rand = "0.8.5"
 serde = "1.0.217"
