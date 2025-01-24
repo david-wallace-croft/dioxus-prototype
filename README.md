@@ -58,7 +58,7 @@
 - npm run dist
   - Runs the clean, build, and merge scripts
   - Used to generate an SSG distribution in the dist/ directory
-  - The dist/ files are hosted on a Content Delivery Network (CDN)
+  - The dist/ files can be hosted on a Content Delivery Network (CDN)
 - npm run serve
   - Serves the files in the distribution directory dist/
   - Automatically opens a browser window
