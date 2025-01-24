@@ -56,7 +56,7 @@
   - Merges the generated SSG files into dist/
   - Merges the static files in merge/ into dist/
 - npm run dist
-  - Runs the clean, build, and dist scripts
+  - Runs the clean, build, and merge scripts
   - Used to generate an SSG distribution in the dist/ directory
   - The dist/ files are hosted on a Content Delivery Network (CDN)
 - npm run serve
