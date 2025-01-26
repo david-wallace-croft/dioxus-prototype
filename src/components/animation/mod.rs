@@ -18,7 +18,7 @@ const MESSAGE_START: &str = "Click on or tab to the canvas";
 pub fn Animation() -> Element {
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
-  let mut click_count_signal: Signal<i32> = use_signal(|| 0);
+  let mut click_count: i32 = 0;
 
   let mut message_signal: Signal<&str> = use_signal(|| MESSAGE_START);
 
@@ -67,7 +67,7 @@ pub fn Animation() -> Element {
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
       onblur: move |event| on_blur(event, &mut message_signal, &mut running_signal),
-      onclick: move |event| on_click(event, &mut click_count_signal, &mut update_signal),
+      onclick: move |event| on_click(event, &mut click_count, &mut update_signal),
       onfocus: move |event| on_focus(event, &mut message_signal, &mut running_signal, &mut update_signal),
       onkeydown: move |event| on_key_down(event, &mut update_signal),
       onwheel: move |event| on_wheel(event, &mut update_signal),
@@ -92,22 +92,12 @@ fn on_blur(
 
 fn on_click(
   _event: Event<MouseData>,
-  click_count_signal: &mut Signal<i32>,
+  click_count: &mut i32,
   _update_signal: &mut Signal<bool>,
 ) {
-  // log::info!("onclick Event: {event:?}");
+  *click_count = *click_count + 1;
 
-  let click_count: i32 = *click_count_signal.read();
-
-  click_count_signal.set(click_count + 1);
-
-  let current_value: i32 = *click_count_signal.read();
-
-  info!("click count: {current_value:?}");
-
-  // color_signal.set(generate_random_color());
-
-  // update_signal.set(true);
+  info!("click count: {click_count:?}");
 }
 
 fn on_focus(
