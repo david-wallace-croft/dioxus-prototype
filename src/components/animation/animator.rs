@@ -11,13 +11,17 @@ pub struct Animator {
   color: Color,
   delta_x: f64,
   delta_y: f64,
+  message: &'static str,
   square_size: f64,
   x: f64,
   y: f64,
 }
 
 impl Animator {
-  pub fn new(canvas_id: &str) -> Self {
+  pub fn new(
+    canvas_id: &str,
+    message: &'static str,
+  ) -> Self {
     let window: Window = window().expect("global window does not exists");
 
     let document: Document =
@@ -61,16 +65,14 @@ impl Animator {
       color,
       delta_x,
       delta_y,
+      message,
       square_size,
       x,
       y,
     }
   }
 
-  pub fn paint(
-    &self,
-    message: &str,
-  ) {
+  pub fn paint(&self) {
     self.canvas_rendering_context_2d.set_fill_style_str("black");
 
     self.canvas_rendering_context_2d.fill_rect(
@@ -97,7 +99,16 @@ impl Animator {
 
     self.canvas_rendering_context_2d.set_fill_style_str("white");
 
-    let _ = self.canvas_rendering_context_2d.fill_text(message, 4., 30.);
+    let _ = self
+      .canvas_rendering_context_2d
+      .fill_text(self.message, 4., 30.);
+  }
+
+  pub fn set_message(
+    &mut self,
+    message: &'static str,
+  ) {
+    self.message = message;
   }
 
   pub fn update(&mut self) {

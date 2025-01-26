@@ -33,21 +33,25 @@ pub fn Animation() -> Element {
     to_owned![running_signal];
     to_owned![update_signal];
     async move {
-      let mut animator = Animator::new(CANVAS_ID);
+      let mut animator = Animator::new(CANVAS_ID, MESSAGE_START.into());
 
       loop {
         if *running_signal.read() || *update_signal.read() {
           update_signal.set(false);
 
+          // TODO: move this to event handlers
+          animator.set_message(*message_signal.read());
+
           animator.update();
 
-          animator.paint(*message_signal.read());
+          animator.paint();
         }
 
         async_std::task::sleep(Duration::from_millis(17u64)).await;
       }
     }
   });
+
   rsx! {
     document::Stylesheet {
       href: CSS
@@ -117,6 +121,8 @@ fn on_focus(
   message_signal.set(MESSAGE_CONTROLS);
 
   running_signal.set(false);
+
+  // TODO: change this to repaint_signal
 
   update_signal.set(true);
 }
