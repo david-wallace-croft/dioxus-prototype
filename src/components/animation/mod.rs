@@ -20,29 +20,67 @@ pub fn Animation() -> Element {
 
   let mut click_count: i32 = 0;
 
-  let mut message_signal: Signal<&str> = use_signal(|| MESSAGE_START);
+  // TODO: Do these flags need to be Signals?  Maybe Atomics?
 
-  let mut running_signal: Signal<bool> = use_signal(|| true);
+  let mut blur_event_signal: Signal<bool> = use_signal(|| false);
 
-  let mut update_signal: Signal<bool> = use_signal(|| true);
+  let mut focus_event_signal: Signal<bool> = use_signal(|| false);
+
+  let mut update_event_signal: Signal<bool> = use_signal(|| false);
 
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/use_effect.rs
   use_future(move || {
-    to_owned![message_signal];
-    to_owned![running_signal];
-    to_owned![update_signal];
+    to_owned![blur_event_signal];
+
+    to_owned![focus_event_signal];
+
+    to_owned![update_event_signal];
+
     async move {
       let mut animator = Animator::new(CANVAS_ID, MESSAGE_START.into());
 
-      loop {
-        if *running_signal.read() || *update_signal.read() {
-          update_signal.set(false);
+      let mut repaint = false;
 
-          // TODO: move this to event handlers
-          animator.set_message(*message_signal.read());
+      let mut running = true;
+
+      let mut update = false;
+
+      loop {
+        if *blur_event_signal.read() {
+          blur_event_signal.set(false);
+
+          animator.set_message(&MESSAGE_START);
+
+          running = true;
+        }
+
+        if *focus_event_signal.read() {
+          focus_event_signal.set(false);
+
+          animator.set_message(&MESSAGE_CONTROLS);
+
+          repaint = true;
+
+          running = false;
+        }
+
+        if *update_event_signal.read() {
+          update_event_signal.set(false);
+
+          update = true;
+        }
+
+        if running || update {
+          update = false;
 
           animator.update();
+
+          repaint = true;
+        }
+
+        if repaint {
+          repaint = false;
 
           animator.paint();
         }
@@ -66,11 +104,11 @@ pub fn Animation() -> Element {
       cursor: "crosshair",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onblur: move |event| on_blur(event, &mut message_signal, &mut running_signal),
-      onclick: move |event| on_click(event, &mut click_count, &mut update_signal),
-      onfocus: move |event| on_focus(event, &mut message_signal, &mut running_signal, &mut update_signal),
-      onkeydown: move |event| on_key_down(event, &mut update_signal),
-      onwheel: move |event| on_wheel(event, &mut update_signal),
+      onblur: move |_event| blur_event_signal.set(true),
+      onclick: move |event| on_click(event, &mut click_count),
+      onfocus: move |_event| focus_event_signal.set(true),
+      onkeydown: move |_event| update_event_signal.set(true),
+      onwheel: move |_event| update_event_signal.set(true),
       tabindex: 0,
       width: "600",
     }
@@ -78,72 +116,35 @@ pub fn Animation() -> Element {
   }
 }
 
-fn on_blur(
-  _event: Event<FocusData>,
-  message_signal: &mut Signal<&str>,
-  running_signal: &mut Signal<bool>,
-) {
-  // log::info!("onblur Event: {event:?}");
-
-  message_signal.set(MESSAGE_START);
-
-  running_signal.set(true);
-}
-
 fn on_click(
   _event: Event<MouseData>,
   click_count: &mut i32,
-  _update_signal: &mut Signal<bool>,
 ) {
   *click_count = *click_count + 1;
 
   info!("click count: {click_count:?}");
 }
 
-fn on_focus(
-  _event: Event<FocusData>,
-  message_signal: &mut Signal<&str>,
-  running_signal: &mut Signal<bool>,
-  update_signal: &mut Signal<bool>,
-) {
-  // log::info!("onfocus Event: {event:?}");
+// fn on_wheel(
+//   _event: Event<WheelData>,
+//   // color_signal: &mut Signal<Color>,
+//   update_signal: &mut Signal<bool>,
+// ) {
+// log::info!("onwheel Event: {event:?}");
 
-  message_signal.set(MESSAGE_CONTROLS);
+// let wheel_delta: WheelDelta = event.delta();
 
-  running_signal.set(false);
+// let delta: f64 = match wheel_delta {
+//   Lines(lines_vector) => lines_vector.y,
+//   Pages(pages_vector) => pages_vector.y,
+//   Pixels(pixels_vector) => pixels_vector.y,
+// };
 
-  // TODO: change this to repaint_signal
+// let delta: i8 = delta.clamp(-1., 1.) as i8;
 
-  update_signal.set(true);
-}
+// let color: Color = *color_signal.read();
 
-fn on_key_down(
-  _event: Event<KeyboardData>,
-  update_signal: &mut Signal<bool>,
-) {
-  update_signal.set(true);
-}
+// color_signal.set(color.shift(delta));
 
-fn on_wheel(
-  _event: Event<WheelData>,
-  // color_signal: &mut Signal<Color>,
-  update_signal: &mut Signal<bool>,
-) {
-  // log::info!("onwheel Event: {event:?}");
-
-  // let wheel_delta: WheelDelta = event.delta();
-
-  // let delta: f64 = match wheel_delta {
-  //   Lines(lines_vector) => lines_vector.y,
-  //   Pages(pages_vector) => pages_vector.y,
-  //   Pixels(pixels_vector) => pixels_vector.y,
-  // };
-
-  // let delta: i8 = delta.clamp(-1., 1.) as i8;
-
-  // let color: Color = *color_signal.read();
-
-  // color_signal.set(color.shift(delta));
-
-  update_signal.set(true);
-}
+//   update_signal.set(true);
+// }
