@@ -20,73 +20,65 @@ pub fn Animation() -> Element {
 
   let mut click_count: i32 = 0;
 
-  // TODO: Do these flags need to be Signals?  Maybe Atomics?
+  // TODO: Is it better to use Arc<AtomicBool> instead of Signal<bool>?
 
-  let mut blur_event_signal: Signal<bool> = use_signal(|| false);
+  let mut blur_signal: Signal<bool> = use_signal(|| false);
 
-  let mut focus_event_signal: Signal<bool> = use_signal(|| false);
+  let mut focus_signal: Signal<bool> = use_signal(|| false);
 
-  let mut update_event_signal: Signal<bool> = use_signal(|| false);
+  let mut update_signal: Signal<bool> = use_signal(|| false);
 
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/use_effect.rs
-  use_future(move || {
-    to_owned![blur_event_signal];
+  use_future(move || async move {
+    let mut animator = Animator::new(CANVAS_ID, MESSAGE_START.into());
 
-    to_owned![focus_event_signal];
+    let mut repaint = false;
 
-    to_owned![update_event_signal];
+    let mut running = true;
 
-    async move {
-      let mut animator = Animator::new(CANVAS_ID, MESSAGE_START.into());
+    let mut update = false;
 
-      let mut repaint = false;
+    loop {
+      if *blur_signal.read() {
+        blur_signal.set(false);
 
-      let mut running = true;
+        animator.set_message(&MESSAGE_START);
 
-      let mut update = false;
-
-      loop {
-        if *blur_event_signal.read() {
-          blur_event_signal.set(false);
-
-          animator.set_message(&MESSAGE_START);
-
-          running = true;
-        }
-
-        if *focus_event_signal.read() {
-          focus_event_signal.set(false);
-
-          animator.set_message(&MESSAGE_CONTROLS);
-
-          repaint = true;
-
-          running = false;
-        }
-
-        if *update_event_signal.read() {
-          update_event_signal.set(false);
-
-          update = true;
-        }
-
-        if running || update {
-          update = false;
-
-          animator.update();
-
-          repaint = true;
-        }
-
-        if repaint {
-          repaint = false;
-
-          animator.paint();
-        }
-
-        async_std::task::sleep(Duration::from_millis(17u64)).await;
+        running = true;
       }
+
+      if *focus_signal.read() {
+        focus_signal.set(false);
+
+        animator.set_message(&MESSAGE_CONTROLS);
+
+        repaint = true;
+
+        running = false;
+      }
+
+      if *update_signal.read() {
+        update_signal.set(false);
+
+        update = true;
+      }
+
+      if running || update {
+        update = false;
+
+        animator.update();
+
+        repaint = true;
+      }
+
+      if repaint {
+        repaint = false;
+
+        animator.paint();
+      }
+
+      async_std::task::sleep(Duration::from_millis(17u64)).await;
     }
   });
 
@@ -104,11 +96,11 @@ pub fn Animation() -> Element {
       cursor: "crosshair",
       id: CANVAS_ID,
       // https://docs.rs/dioxus/latest/dioxus/events/index.html
-      onblur: move |_event| blur_event_signal.set(true),
+      onblur: move |_event| blur_signal.set(true),
       onclick: move |event| on_click(event, &mut click_count),
-      onfocus: move |_event| focus_event_signal.set(true),
-      onkeydown: move |_event| update_event_signal.set(true),
-      onwheel: move |_event| update_event_signal.set(true),
+      onfocus: move |_event| focus_signal.set(true),
+      onkeydown: move |_event| update_signal.set(true),
+      onwheel: move |_event| update_signal.set(true),
       tabindex: 0,
       width: "600",
     }
