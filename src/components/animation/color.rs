@@ -57,22 +57,4 @@ impl Color {
       red,
     }
   }
-
-  pub fn shift(
-    &self,
-    delta: i8,
-  ) -> Color {
-    Color {
-      blue: Color::shift_primary_color(self.blue, delta),
-      green: Color::shift_primary_color(self.green, delta),
-      red: Color::shift_primary_color(self.red, delta),
-    }
-  }
-
-  pub fn shift_primary_color(
-    primary_color: u8,
-    delta: i8,
-  ) -> u8 {
-    primary_color.saturating_add_signed(delta)
-  }
 }
