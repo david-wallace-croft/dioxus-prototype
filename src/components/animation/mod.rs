@@ -31,7 +31,7 @@ pub fn Animation() -> Element {
   // https://github.com/DioxusLabs/dioxus/discussions/999
   // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/use_effect.rs
   use_future(move || async move {
-    let mut animator = Animator::new(CANVAS_ID, MESSAGE_START.into());
+    let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
 
     let mut repaint = false;
 
@@ -43,7 +43,7 @@ pub fn Animation() -> Element {
       if *blur_signal.read() {
         blur_signal.set(false);
 
-        animator.set_message(&MESSAGE_START);
+        animator.set_message(MESSAGE_START);
 
         running = true;
       }
@@ -51,7 +51,7 @@ pub fn Animation() -> Element {
       if *focus_signal.read() {
         focus_signal.set(false);
 
-        animator.set_message(&MESSAGE_CONTROLS);
+        animator.set_message(MESSAGE_CONTROLS);
 
         repaint = true;
 
@@ -112,7 +112,7 @@ fn on_click(
   _event: Event<MouseData>,
   click_count: &mut i32,
 ) {
-  *click_count = *click_count + 1;
+  *click_count += 1;
 
   info!("click count: {click_count:?}");
 }
