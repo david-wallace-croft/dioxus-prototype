@@ -1,6 +1,4 @@
-use ::rand::distributions::Uniform;
-use ::rand::prelude::*;
-use ::std::ops::RangeInclusive;
+use ::web_sys::js_sys::Math::random;
 
 #[derive(Clone, Copy)]
 pub struct Color {
@@ -29,27 +27,17 @@ impl Color {
   }
 
   pub fn drift_primary_color(primary_color: u8) -> u8 {
-    let range: RangeInclusive<i8> = -6..=6;
-
-    let die: Uniform<i8> = Uniform::from(range);
-
-    let mut rng: ThreadRng = rand::thread_rng();
-
-    let delta: i8 = die.sample(&mut rng);
+    let delta: i8 = (random() * 13.) as i8 - 6;
 
     primary_color.saturating_add_signed(delta)
   }
 
   pub fn generate_random_color() -> Color {
-    let mut rng: ThreadRng = rand::thread_rng();
+    let red: u8 = (random() * 256.) as u8;
 
-    let d256: Uniform<u8> = Uniform::from(0..=255);
+    let green: u8 = (random() * 256.) as u8;
 
-    let red: u8 = d256.sample(&mut rng);
-
-    let green: u8 = d256.sample(&mut rng);
-
-    let blue: u8 = d256.sample(&mut rng);
+    let blue: u8 = (random() * 256.) as u8;
 
     Color {
       blue,

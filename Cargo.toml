@@ -20,7 +20,6 @@ dioxus-charts = "0.3.1"
 dioxus-isrg = "0.6.2"
 dioxus-logger = "0.6.2"
 gloo-events = "0.2.0"
-rand = "0.8.5"
 serde = "1.0.217"
 tracing = "0.1.41"
 
@@ -29,10 +28,6 @@ tracing = "0.1.41"
 # features = ["material-design-icons-action"]
 features = ["font-awesome-regular", "font-awesome-solid"]
 version = "0.9.0"
-
-[dependencies.getrandom]
-features = ["js"]
-version = "0.2.15"
 
 [dependencies.web-sys]
 features = [
