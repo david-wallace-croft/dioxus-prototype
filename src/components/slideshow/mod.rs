@@ -12,7 +12,7 @@ const CONTROL_PANEL_DISPLAY_TIME: u64 = 10 * 1_000;
 
 const CONTROL_PANEL_FADE_TIME: u64 = 5 * 1_000;
 
-const IMAGE_DISPLAY_TIME: u64 = 60 * 1_000;
+const IMAGE_DISPLAY_TIME: u64 = 15 * 1_000;
 
 const POLLING_PERIOD: u64 = 100;
 
@@ -37,10 +37,11 @@ struct SlideshowState {
 #[allow(non_snake_case)]
 #[component]
 pub fn Slideshow() -> Element {
-  let fullscreen_event_listener_option_signal: Signal<Option<EventListener>> =
-    use_signal(|| None);
+  let mut fullscreen_event_listener_option_signal: Signal<
+    Option<EventListener>,
+  > = use_signal(|| None);
 
-  let fullscreen_signal: Signal<bool> = use_signal(|| false);
+  let mut fullscreen_signal: Signal<bool> = use_signal(|| false);
 
   let mut slideshow_state_signal: Signal<SlideshowState> =
     use_signal(|| SlideshowState {
@@ -50,58 +51,48 @@ pub fn Slideshow() -> Element {
       image_time_remaining: IMAGE_DISPLAY_TIME,
     });
 
-  use_future(move || {
-    to_owned![slideshow_state_signal];
+  use_future(move || async move {
+    loop {
+      sleep(Duration::from_millis(POLLING_PERIOD)).await;
 
-    async move {
-      loop {
-        sleep(Duration::from_millis(POLLING_PERIOD)).await;
+      slideshow_state_signal.with_mut(
+        |slideshow_state: &mut SlideshowState| {
+          slideshow_state.control_panel_time_remaining = slideshow_state
+            .control_panel_time_remaining
+            .saturating_sub(POLLING_PERIOD);
 
-        slideshow_state_signal.with_mut(
-          |slideshow_state: &mut SlideshowState| {
-            slideshow_state.control_panel_time_remaining = slideshow_state
-              .control_panel_time_remaining
-              .saturating_sub(POLLING_PERIOD);
+          slideshow_state.image_time_remaining = slideshow_state
+            .image_time_remaining
+            .saturating_sub(POLLING_PERIOD);
 
-            slideshow_state.image_time_remaining = slideshow_state
-              .image_time_remaining
-              .saturating_sub(POLLING_PERIOD);
-
-            if slideshow_state.image_time_remaining == 0 {
-              next_image(slideshow_state);
-            }
-          },
-        );
-      }
+          if slideshow_state.image_time_remaining == 0 {
+            next_image(slideshow_state);
+          }
+        },
+      );
     }
   });
 
-  use_future(move || {
-    to_owned![fullscreen_event_listener_option_signal];
+  use_future(move || async move {
+    let document: Document = web_sys::window().unwrap().document().unwrap();
 
-    to_owned![fullscreen_signal];
-
-    async move {
-      let document: Document = web_sys::window().unwrap().document().unwrap();
-
-      if !document.fullscreen_enabled() {
-        return;
-      }
-
-      let slideshow_element: web_sys::Element =
-        document.get_element_by_id("slideshow").unwrap();
-
-      let event_listener = EventListener::new(
-        &slideshow_element,
-        "fullscreenchange",
-        move |_event| {
-          let is_fullscreen: bool = document.fullscreen_element().is_some();
-          fullscreen_signal.set(is_fullscreen);
-        },
-      );
-
-      fullscreen_event_listener_option_signal.set(Some(event_listener));
+    if !document.fullscreen_enabled() {
+      return;
     }
+
+    let slideshow_element: web_sys::Element =
+      document.get_element_by_id("slideshow").unwrap();
+
+    let event_listener = EventListener::new(
+      &slideshow_element,
+      "fullscreenchange",
+      move |_event| {
+        let is_fullscreen: bool = document.fullscreen_element().is_some();
+        fullscreen_signal.set(is_fullscreen);
+      },
+    );
+
+    fullscreen_event_listener_option_signal.set(Some(event_listener));
   });
 
   rsx! {
