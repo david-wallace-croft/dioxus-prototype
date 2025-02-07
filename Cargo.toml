@@ -17,8 +17,6 @@ com-croftsoft-core = "0.14.0"
 com-croftsoft-lib-string = "0.1.0"
 dioxus = { version = "0.6.2", features = ["fullstack", "router"] }
 dioxus-charts = "0.3.1"
-dioxus-isrg = "0.6.2"
-dioxus-logger = "0.6.2"
 gloo-events = "0.2.0"
 serde = "1.0.217"
 tracing = "0.1.41"
