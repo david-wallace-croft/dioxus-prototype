@@ -1,9 +1,3 @@
-.app-flashcard {
-  animation-duration: 1s;
-  animation-iteration-count: 1;
-  animation-name: app-fade-in;
-}
-
 .app-flashcard .app-answer-button {
   appearance: none;
   border-color: var(--app-button-border-color);

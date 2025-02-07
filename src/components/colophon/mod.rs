@@ -10,7 +10,7 @@ pub fn Colophon() -> Element {
       href: CSS
     }
     div {
-      class: "app-colophon box",
+      class: "app-colophon app-fade-in-animation box",
     h1 {
       style: "text-align: center",
     "Colophon"

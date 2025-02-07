@@ -100,7 +100,7 @@ pub fn Slideshow() -> Element {
       href: CSS
     }
     div {
-      class: "app-slideshow box",
+      class: "app-fade-in-animation app-slideshow box",
       onmousemove: move |_event| on_mouse_move(&mut slideshow_state_signal),
     h1 {
       class: "app-title",

@@ -66,7 +66,8 @@
   - Runs the dist and serve scripts
   - Used to test the SSG distribution prior to hosting on a CDN
 - npm run format
-  - Runs the utility prettier to format the generated SSG files
+  - Runs the "prettier" utility to format the generated HTML files
+  - Useful for analyzing or debugging the generated HTML files
 
 ## TODO
 

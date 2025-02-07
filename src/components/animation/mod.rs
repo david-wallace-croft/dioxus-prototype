@@ -87,7 +87,7 @@ pub fn Animation() -> Element {
       href: CSS
     }
     div {
-      class: "app-animation box",
+      class: "app-fade-in-animation box",
     h1 {
       "Animation"
     }

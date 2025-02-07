@@ -27,7 +27,7 @@ pub fn Barchart() -> Element {
     href: CSS
   }
   div {
-    class: "app-barchart box",
+    class: "app-barchart app-fade-in-animation box",
   h1 {
     style: "text-align: center",
   "Barchart"

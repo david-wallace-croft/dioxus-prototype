@@ -16,6 +16,12 @@ a:visited {
   color: #b7410e;
 }
 
+.app-fade-in-animation {
+  animation-duration: 3s;
+  animation-iteration-count: 1;
+  animation-name: app-fade-in;
+}
+
 body {
   background-color: #b7410e;
   box-sizing: border-box;

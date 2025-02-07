@@ -1,9 +1,3 @@
-.app-retirement {
-  animation-duration: 1s;
-  animation-iteration-count: 1;
-  animation-name: app-fade-in;
-}
-
 .app-retirement .app-title {
   text-align: center;
 }

@@ -11,12 +11,6 @@
   transition: opacity 5s;
 }
 
-.app-slideshow {
-  animation-duration: 1s;
-  animation-iteration-count: 1;
-  animation-name: app-fade-in;
-}
-
 .app-slideshow .app-control-panel {
   margin-top: 0.5rem;
   position: absolute;

@@ -42,7 +42,7 @@ pub fn Retirement() -> Element {
     href: CSS
   }
   div {
-    class: "app-retirement box",
+    class: "app-fade-in-animation app-retirement box",
   div {
     margin_bottom: "1rem",
     text_align: "right",

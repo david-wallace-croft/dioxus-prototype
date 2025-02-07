@@ -36,7 +36,7 @@ pub fn Flashcard() -> Element {
     href: CSS
   }
   div {
-    class: "app-flashcard box",
+    class: "app-fade-in-animation app-flashcard box",
     onclick: move |_event| on_click_flashcard(&mut message_signal),
   div {
     display: "flex",

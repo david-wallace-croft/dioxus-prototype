@@ -1,9 +1,3 @@
-.app-animation {
-  animation-duration: 1s;
-  animation-iteration-count: 1;
-  animation-name: app-fade-in;
-}
-
 .app-animation h1 {
   text-align: center;
 }

@@ -12,7 +12,7 @@ pub fn Home() -> Element {
     href: CSS
   }
   div {
-    class: "app-home box",
+    class: "app-fade-in-animation app-home box",
   h1 {
   "CroftSoft Dioxus Prototype"
   }
