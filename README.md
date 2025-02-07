@@ -69,11 +69,6 @@
   - Runs the "prettier" utility to format the generated HTML files
   - Useful for analyzing or debugging the generated HTML files
 
-## TODO
-
-- Restore the prettier configuration
-- Bump the version number
-
 ## History
 
 - 2022-08-21: Initial release
