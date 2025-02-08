@@ -94,15 +94,15 @@ pub fn Animation() -> Element {
     canvas {
       background_color: "black",
       cursor: "crosshair",
+      height: "360",
       id: CANVAS_ID,
-      // https://docs.rs/dioxus/latest/dioxus/events/index.html
       onblur: move |_event| blur_signal.set(true),
       onclick: move |event| on_click(event, &mut click_count),
       onfocus: move |_event| focus_signal.set(true),
       onkeydown: move |_event| update_signal.set(true),
       onwheel: move |_event| update_signal.set(true),
       tabindex: 0,
-      width: "600",
+      width: "470",
     }
     }
   }
