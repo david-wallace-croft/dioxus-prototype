@@ -17,55 +17,55 @@ pub fn Nav() -> Element {
     Link {
       active_class: "app-nav-active",
       to: Route::Home {},
-      "Home",
+    "Home",
     }
     }
     li {
     Link {
       active_class: "app-nav-active",
       to: Route::Animation {},
-      "Animation",
+    "Animation",
     }
     }
     li {
     Link {
       active_class: "app-nav-active",
       to: Route::Barchart {},
-      "Barchart",
+    "Barchart",
     }
     }
     li {
     Link {
       active_class: "app-nav-active",
       to: Route::Flashcard {},
-      "Flashcard",
-    }
-    }
-    li {
-    a {
-      href: "/manual/",
-      "Manual"
+    "Flashcard",
     }
     }
     li {
     Link {
       active_class: "app-nav-active",
       to: Route::Retirement {},
-      "Retirement",
+    "Retirement",
     }
     }
     li {
     Link {
       active_class: "app-nav-active",
       to: Route::Slideshow {},
-      "Slideshow",
+    "Slideshow",
+    }
+    }
+    li {
+    a {
+      href: "/merged/",
+    "Merged"
     }
     }
     li {
     Link {
       active_class: "app-nav-active",
       to: Route::Colophon {},
-      "Colophon",
+    "Colophon",
     }
     }
     }

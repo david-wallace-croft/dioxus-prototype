@@ -85,19 +85,6 @@ pub fn Home() -> Element {
   }
   li {
   "The "
-  a {
-    href: "/manual/",
-  "Manual"
-  }
-  " link demonstrates"
-  ul {
-  li {
-  "integrating with pre-existing non-Dioxus webpages"
-  }
-  }
-  }
-  li {
-  "The "
   Link {
     to: Route::Retirement {},
   "Retirement"
@@ -137,6 +124,19 @@ pub fn Home() -> Element {
   }
   li {
   "periodic updates"
+  }
+  }
+  }
+  li {
+  "The "
+  a {
+    href: "/merged/",
+  "Merged"
+  }
+  " link demonstrates"
+  ul {
+  li {
+  "integrating with pre-existing non-Dioxus webpages"
   }
   }
   }
