@@ -1,9 +1,9 @@
 use self::reset_button::ResetButton;
+use super::super::components::language_select::LanguageSelector;
 use super::translator::Translator;
-use crate::components::language_select::LanguageSelector;
+use ::com_croftsoft_core::math::finance_lib::PeriodicSavingsNeeded;
+use ::com_croftsoft_lib_string::to_dollars;
 use ::dioxus::prelude::*;
-use com_croftsoft_core::math::finance_lib::PeriodicSavingsNeeded;
-use com_croftsoft_lib_string::to_dollars;
 
 mod reset_button;
 
@@ -36,6 +36,15 @@ pub fn Retirement() -> Element {
 
   let mut retirement_tax_rate: Signal<String> =
     use_signal(|| RETIREMENT_TAX_RATE.to_string());
+
+  let reset_button_disabled: Memo<bool> = use_memo(move || {
+    investment_interest() == INVESTMENT_INTEREST.to_string()
+      && investment_years() == INVESTMENT_YEARS.to_string()
+      && retirement_income() == RETIREMENT_INCOME.to_string()
+      && retirement_inflation() == RETIREMENT_INFLATION.to_string()
+      && retirement_interest() == RETIREMENT_INTEREST.to_string()
+      && retirement_tax_rate() == RETIREMENT_TAX_RATE.to_string()
+  });
 
   rsx! {
   document::Stylesheet {
@@ -258,8 +267,7 @@ pub fn Retirement() -> Element {
   div {
     style: "text-align:center",
   ResetButton {
-    // TODO: Disable when the inputs are pristine
-    disabled: false,
+    disabled: reset_button_disabled(),
     on_click: move |_event| on_click_reset_button(
       &mut investment_interest,
       &mut investment_years,
@@ -286,7 +294,7 @@ pub fn Retirement() -> Element {
       es: "Haga clic ",
     }
     a {
-      href: "https://www.bankrate.com/retirement/retirement-plan-calculator/",
+      href: "https://trsretire.com/media/calculators/en/RetirementPlan.jsp",
       target: "_blank",
       Translator {
         en: "here",
