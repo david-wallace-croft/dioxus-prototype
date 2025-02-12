@@ -37,14 +37,7 @@ pub fn Retirement() -> Element {
   let mut retirement_tax_rate: Signal<String> =
     use_signal(|| RETIREMENT_TAX_RATE.to_string());
 
-  let reset_button_disabled: Memo<bool> = use_memo(move || {
-    investment_interest() == INVESTMENT_INTEREST.to_string()
-      && investment_years() == INVESTMENT_YEARS.to_string()
-      && retirement_income() == RETIREMENT_INCOME.to_string()
-      && retirement_inflation() == RETIREMENT_INFLATION.to_string()
-      && retirement_interest() == RETIREMENT_INTEREST.to_string()
-      && retirement_tax_rate() == RETIREMENT_TAX_RATE.to_string()
-  });
+  let mut reset_button_disabled: Signal<bool> = use_signal(|| true);
 
   rsx! {
   document::Stylesheet {
@@ -78,7 +71,10 @@ pub fn Retirement() -> Element {
   }
   input {
     size: "10",
-    oninput: move |event| on_input(event, &mut retirement_income),
+    oninput: move |event| on_input(
+      event,
+      &mut reset_button_disabled,
+      &mut retirement_income),
     r#type: "text",
     value: "{retirement_income}",
   }
@@ -99,7 +95,10 @@ pub fn Retirement() -> Element {
   }
   input {
     size: "10",
-    oninput: move |event| on_input(event, &mut investment_years),
+    oninput: move |event| on_input(
+      event,
+      &mut reset_button_disabled,
+      &mut investment_years),
     r#type: "text",
     value: "{investment_years}",
   }
@@ -123,7 +122,10 @@ pub fn Retirement() -> Element {
   }
   input {
     size: "10",
-    oninput: move |event| on_input(event, &mut investment_interest),
+    oninput: move |event| on_input(
+      event,
+      &mut reset_button_disabled,
+      &mut investment_interest),
     r#type: "text",
     value: "{investment_interest}",
   }
@@ -144,7 +146,10 @@ pub fn Retirement() -> Element {
   }
   input {
     size: "10",
-    oninput: move |event| on_input(event, &mut retirement_interest),
+    oninput: move |event| on_input(
+      event,
+      &mut reset_button_disabled,
+      &mut retirement_interest),
     r#type: "text",
     value: "{retirement_interest}",
   }
@@ -169,7 +174,10 @@ pub fn Retirement() -> Element {
   }
   input {
     size: "10",
-    oninput: move |event| on_input(event, &mut retirement_tax_rate),
+    oninput: move |event| on_input(
+      event,
+      &mut reset_button_disabled,
+      &mut retirement_tax_rate),
     r#type: "text",
     value: "{retirement_tax_rate}",
   }
@@ -190,7 +198,10 @@ pub fn Retirement() -> Element {
   }
   input {
     size: "10",
-    oninput: move |event| on_input(event, &mut retirement_inflation),
+    oninput: move |event| on_input(
+      event,
+      &mut reset_button_disabled,
+      &mut retirement_inflation),
     r#type: "input",
     value: "{retirement_inflation}",
   }
@@ -271,6 +282,7 @@ pub fn Retirement() -> Element {
     on_click: move |_event| on_click_reset_button(
       &mut investment_interest,
       &mut investment_years,
+      &mut reset_button_disabled,
       &mut retirement_income,
       &mut retirement_inflation,
       &mut retirement_interest,
@@ -391,11 +403,14 @@ fn input_is_empty(
 fn on_click_reset_button(
   investment_interest: &mut Signal<String>,
   investment_years: &mut Signal<String>,
+  reset_button_disabled: &mut Signal<bool>,
   retirement_income: &mut Signal<String>,
   retirement_inflation: &mut Signal<String>,
   retirement_interest: &mut Signal<String>,
   retirement_tax_rate: &mut Signal<String>,
 ) {
+  reset_button_disabled.set(true);
+
   investment_interest.set(INVESTMENT_INTEREST.to_owned());
 
   // TODO: use set() instead of write()?
@@ -413,8 +428,11 @@ fn on_click_reset_button(
 
 fn on_input(
   event: Event<FormData>,
+  reset_button_disabled: &mut Signal<bool>,
   state: &mut Signal<String>,
 ) {
+  reset_button_disabled.set(false);
+
   let value: String = event.data.value();
 
   if value.is_empty() || parse_string_slice(&value).is_some() {
