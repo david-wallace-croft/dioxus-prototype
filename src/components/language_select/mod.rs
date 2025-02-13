@@ -5,8 +5,8 @@ pub static LANGUAGE: GlobalSignal<String> = Signal::global(|| "en".to_string());
 #[allow(non_snake_case)]
 #[component]
 pub fn LanguageSelector() -> Element {
-  let selected_en: bool = "en".eq(LANGUAGE.read().as_str());
-  let selected_es: bool = "es".eq(LANGUAGE.read().as_str());
+  let selected_en: bool = "en".eq(LANGUAGE().as_str());
+  let selected_es: bool = "es".eq(LANGUAGE().as_str());
   rsx! {
     div {
       class: "app-language-selector",
