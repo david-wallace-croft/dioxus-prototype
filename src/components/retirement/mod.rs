@@ -409,21 +409,19 @@ fn on_click_reset_button(
   retirement_interest: &mut Signal<String>,
   retirement_tax_rate: &mut Signal<String>,
 ) {
-  reset_button_disabled.set(true);
-
   investment_interest.set(INVESTMENT_INTEREST.to_owned());
 
-  // TODO: use set() instead of write()?
+  investment_years.set(INVESTMENT_YEARS.to_owned());
 
-  *investment_years.write() = INVESTMENT_YEARS.to_owned();
+  reset_button_disabled.set(true);
 
-  *retirement_income.write() = RETIREMENT_INCOME.to_owned();
+  retirement_income.set(RETIREMENT_INCOME.to_owned());
 
-  *retirement_inflation.write() = RETIREMENT_INFLATION.to_owned();
+  retirement_inflation.set(RETIREMENT_INFLATION.to_owned());
 
-  *retirement_interest.write() = RETIREMENT_INTEREST.to_owned();
+  retirement_interest.set(RETIREMENT_INTEREST.to_owned());
 
-  *retirement_tax_rate.write() = RETIREMENT_TAX_RATE.to_owned();
+  retirement_tax_rate.set(RETIREMENT_TAX_RATE.to_owned());
 }
 
 fn on_input(
