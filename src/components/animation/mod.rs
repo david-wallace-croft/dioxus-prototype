@@ -28,8 +28,6 @@ pub fn Animation() -> Element {
 
   let mut update_signal: Signal<bool> = use_signal(|| false);
 
-  // https://github.com/DioxusLabs/dioxus/discussions/999
-  // https://github.com/DioxusLabs/dioxus/blob/master/packages/hooks/src/use_effect.rs
   use_future(move || async move {
     let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
 
