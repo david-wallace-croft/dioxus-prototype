@@ -1,7 +1,6 @@
 use ::com_croftsoft_lib_string::to_dollars;
 use ::dioxus::prelude::*;
 use ::dioxus_charts::BarChart;
-// use ::dioxus_elements::optgroup::label;
 
 #[allow(non_snake_case)]
 #[component]
@@ -33,19 +32,15 @@ pub fn Barchart() -> Element {
   "Barchart"
   }
   BarChart {
-    // bar_distance: 200.,
     bar_width: "10%",
-    // height: "50%",
     highest: 50_000.,
     horizontal_bars: true,
     label_interpolation: label_interpolation_option,
     label_size: 120,
     labels: labels,
     max_ticks: 0,
-    // padding_bottom: 10,
     padding_left: 130,
     padding_right: 75,
-    // padding_top: 0,
     series: vec![
       vec![50_000., 23_483.78, 11_000., 12_483.78],
     ],
@@ -55,8 +50,6 @@ pub fn Barchart() -> Element {
     show_labels: true,
     show_series_labels: true,
     viewbox_height: 200,
-    // viewbox_width: 1200,
-    // width: "80%",
   }
   }
   }
