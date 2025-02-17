@@ -1,6 +1,5 @@
-use crate::route::Route;
+use super::super::route::Route;
 use ::dioxus::prelude::*;
-use dioxus_router::prelude::Link;
 
 #[allow(non_snake_case)]
 #[component]
