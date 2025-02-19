@@ -429,18 +429,18 @@ fn on_input(
   reset_button_disabled: &mut Signal<bool>,
   state: &mut Signal<String>,
 ) {
-  reset_button_disabled.set(false);
-
   let value: String = event.data.value();
 
   if value.is_empty() || parse_string_slice(&value).is_some() {
     state.set(value);
+
+    reset_button_disabled.set(false);
   } else {
-    let old_value: String = state.read().clone();
+    let previous_value: String = state.read().clone();
 
-    // TODO: Does this work?
+    // Triggers an update of the input to restore the previous value
 
-    state.set(old_value);
+    state.set(previous_value);
   }
 }
 
