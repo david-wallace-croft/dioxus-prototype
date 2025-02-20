@@ -1,7 +1,7 @@
 use ::dioxus::prelude::*;
-use ::dioxus_free_icons::icons::fa_solid_icons::FaCompress;
-use ::dioxus_free_icons::icons::fa_solid_icons::FaExpand;
-use ::dioxus_free_icons::icons::fa_solid_icons::FaForwardStep;
+use ::dioxus_free_icons::icons::fa_solid_icons::{
+  FaCompress, FaExpand, FaForwardStep,
+};
 use ::dioxus_free_icons::Icon;
 
 #[allow(non_snake_case)]
