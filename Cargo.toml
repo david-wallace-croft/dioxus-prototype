@@ -1,7 +1,7 @@
 [package]
 authors = ["David Wallace Croft <david@CroftSoft.com>"]
 description = "CroftSoft Dioxus Prototype"
-edition = "2021"
+edition = "2024"
 homepage = "https://www.CroftSoft.com/"
 keywords = ["dioxus"]
 license = "MIT"
@@ -9,6 +9,7 @@ name = "dioxus-prototype"
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
+rust-version = "1.85.0"
 version = "0.6.4-SNAPSHOT"
 
 [dependencies]
@@ -18,7 +19,7 @@ com-croftsoft-lib-string = "0.1.0"
 dioxus = { version = "0.6.3", features = ["fullstack", "router"] }
 dioxus-charts = "0.3.1"
 gloo-events = "0.2.0"
-serde = "1.0.217"
+serde = "1.0.218"
 tracing = "0.1.41"
 
 [dependencies.dioxus-free-icons]
