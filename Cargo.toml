@@ -19,7 +19,7 @@ com-croftsoft-lib-string = "0.1.0"
 dioxus = { version = "0.6.3", features = ["fullstack", "router"] }
 dioxus-charts = "0.3.1"
 gloo-events = "0.2.0"
-serde = "1.0.218"
+serde = "1.0.219"
 tracing = "0.1.41"
 
 [dependencies.dioxus-free-icons]
