@@ -1,7 +1,7 @@
 use ::dioxus::logger;
 use ::dioxus::prelude::*;
 use ::dioxus_prototype::route::Route;
-use ::tracing::{info, Level};
+use ::tracing::{Level, info};
 
 #[server(endpoint = "static_routes")]
 async fn static_routes() -> Result<Vec<String>, ServerFnError> {

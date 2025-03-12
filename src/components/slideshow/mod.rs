@@ -3,8 +3,8 @@ use ::async_std::task::sleep;
 use ::dioxus::prelude::*;
 use ::gloo_events::EventListener;
 use ::std::time::Duration;
-use ::web_sys::wasm_bindgen::JsValue;
 use ::web_sys::Document;
+use ::web_sys::wasm_bindgen::JsValue;
 
 mod control_panel;
 

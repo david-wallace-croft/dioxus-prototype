@@ -1,6 +1,6 @@
 use ::dioxus::prelude::*;
-use ::dioxus_free_icons::icons::fa_regular_icons::FaCircleQuestion;
 use ::dioxus_free_icons::Icon;
+use ::dioxus_free_icons::icons::fa_regular_icons::FaCircleQuestion;
 
 #[allow(non_snake_case)]
 #[component]

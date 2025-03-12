@@ -1,6 +1,6 @@
 use ::dioxus::prelude::*;
-use ::dioxus_free_icons::icons::fa_solid_icons::FaLink;
 use ::dioxus_free_icons::Icon;
+use ::dioxus_free_icons::icons::fa_solid_icons::FaLink;
 
 #[allow(non_snake_case)]
 #[component]

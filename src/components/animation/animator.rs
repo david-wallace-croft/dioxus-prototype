@@ -1,7 +1,7 @@
 use super::color::Color;
 use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{
-  window, CanvasRenderingContext2d, Document, HtmlCanvasElement, Window,
+  CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
 
 pub struct Animator {
