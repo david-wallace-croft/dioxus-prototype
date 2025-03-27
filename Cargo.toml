@@ -13,7 +13,7 @@ rust-version = "1.85.0"
 version = "0.6.4-SNAPSHOT"
 
 [dependencies]
-async-std = "1.13.0"
+async-std = "1.13.1"
 com-croftsoft-core = "0.14.0"
 com-croftsoft-lib-string = "0.1.0"
 dioxus = { version = "0.6.3", features = ["fullstack", "router"] }
