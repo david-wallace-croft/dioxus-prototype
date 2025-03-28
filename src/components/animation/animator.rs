@@ -4,6 +4,8 @@ use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
 
+const SIZE: u8 = 6;
+
 pub struct Animator {
   canvas_height: f64,
   canvas_rendering_context_2d: CanvasRenderingContext2d,
@@ -132,6 +134,6 @@ impl Animator {
 
     self.y += self.delta_y;
 
-    self.color = self.color.drift();
+    self.color = self.color.drift(SIZE);
   }
 }

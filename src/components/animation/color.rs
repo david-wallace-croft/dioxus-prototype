@@ -18,16 +18,24 @@ impl Color {
     format!("rgb({red}, {green}, {blue})")
   }
 
-  pub fn drift(&self) -> Color {
+  pub fn drift(
+    &self,
+    size: u8,
+  ) -> Color {
     Color {
-      blue: Color::drift_primary_color(self.blue),
-      green: Color::drift_primary_color(self.green),
-      red: Color::drift_primary_color(self.red),
+      blue: Color::drift_primary_color(self.blue, size),
+      green: Color::drift_primary_color(self.green, size),
+      red: Color::drift_primary_color(self.red, size),
     }
   }
 
-  pub fn drift_primary_color(primary_color: u8) -> u8 {
-    let delta: i8 = (random() * 13.) as i8 - 6;
+  pub fn drift_primary_color(
+    primary_color: u8,
+    size: u8,
+  ) -> u8 {
+    let width: f64 = (size * 2 + 1) as f64;
+
+    let delta: i8 = (random() * width) as i8 - size as i8;
 
     primary_color.saturating_add_signed(delta)
   }
