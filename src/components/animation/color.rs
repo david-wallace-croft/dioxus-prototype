@@ -60,39 +60,39 @@ fn drift_primary_color(
 fn generate_random_drift(maximum_drift: u8) -> i16 {
   let maximum_drift_as_i16: i16 = maximum_drift as i16;
 
-  // if maximum_drift is 0, width is 1
-  // if maximum_drift is 1, width is 3
-  // if maximum_drift is 2, width is 5
-  // if maximum_drift is 3, width is 7
+  // if maximum is 0, width is 1
+  // if maximum is 1, width is 3
+  // if maximum is 2, width is 5
+  // if maximum is 3, width is 7
   // ...
-  // if maximum_drift is 254, width is 509
-  // if maximum_drift is 255, width is 511
-  let width: i16 = 2 * maximum_drift_as_i16 + 1;
+  // if maximum is 254, width is 509
+  // if maximum is 255, width is 511
+  let range_width: i16 = 2 * maximum_drift_as_i16 + 1;
 
-  // if maximum_drift is 0, 0.0 <= drift < 1.0
-  // if maximum_drift is 1, 0.0 <= drift < 3.0
-  // if maximum_drift is 2, 0.0 <= drift < 5.0
-  // if maximum_drift is 3, 0.0 <= drift < 7.0
+  // if maximum is 0, 0.0 <= drift < 1.0
+  // if maximum is 1, 0.0 <= drift < 3.0
+  // if maximum is 2, 0.0 <= drift < 5.0
+  // if maximum is 3, 0.0 <= drift < 7.0
   // ...
-  // if maximum_drift is 254, 0.0 <= drift < 509.0
-  // if maximum_drift is 255, 0.0 <= drift < 511.0
-  let drift_as_f64: f64 = random() * (width as f64);
+  // if maximum is 254, 0.0 <= drift < 509.0
+  // if maximum is 255, 0.0 <= drift < 511.0
+  let shifted_drift_as_f64: f64 = random() * (range_width as f64);
 
-  // if maximum_drift is 0, drift is 0
-  // if maximum_drift is 1, drift is 0, 1, or 2
-  // if maximum_drift is 2, drift is 0, 1, 2, 3, or 4
-  // if maximum_drift is 3, drift is 0, 1, 2, 3, 4, 5, or 6
+  // if maximum is 0, drift is 0
+  // if maximum is 1, drift is 0, 1, or 2
+  // if maximum is 2, drift is 0, 1, 2, 3, or 4
+  // if maximum is 3, drift is 0, 1, 2, 3, 4, 5, or 6
   // ...
-  // if maximum_drift is 254, drift is 0, 1, 2, ..., 507, or 508
-  // if maximum_drift is 255, drift is 0, 1, 2, ..., 509, or 510
-  let drift_as_i16: i16 = drift_as_f64 as i16;
+  // if maximum is 254, drift is 0, 1, 2, ..., 507, or 508
+  // if maximum is 255, drift is 0, 1, 2, ..., 509, or 510
+  let shifted_drift_as_i16: i16 = shifted_drift_as_f64 as i16;
 
-  // if maximum_drift is 0, drift is 0
-  // if maximum_drift is 1, drift is -1, 0, or 1
-  // if maximum_drift is 2, drift is -2, -1, 0, 1, 2, or 2
-  // if maximum_drift is 3, drift is -3, -2, -1, 0, 1, 2, or 3
+  // if maximum is 0, drift is 0
+  // if maximum is 1, drift is -1, 0, or 1
+  // if maximum is 2, drift is -2, -1, 0, 1, 2, or 2
+  // if maximum is 3, drift is -3, -2, -1, 0, 1, 2, or 3
   // ...
-  // if maximum_drift is 254, drift is -254, -253, ..., 253, or 254
-  // if maximum_drift is 255, drift is -255, -254, ..., 254, or 255
-  drift_as_i16 - maximum_drift_as_i16
+  // if maximum is 254, drift is -254, -253, ..., 253, or 254
+  // if maximum is 255, drift is -255, -254, ..., 254, or 255
+  shifted_drift_as_i16 - maximum_drift_as_i16
 }
