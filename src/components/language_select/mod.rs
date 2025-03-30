@@ -1,7 +1,7 @@
 use ::dioxus::prelude::*;
 
-pub static EN: &'static str = "en";
-pub static ES: &'static str = "es";
+pub static EN: &str = "en";
+pub static ES: &str = "es";
 
 pub static LANGUAGE: GlobalSignal<&'static str> = Signal::global(|| EN);
 
