@@ -19,25 +19,22 @@ impl Color {
   }
 
   pub fn drift(
-    // TODO: make this &mut self
-    &self,
+    &mut self,
     maximum_drift: u8,
-  ) -> Color {
-    Color {
-      blue: drift_primary_color(self.blue, maximum_drift),
-      green: drift_primary_color(self.green, maximum_drift),
-      red: drift_primary_color(self.red, maximum_drift),
-    }
+  ) {
+    self.blue = drift_primary_color(self.blue, maximum_drift);
+    self.green = drift_primary_color(self.green, maximum_drift);
+    self.red = drift_primary_color(self.red, maximum_drift);
   }
 
-  pub fn generate_random_color() -> Color {
+  pub fn generate_random_color() -> Self {
     let red: u8 = (random() * 256.) as u8;
 
     let green: u8 = (random() * 256.) as u8;
 
     let blue: u8 = (random() * 256.) as u8;
 
-    Color {
+    Self {
       blue,
       green,
       red,
