@@ -1,5 +1,5 @@
 use self::animator::Animator;
-// use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
+use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
 use ::std::time::Duration;
 use ::tracing::info;
@@ -24,6 +24,8 @@ pub fn Animation() -> Element {
 
   let mut blur_signal: Signal<bool> = use_signal(|| false);
 
+  let mut drift_signal: Signal<i8> = use_signal(|| 0);
+
   let mut focus_signal: Signal<bool> = use_signal(|| false);
 
   let mut update_signal: Signal<bool> = use_signal(|| false);
@@ -44,6 +46,16 @@ pub fn Animation() -> Element {
         animator.set_message(MESSAGE_START);
 
         running = true;
+      }
+
+      let delta: i8 = *drift_signal.read();
+
+      if delta != 0 {
+        drift_signal.set(0);
+
+        animator.adjust_maximum_drift(delta);
+
+        update = true;
       }
 
       if *focus_signal.read() {
@@ -98,7 +110,7 @@ pub fn Animation() -> Element {
       onclick: move |event| on_click(event, &mut click_count),
       onfocus: move |_event| focus_signal.set(true),
       onkeydown: move |_event| update_signal.set(true),
-      onwheel: move |_event| update_signal.set(true),
+      onwheel: move |event| on_wheel(&mut drift_signal, event),
       tabindex: 0,
       width: "470",
     }
@@ -115,26 +127,19 @@ fn on_click(
   info!("click count: {click_count:?}");
 }
 
-// fn on_wheel(
-//   _event: Event<WheelData>,
-//   // color_signal: &mut Signal<Color>,
-//   update_signal: &mut Signal<bool>,
-// ) {
-// log::info!("onwheel Event: {event:?}");
+fn on_wheel(
+  drift_signal: &mut Signal<i8>,
+  event: Event<WheelData>,
+) {
+  let wheel_delta: WheelDelta = event.delta();
 
-// let wheel_delta: WheelDelta = event.delta();
+  let delta: f64 = match wheel_delta {
+    Lines(lines_vector) => lines_vector.y,
+    Pages(pages_vector) => pages_vector.y,
+    Pixels(pixels_vector) => pixels_vector.y,
+  };
 
-// let delta: f64 = match wheel_delta {
-//   Lines(lines_vector) => lines_vector.y,
-//   Pages(pages_vector) => pages_vector.y,
-//   Pixels(pixels_vector) => pixels_vector.y,
-// };
+  let drift_delta: i8 = delta.clamp(-128., 127.) as i8;
 
-// let delta: i8 = delta.clamp(-1., 1.) as i8;
-
-// let color: Color = *color_signal.read();
-
-// color_signal.set(color.shift(delta));
-
-//   update_signal.set(true);
-// }
+  drift_signal.set(drift_delta);
+}

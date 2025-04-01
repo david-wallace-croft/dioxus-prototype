@@ -4,8 +4,6 @@ use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
 
-const MAXIMUM_DRIFT: u8 = 4;
-
 pub struct Animator {
   canvas_height: f64,
   canvas_rendering_context_2d: CanvasRenderingContext2d,
@@ -13,6 +11,7 @@ pub struct Animator {
   color: Color,
   delta_x: f64,
   delta_y: f64,
+  maximum_drift: u8,
   message: &'static str,
   square_size: f64,
   x: f64,
@@ -60,6 +59,8 @@ impl Animator {
 
     let y: f64 = -delta_y;
 
+    let maximum_drift: u8 = 0;
+
     Self {
       canvas_height,
       canvas_rendering_context_2d,
@@ -67,6 +68,7 @@ impl Animator {
       color,
       delta_x,
       delta_y,
+      maximum_drift,
       message,
       square_size,
       x,
@@ -106,6 +108,13 @@ impl Animator {
       .fill_text(self.message, 4., 30.);
   }
 
+  pub fn adjust_maximum_drift(
+    &mut self,
+    delta: i8,
+  ) {
+    self.maximum_drift = self.maximum_drift.saturating_add_signed(delta);
+  }
+
   pub fn set_message(
     &mut self,
     message: &'static str,
@@ -134,6 +143,10 @@ impl Animator {
 
     self.y += self.delta_y;
 
-    self.color.drift(MAXIMUM_DRIFT);
+    if self.maximum_drift == 0 {
+      self.maximum_drift = 1;
+    }
+
+    self.color.drift(self.maximum_drift);
   }
 }
