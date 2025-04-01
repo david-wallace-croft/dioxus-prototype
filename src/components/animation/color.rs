@@ -27,7 +27,7 @@ impl Color {
     self.red = drift_primary_color(self.red, maximum_drift);
   }
 
-  pub fn generate_random_color() -> Self {
+  pub fn random() -> Self {
     let red: u8 = (random() * 256.) as u8;
 
     let green: u8 = (random() * 256.) as u8;

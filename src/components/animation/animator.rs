@@ -46,7 +46,7 @@ impl Animator {
 
     let canvas_width: f64 = html_canvas_element.width() as f64;
 
-    let color: Color = Color::generate_random_color();
+    let color: Color = Color::random();
 
     let square_size: f64 =
       100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.);
