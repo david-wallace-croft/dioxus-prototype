@@ -3,6 +3,8 @@ use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
 use ::std::time::Duration;
 use ::tracing::info;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 mod animator;
 mod color;
@@ -20,75 +22,83 @@ pub fn Animation() -> Element {
 
   let mut click_count: i32 = 0;
 
-  // TODO: Is it better to use Arc<AtomicBool> instead of Signal<bool>?
-
-  let mut blur_signal: Signal<bool> = use_signal(|| false);
-
   let mut drift_signal: Signal<i8> = use_signal(|| 0);
 
   let mut focus_signal: Signal<bool> = use_signal(|| false);
 
   let mut update_signal: Signal<bool> = use_signal(|| false);
 
-  use_future(move || async move {
-    let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
+  // TODO: Is using Arc<AtomicBool> more efficient than using a Signal<bool>?
+  let blur_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
-    let mut repaint = false;
+  // TODO: Compared to using Signal, cloning Arc<AtomicBool> seems awkward
+  let blur_flag_clone_0: Arc<AtomicBool> = blur_flag.clone();
 
-    let mut running = true;
+  use_future(move || {
+    let blur_flag_clone_1: Arc<AtomicBool> = blur_flag.clone();
 
-    let mut update = false;
+    async move {
+      let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
 
-    loop {
-      if *blur_signal.read() {
-        blur_signal.set(false);
+      let mut repaint = false;
+      let mut running = true;
+      let mut update = false;
 
-        animator.set_message(MESSAGE_START);
+      loop {
+        if blur_flag_clone_1.load(Ordering::SeqCst) {
+          blur_flag_clone_1.store(false, Ordering::SeqCst);
 
-        running = true;
+          animator.set_message(MESSAGE_START);
+
+          running = true;
+        }
+
+        // if *blur_signal.read() {
+        //   blur_signal.set(false);
+        // }
+
+        let delta: i8 = *drift_signal.read();
+
+        if delta != 0 {
+          drift_signal.set(0);
+
+          animator.adjust_maximum_drift(delta);
+
+          update = true;
+        }
+
+        if *focus_signal.read() {
+          focus_signal.set(false);
+
+          animator.set_message(MESSAGE_CONTROLS);
+
+          repaint = true;
+
+          running = false;
+        }
+
+        if *update_signal.read() {
+          update_signal.set(false);
+
+          update = true;
+        }
+
+        if running || update {
+          update = false;
+
+          animator.update();
+
+          repaint = true;
+        }
+
+        if repaint {
+          repaint = false;
+
+          animator.paint();
+        }
+
+        async_std::task::sleep(Duration::from_millis(17u64)).await;
       }
-
-      let delta: i8 = *drift_signal.read();
-
-      if delta != 0 {
-        drift_signal.set(0);
-
-        animator.adjust_maximum_drift(delta);
-
-        update = true;
-      }
-
-      if *focus_signal.read() {
-        focus_signal.set(false);
-
-        animator.set_message(MESSAGE_CONTROLS);
-
-        repaint = true;
-
-        running = false;
-      }
-
-      if *update_signal.read() {
-        update_signal.set(false);
-
-        update = true;
-      }
-
-      if running || update {
-        update = false;
-
-        animator.update();
-
-        repaint = true;
-      }
-
-      if repaint {
-        repaint = false;
-
-        animator.paint();
-      }
-
-      async_std::task::sleep(Duration::from_millis(17u64)).await;
     }
   });
 
@@ -106,7 +116,7 @@ pub fn Animation() -> Element {
       cursor: "crosshair",
       height: "360",
       id: CANVAS_ID,
-      onblur: move |_event| blur_signal.set(true),
+      onblur: move |_event| blur_flag_clone_0.store(true, Ordering::SeqCst),
       onclick: move |event| on_click(event, &mut click_count),
       onfocus: move |_event| focus_signal.set(true),
       onkeydown: move |_event| update_signal.set(true),
