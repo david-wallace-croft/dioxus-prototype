@@ -29,13 +29,13 @@ pub fn Animation() -> Element {
   let mut update_signal: Signal<bool> = use_signal(|| false);
 
   // TODO: Is using Arc<AtomicBool> more efficient than using a Signal<bool>?
-  let blur_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+  let blur_flag_for_event: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
-  // TODO: Compared to using Signal, cloning Arc<AtomicBool> seems awkward
-  let blur_flag_clone_0: Arc<AtomicBool> = blur_flag.clone();
+  // TODO: Using Signal seems cleaner than repeatedly cloning Arc<AtomicBool>
+  let blur_flag_for_closure: Arc<AtomicBool> = blur_flag_for_event.clone();
 
   use_future(move || {
-    let blur_flag_clone_1: Arc<AtomicBool> = blur_flag.clone();
+    let blur_flag_for_async: Arc<AtomicBool> = blur_flag_for_closure.clone();
 
     async move {
       let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
@@ -45,8 +45,8 @@ pub fn Animation() -> Element {
       let mut update = false;
 
       loop {
-        if blur_flag_clone_1.load(Ordering::SeqCst) {
-          blur_flag_clone_1.store(false, Ordering::SeqCst);
+        if blur_flag_for_async.load(Ordering::SeqCst) {
+          blur_flag_for_async.store(false, Ordering::SeqCst);
 
           animator.set_message(MESSAGE_START);
 
@@ -113,7 +113,7 @@ pub fn Animation() -> Element {
       cursor: "crosshair",
       height: "360",
       id: CANVAS_ID,
-      onblur: move |_event| blur_flag_clone_0.store(true, Ordering::SeqCst),
+      onblur: move |_event| blur_flag_for_event.store(true, Ordering::SeqCst),
       onclick: move |event| on_click(event, &mut click_count),
       onfocus: move |_event| focus_signal.set(true),
       onkeydown: move |_event| update_signal.set(true),
