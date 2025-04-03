@@ -53,10 +53,6 @@ pub fn Animation() -> Element {
           running = true;
         }
 
-        // if *blur_signal.read() {
-        //   blur_signal.set(false);
-        // }
-
         let delta: i8 = *drift_signal.read();
 
         if delta != 0 {
