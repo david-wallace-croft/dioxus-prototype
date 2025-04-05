@@ -38,6 +38,7 @@ pub fn Animation() -> Element {
 
   let update_for_closure: Arc<AtomicBool> = update_for_event.clone();
 
+  // TODO: Can we use the new Rust 1.85 async closure syntax?
   use_future(move || {
     let blur_for_async: Arc<AtomicBool> = blur_for_closure.clone();
 
