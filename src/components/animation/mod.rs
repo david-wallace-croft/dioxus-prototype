@@ -25,88 +25,29 @@ pub fn Animation() -> Element {
   let mut drift_signal: Signal<i8> = use_signal(|| 0);
 
   // TODO: Is using Arc<AtomicBool> more efficient than using a Signal<bool>?
-  let blur_for_event: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+  let blur_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
-  let focus_for_event: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+  let focus_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
-  let update_for_event: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+  let update_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
   // TODO: Using Signal seems cleaner than repeatedly cloning Arc<AtomicBool>
-  let blur_for_closure: Arc<AtomicBool> = blur_for_event.clone();
+  let blur_flag_for_closure: Arc<AtomicBool> = blur_flag.clone();
 
-  let focus_for_closure: Arc<AtomicBool> = focus_for_event.clone();
+  let focus_flag_for_closure: Arc<AtomicBool> = focus_flag.clone();
 
-  let update_for_closure: Arc<AtomicBool> = update_for_event.clone();
+  let update_flag_for_closure: Arc<AtomicBool> = update_flag.clone();
 
-  // TODO: Can we use the new Rust 1.85 async closure syntax?
-  use_future(move || {
-    let blur_for_async: Arc<AtomicBool> = blur_for_closure.clone();
+  let looper_closure = move || {
+    looper(
+      blur_flag_for_closure.clone(),
+      drift_signal,
+      focus_flag_for_closure.clone(),
+      update_flag_for_closure.clone(),
+    )
+  };
 
-    let focus_for_async: Arc<AtomicBool> = focus_for_closure.clone();
-
-    let update_for_async: Arc<AtomicBool> = update_for_closure.clone();
-
-    async move {
-      let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
-
-      let mut repaint = false;
-      let mut running = true;
-      let mut update = false;
-
-      loop {
-        if blur_for_async.load(Ordering::SeqCst) {
-          blur_for_async.store(false, Ordering::SeqCst);
-
-          animator.set_message(MESSAGE_START);
-
-          running = true;
-        }
-
-        let delta: i8 = *drift_signal.read();
-
-        if delta != 0 {
-          drift_signal.set(0);
-
-          animator.adjust_maximum_drift(delta);
-
-          update = true;
-        }
-
-        if focus_for_async.load(Ordering::SeqCst) {
-          focus_for_async.store(false, Ordering::SeqCst);
-
-          animator.set_message(MESSAGE_CONTROLS);
-
-          repaint = true;
-
-          running = false;
-        }
-
-        if update_for_async.load(Ordering::SeqCst) {
-          update_for_async.store(false, Ordering::SeqCst);
-
-          update = true;
-        }
-
-        if running || update {
-          update = false;
-
-          animator.update();
-
-          repaint = true;
-        }
-
-        if repaint {
-          repaint = false;
-
-          animator.paint();
-        }
-
-        // TODO: Can we replace this with a request_animation_frame?
-        async_std::task::sleep(Duration::from_millis(17u64)).await;
-      }
-    }
-  });
+  use_future(looper_closure);
 
   rsx! {
     document::Stylesheet {
@@ -122,15 +63,81 @@ pub fn Animation() -> Element {
       cursor: "crosshair",
       height: "360",
       id: CANVAS_ID,
-      onblur: move |_event| blur_for_event.store(true, Ordering::SeqCst),
+      onblur: move |_event| blur_flag.store(true, Ordering::SeqCst),
       onclick: move |event| on_click(event, &mut click_count),
-      onfocus: move |_event| focus_for_event.store(true, Ordering::SeqCst),
-      onkeydown: move |_event| update_for_event.store(true, Ordering::SeqCst),
+      onfocus: move |_event| focus_flag.store(true, Ordering::SeqCst),
+      onkeydown: move |_event| update_flag.store(true, Ordering::SeqCst),
       onwheel: move |event| on_wheel(&mut drift_signal, event),
       tabindex: 0,
       width: "470",
     }
     }
+  }
+}
+
+async fn looper(
+  blur_flag: Arc<AtomicBool>,
+  mut drift_signal: Signal<i8>,
+  focus_flag: Arc<AtomicBool>,
+  update_flag: Arc<AtomicBool>,
+) {
+  let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
+
+  let mut repaint = false;
+  let mut running = true;
+  let mut update = false;
+
+  loop {
+    if blur_flag.load(Ordering::SeqCst) {
+      blur_flag.store(false, Ordering::SeqCst);
+
+      animator.set_message(MESSAGE_START);
+
+      running = true;
+    }
+
+    let delta: i8 = *drift_signal.read();
+
+    if delta != 0 {
+      drift_signal.set(0);
+
+      animator.adjust_maximum_drift(delta);
+
+      update = true;
+    }
+
+    if focus_flag.load(Ordering::SeqCst) {
+      focus_flag.store(false, Ordering::SeqCst);
+
+      animator.set_message(MESSAGE_CONTROLS);
+
+      repaint = true;
+
+      running = false;
+    }
+
+    if update_flag.load(Ordering::SeqCst) {
+      update_flag.store(false, Ordering::SeqCst);
+
+      update = true;
+    }
+
+    if running || update {
+      update = false;
+
+      animator.update();
+
+      repaint = true;
+    }
+
+    if repaint {
+      repaint = false;
+
+      animator.paint();
+    }
+
+    // TODO: Can we replace this with a request_animation_frame?
+    async_std::task::sleep(Duration::from_millis(17u64)).await;
   }
 }
 
