@@ -32,6 +32,7 @@ pub fn Animation() -> Element {
   let update_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
   // TODO: Using Signal seems cleaner than repeatedly cloning Arc<AtomicBool>
+  // TODO: Revisit when Dioxus supports async closures
   let blur_flag_for_closure: Arc<AtomicBool> = blur_flag.clone();
 
   let focus_flag_for_closure: Arc<AtomicBool> = focus_flag.clone();
