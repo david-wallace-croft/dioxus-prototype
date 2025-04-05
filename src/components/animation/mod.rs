@@ -24,18 +24,26 @@ pub fn Animation() -> Element {
 
   let mut drift_signal: Signal<i8> = use_signal(|| 0);
 
-  let mut focus_signal: Signal<bool> = use_signal(|| false);
-
-  let mut update_signal: Signal<bool> = use_signal(|| false);
-
   // TODO: Is using Arc<AtomicBool> more efficient than using a Signal<bool>?
-  let blur_flag_for_event: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+  let blur_for_event: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+
+  let focus_for_event: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+
+  let update_for_event: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
   // TODO: Using Signal seems cleaner than repeatedly cloning Arc<AtomicBool>
-  let blur_flag_for_closure: Arc<AtomicBool> = blur_flag_for_event.clone();
+  let blur_for_closure: Arc<AtomicBool> = blur_for_event.clone();
+
+  let focus_for_closure: Arc<AtomicBool> = focus_for_event.clone();
+
+  let update_for_closure: Arc<AtomicBool> = update_for_event.clone();
 
   use_future(move || {
-    let blur_flag_for_async: Arc<AtomicBool> = blur_flag_for_closure.clone();
+    let blur_for_async: Arc<AtomicBool> = blur_for_closure.clone();
+
+    let focus_for_async: Arc<AtomicBool> = focus_for_closure.clone();
+
+    let update_for_async: Arc<AtomicBool> = update_for_closure.clone();
 
     async move {
       let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
@@ -45,8 +53,8 @@ pub fn Animation() -> Element {
       let mut update = false;
 
       loop {
-        if blur_flag_for_async.load(Ordering::SeqCst) {
-          blur_flag_for_async.store(false, Ordering::SeqCst);
+        if blur_for_async.load(Ordering::SeqCst) {
+          blur_for_async.store(false, Ordering::SeqCst);
 
           animator.set_message(MESSAGE_START);
 
@@ -63,8 +71,8 @@ pub fn Animation() -> Element {
           update = true;
         }
 
-        if *focus_signal.read() {
-          focus_signal.set(false);
+        if focus_for_async.load(Ordering::SeqCst) {
+          focus_for_async.store(false, Ordering::SeqCst);
 
           animator.set_message(MESSAGE_CONTROLS);
 
@@ -73,8 +81,8 @@ pub fn Animation() -> Element {
           running = false;
         }
 
-        if *update_signal.read() {
-          update_signal.set(false);
+        if update_for_async.load(Ordering::SeqCst) {
+          update_for_async.store(false, Ordering::SeqCst);
 
           update = true;
         }
@@ -113,10 +121,10 @@ pub fn Animation() -> Element {
       cursor: "crosshair",
       height: "360",
       id: CANVAS_ID,
-      onblur: move |_event| blur_flag_for_event.store(true, Ordering::SeqCst),
+      onblur: move |_event| blur_for_event.store(true, Ordering::SeqCst),
       onclick: move |event| on_click(event, &mut click_count),
-      onfocus: move |_event| focus_signal.set(true),
-      onkeydown: move |_event| update_signal.set(true),
+      onfocus: move |_event| focus_for_event.store(true, Ordering::SeqCst),
+      onkeydown: move |_event| update_for_event.store(true, Ordering::SeqCst),
       onwheel: move |event| on_wheel(&mut drift_signal, event),
       tabindex: 0,
       width: "470",
