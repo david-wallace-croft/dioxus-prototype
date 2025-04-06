@@ -4,7 +4,7 @@ use ::dioxus::prelude::*;
 use ::std::time::Duration;
 use ::tracing::info;
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicI8, Ordering};
 
 mod animator;
 mod color;
@@ -18,33 +18,37 @@ const MESSAGE_START: &str = "Click on or tab to the canvas";
 #[allow(non_snake_case)]
 #[component]
 pub fn Animation() -> Element {
+  // TODO: Pause animation when browser window minimized
+
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
   let mut click_count: i32 = 0;
 
-  let mut drift_signal: Signal<i8> = use_signal(|| 0);
-
   // TODO: Is using Arc<AtomicBool> more efficient than using a Signal<bool>?
-  let blur_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+  let request_blur: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
-  let focus_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+  let request_drift: Arc<AtomicI8> = Arc::new(AtomicI8::new(0));
 
-  let update_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+  let request_focus: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+
+  let request_update: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
   // TODO: Using Signal seems cleaner than repeatedly cloning Arc<AtomicBool>
   // TODO: Revisit when Dioxus supports async closures
-  let blur_flag_for_closure: Arc<AtomicBool> = blur_flag.clone();
+  let request_blur_for_closure: Arc<AtomicBool> = request_blur.clone();
 
-  let focus_flag_for_closure: Arc<AtomicBool> = focus_flag.clone();
+  let request_drift_for_closure: Arc<AtomicI8> = request_drift.clone();
 
-  let update_flag_for_closure: Arc<AtomicBool> = update_flag.clone();
+  let request_focus_for_closure: Arc<AtomicBool> = request_focus.clone();
+
+  let request_update_for_closure: Arc<AtomicBool> = request_update.clone();
 
   let looper_closure = move || {
     looper(
-      blur_flag_for_closure.clone(),
-      drift_signal,
-      focus_flag_for_closure.clone(),
-      update_flag_for_closure.clone(),
+      request_blur_for_closure.clone(),
+      request_drift_for_closure.clone(),
+      request_focus_for_closure.clone(),
+      request_update_for_closure.clone(),
     )
   };
 
@@ -64,11 +68,11 @@ pub fn Animation() -> Element {
       cursor: "crosshair",
       height: "360",
       id: CANVAS_ID,
-      onblur: move |_event| blur_flag.store(true, Ordering::SeqCst),
+      onblur: move |_event| request_blur.store(true, Ordering::SeqCst),
       onclick: move |event| on_click(event, &mut click_count),
-      onfocus: move |_event| focus_flag.store(true, Ordering::SeqCst),
-      onkeydown: move |_event| update_flag.store(true, Ordering::SeqCst),
-      onwheel: move |event| on_wheel(&mut drift_signal, event),
+      onfocus: move |_event| request_focus.store(true, Ordering::SeqCst),
+      onkeydown: move |_event| request_update.store(true, Ordering::SeqCst),
+      onwheel: move |event| on_wheel(event, request_drift.clone()),
       tabindex: 0,
       width: "470",
     }
@@ -77,10 +81,10 @@ pub fn Animation() -> Element {
 }
 
 async fn looper(
-  blur_flag: Arc<AtomicBool>,
-  mut drift_signal: Signal<i8>,
-  focus_flag: Arc<AtomicBool>,
-  update_flag: Arc<AtomicBool>,
+  request_blur: Arc<AtomicBool>,
+  request_drift: Arc<AtomicI8>,
+  request_focus: Arc<AtomicBool>,
+  request_update: Arc<AtomicBool>,
 ) {
   let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
 
@@ -89,26 +93,26 @@ async fn looper(
   let mut update = false;
 
   loop {
-    if blur_flag.load(Ordering::SeqCst) {
-      blur_flag.store(false, Ordering::SeqCst);
+    if request_blur.load(Ordering::SeqCst) {
+      request_blur.store(false, Ordering::SeqCst);
 
       animator.set_message(MESSAGE_START);
 
       running = true;
     }
 
-    let delta: i8 = *drift_signal.read();
+    let delta: i8 = request_drift.load(Ordering::SeqCst);
 
     if delta != 0 {
-      drift_signal.set(0);
+      request_drift.store(0, Ordering::SeqCst);
 
       animator.adjust_maximum_drift(delta);
 
       update = true;
     }
 
-    if focus_flag.load(Ordering::SeqCst) {
-      focus_flag.store(false, Ordering::SeqCst);
+    if request_focus.load(Ordering::SeqCst) {
+      request_focus.store(false, Ordering::SeqCst);
 
       animator.set_message(MESSAGE_CONTROLS);
 
@@ -117,8 +121,8 @@ async fn looper(
       running = false;
     }
 
-    if update_flag.load(Ordering::SeqCst) {
-      update_flag.store(false, Ordering::SeqCst);
+    if request_update.load(Ordering::SeqCst) {
+      request_update.store(false, Ordering::SeqCst);
 
       update = true;
     }
@@ -143,17 +147,20 @@ async fn looper(
 }
 
 fn on_click(
+  // TODO: &mut self for click_count instead of passing it in?
   _event: Event<MouseData>,
   click_count: &mut i32,
 ) {
   *click_count += 1;
 
+  // TODO: Animate the click count
+
   info!("click count: {click_count:?}");
 }
 
 fn on_wheel(
-  drift_signal: &mut Signal<i8>,
   event: Event<WheelData>,
+  request_drift: Arc<AtomicI8>,
 ) {
   let wheel_delta: WheelDelta = event.delta();
 
@@ -165,5 +172,5 @@ fn on_wheel(
 
   let drift_delta: i8 = delta.clamp(-128., 127.) as i8;
 
-  drift_signal.set(drift_delta);
+  request_drift.store(drift_delta, Ordering::SeqCst);
 }
