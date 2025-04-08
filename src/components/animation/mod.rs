@@ -1,10 +1,12 @@
 use self::animator::Animator;
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
+use ::std::sync::Arc;
+use ::std::sync::atomic::{AtomicBool, AtomicI8, Ordering};
 use ::std::time::Duration;
 use ::tracing::info;
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, AtomicI8, Ordering};
+use ::web_sys::wasm_bindgen::prelude::*;
+use ::web_sys::{Window, window};
 
 mod animator;
 mod color;
@@ -21,6 +23,19 @@ pub fn Animation() -> Element {
   // TODO: Pause animation when browser window minimized
 
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
+
+  let window: Window = window().unwrap();
+
+  let callback: Closure<dyn FnMut()> = Closure::wrap(Box::new(move || {
+    info!("Animation frame requested");
+    // TODO: Do some animation then call request_animation_frame again
+  }) as Box<dyn FnMut()>);
+
+  let _result: Result<i32, JsValue> =
+    window.request_animation_frame(callback.as_ref().unchecked_ref());
+
+  // Prevent the callback from being dropped
+  callback.forget();
 
   let mut click_count: i32 = 0;
 
