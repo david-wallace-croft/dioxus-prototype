@@ -31,6 +31,8 @@ pub fn Animation() -> Element {
     // TODO: Do some animation then call request_animation_frame again
   }) as Box<dyn FnMut()>);
 
+  // TODO: Use ::com-crofsoft-lib-animation::web_sys::spawn_local_loop
+
   let _result: Result<i32, JsValue> =
     window.request_animation_frame(callback.as_ref().unchecked_ref());
 
