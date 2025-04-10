@@ -1,12 +1,11 @@
 use self::animator::Animator;
+use ::com_croftsoft_lib_animation::web_sys::{LoopUpdater, spawn_local_loop};
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
 use ::std::sync::Arc;
 use ::std::sync::atomic::{AtomicBool, AtomicI8, Ordering};
 use ::std::time::Duration;
 use ::tracing::info;
-use ::web_sys::wasm_bindgen::prelude::*;
-use ::web_sys::{Window, window};
 
 mod animator;
 mod color;
@@ -17,6 +16,17 @@ const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
 
 const MESSAGE_START: &str = "Click on or tab to the canvas";
 
+struct MyLoopUpdater;
+
+impl LoopUpdater for MyLoopUpdater {
+  fn update_loop(
+    &mut self,
+    update_time: f64,
+  ) {
+    info!("update_loop() called with update_time: {update_time}");
+  }
+}
+
 #[allow(non_snake_case)]
 #[component]
 pub fn Animation() -> Element {
@@ -24,20 +34,8 @@ pub fn Animation() -> Element {
 
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
-  let window: Window = window().unwrap();
-
-  let callback: Closure<dyn FnMut()> = Closure::wrap(Box::new(move || {
-    info!("Animation frame requested");
-    // TODO: Do some animation then call request_animation_frame again
-  }) as Box<dyn FnMut()>);
-
-  // TODO: Use ::com-crofsoft-lib-animation::web_sys::spawn_local_loop
-
-  let _result: Result<i32, JsValue> =
-    window.request_animation_frame(callback.as_ref().unchecked_ref());
-
-  // Prevent the callback from being dropped
-  callback.forget();
+  // TODO: Continue integrating com_croftsoft_lib_animation
+  spawn_local_loop(MyLoopUpdater);
 
   let mut click_count: i32 = 0;
 

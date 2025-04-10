@@ -3,6 +3,12 @@
 version = 4
 
 [[package]]
+name = "anyhow"
+version = "1.0.97"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dcfed56ad506cb2c684a14971b8861fdc3baaaae314b9e5f9bb532cbe3ba7a4f"
+
+[[package]]
 name = "async-channel"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -228,6 +234,27 @@ name = "com-croftsoft-core"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d1c8081e206f2f31e0c069dacc1af15bd4cf27c769bd8ce34ff1187e279934fc"
+
+[[package]]
+name = "com-croftsoft-lib-animation"
+version = "0.0.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8581b5efdde52f061218bad6a02e9e8a3691622f304ba314401ff67e4a47da61"
+dependencies = [
+ "anyhow",
+ "com-croftsoft-lib-role",
+ "futures",
+ "js-sys",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "com-croftsoft-lib-role"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0cfe16a898d32eb894dbb8d9449af399e7332506d2b930c1246416e42775060"
 
 [[package]]
 name = "com-croftsoft-lib-string"
@@ -687,6 +714,7 @@ version = "0.6.4-SNAPSHOT"
 dependencies = [
  "async-std",
  "com-croftsoft-core",
+ "com-croftsoft-lib-animation",
  "com-croftsoft-lib-string",
  "dioxus",
  "dioxus-charts",

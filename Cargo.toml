@@ -15,6 +15,7 @@ version = "0.6.4-SNAPSHOT"
 [dependencies]
 async-std = "1.13.1"
 com-croftsoft-core = "0.14.0"
+com-croftsoft-lib-animation = "0.0.8"
 com-croftsoft-lib-string = "0.1.0"
 dioxus = { version = "0.6.3", features = ["fullstack", "router"] }
 dioxus-charts = "0.3.1"
@@ -49,8 +50,6 @@ version = "0.3.77"
 [features]
 default = ["web"]
 web = ["dioxus/web"]
-
-[profile]
 
 [profile.wasm-dev]
 inherits = "dev"
