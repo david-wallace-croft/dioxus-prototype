@@ -1,5 +1,5 @@
 use self::animator::Animator;
-use ::com_croftsoft_lib_animation::web_sys::{LoopUpdater, spawn_local_loop};
+// use ::com_croftsoft_lib_animation::web_sys::{LoopUpdater, spawn_local_loop};
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
 use ::std::sync::Arc;
@@ -16,26 +16,12 @@ const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
 
 const MESSAGE_START: &str = "Click on or tab to the canvas";
 
-struct MyLoopUpdater;
-
-impl LoopUpdater for MyLoopUpdater {
-  fn update_loop(
-    &mut self,
-    update_time: f64,
-  ) {
-    info!("update_loop() called with update_time: {update_time}");
-  }
-}
-
 #[allow(non_snake_case)]
 #[component]
 pub fn Animation() -> Element {
   // TODO: Pause animation when browser window minimized
 
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
-
-  // TODO: Continue integrating com_croftsoft_lib_animation
-  spawn_local_loop(MyLoopUpdater);
 
   let mut click_count: i32 = 0;
 
@@ -66,6 +52,12 @@ pub fn Animation() -> Element {
       request_update_for_closure.clone(),
     )
   };
+
+  // let looper_closure = async || {
+  //   let animator = Animator::new(CANVAS_ID, MESSAGE_START);
+  //
+  //   spawn_local_loop(animator);
+  // };
 
   use_future(looper_closure);
 

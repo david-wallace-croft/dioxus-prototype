@@ -3,6 +3,8 @@ use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
+// use com_croftsoft_lib_animation::web_sys::LoopUpdater;
+// use tracing::info;
 
 pub struct Animator {
   canvas_height: f64,
@@ -150,3 +152,16 @@ impl Animator {
     self.color.drift(self.maximum_drift);
   }
 }
+
+// impl LoopUpdater for Animator {
+//   fn update_loop(
+//     &mut self,
+//     update_time: f64,
+//   ) {
+//     info!("update_loop() called with update_time: {update_time}");
+
+//     self.update();
+
+//     self.paint();
+//   }
+// }
