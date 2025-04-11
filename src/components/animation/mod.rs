@@ -61,6 +61,11 @@ pub fn Animation() -> Element {
 
   use_future(looper_closure);
 
+  use_drop(|| {
+    // TODO: Can we use the drop to stop the spawn_local_loop?
+    info!("Child dropped");
+  });
+
   rsx! {
     document::Stylesheet {
       href: CSS
@@ -100,6 +105,8 @@ async fn looper(
   let mut update = false;
 
   loop {
+    // info!("looping");
+
     if request_blur.load(Ordering::SeqCst) {
       request_blur.store(false, Ordering::SeqCst);
 
