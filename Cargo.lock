@@ -237,9 +237,9 @@ checksum = "d1c8081e206f2f31e0c069dacc1af15bd4cf27c769bd8ce34ff1187e279934fc"
 
 [[package]]
 name = "com-croftsoft-lib-animation"
-version = "0.0.8"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8581b5efdde52f061218bad6a02e9e8a3691622f304ba314401ff67e4a47da61"
+checksum = "d57fc04c5ebf1312ef24b3cbb9bcebc4b8eca182f817a12dc7c54e29c969ee1a"
 dependencies = [
  "anyhow",
  "com-croftsoft-lib-role",
@@ -710,7 +710,7 @@ dependencies = [
 
 [[package]]
 name = "dioxus-prototype"
-version = "0.6.4-SNAPSHOT"
+version = "0.6.4"
 dependencies = [
  "async-std",
  "com-croftsoft-core",

@@ -1,29 +1,47 @@
 use super::color::Color;
+use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
+use ::std::sync::Arc;
+use ::std::sync::atomic::AtomicI8;
+use ::std::sync::atomic::{AtomicBool, Ordering};
+// use ::tracing::{debug, info};
 use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
-// use com_croftsoft_lib_animation::web_sys::LoopUpdater;
-// use tracing::info;
+
+const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
+
+const MESSAGE_START: &str = "Click on or tab to the canvas";
 
 pub struct Animator {
   canvas_height: f64,
   canvas_rendering_context_2d: CanvasRenderingContext2d,
   canvas_width: f64,
+  blur: Arc<AtomicBool>,
   color: Color,
   delta_x: f64,
   delta_y: f64,
+  drift: Arc<AtomicI8>,
+  focus: Arc<AtomicBool>,
+  frame_count: usize,
   maximum_drift: u8,
   message: &'static str,
+  running: bool,
   square_size: f64,
+  stop: Arc<AtomicBool>,
+  update: Arc<AtomicBool>,
   x: f64,
   y: f64,
 }
 
 impl Animator {
   pub fn new(
+    blur: Arc<AtomicBool>,
     canvas_id: &str,
-    message: &'static str,
+    drift: Arc<AtomicI8>,
+    focus: Arc<AtomicBool>,
+    stop: Arc<AtomicBool>,
+    update: Arc<AtomicBool>,
   ) -> Self {
     let window: Window = window().expect("global window does not exists");
 
@@ -48,37 +66,29 @@ impl Animator {
 
     let canvas_width: f64 = html_canvas_element.width() as f64;
 
-    let color: Color = Color::random();
-
-    let square_size: f64 =
-      100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.);
-
-    let delta_x: f64 = 1.;
-
-    let delta_y: f64 = 1.;
-
-    let x: f64 = -delta_x;
-
-    let y: f64 = -delta_y;
-
-    let maximum_drift: u8 = 0;
-
     Self {
+      blur,
       canvas_height,
       canvas_rendering_context_2d,
       canvas_width,
-      color,
-      delta_x,
-      delta_y,
-      maximum_drift,
-      message,
-      square_size,
-      x,
-      y,
+      color: Color::random(),
+      delta_x: 1.,
+      delta_y: 1.,
+      drift,
+      focus,
+      frame_count: 0,
+      maximum_drift: 0,
+      message: MESSAGE_START,
+      running: true,
+      square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
+      stop,
+      update,
+      x: -1.,
+      y: -1.,
     }
   }
 
-  pub fn paint(&self) {
+  fn paint(&self) {
     self.canvas_rendering_context_2d.set_fill_style_str("black");
 
     self.canvas_rendering_context_2d.fill_rect(
@@ -110,21 +120,21 @@ impl Animator {
       .fill_text(self.message, 4., 30.);
   }
 
-  pub fn adjust_maximum_drift(
+  fn adjust_maximum_drift(
     &mut self,
     delta: i8,
   ) {
     self.maximum_drift = self.maximum_drift.saturating_add_signed(delta);
   }
 
-  pub fn set_message(
+  fn set_message(
     &mut self,
     message: &'static str,
   ) {
     self.message = message;
   }
 
-  pub fn update(&mut self) {
+  fn update(&mut self) {
     if self.delta_x > 0. {
       if self.x + self.delta_x + self.square_size > self.canvas_width {
         self.delta_x = -self.delta_x;
@@ -153,15 +163,77 @@ impl Animator {
   }
 }
 
-// impl LoopUpdater for Animator {
-//   fn update_loop(
-//     &mut self,
-//     update_time: f64,
-//   ) {
-//     info!("update_loop() called with update_time: {update_time}");
+impl LoopUpdater for Animator {
+  fn update_loop(
+    &mut self,
+    _update_time: f64,
+  ) -> bool {
+    // TODO: Use update_time
 
-//     self.update();
+    // TODO: Maintain keypress state
 
-//     self.paint();
-//   }
-// }
+    self.frame_count += 1;
+
+    // TODO: Display frame_count
+    // TODO: Display frames per second
+
+    // info!("{update_time} {}", self.frame_count);
+
+    let mut repaint = false;
+    let mut update = false;
+
+    if self.blur.load(Ordering::SeqCst) {
+      // debug!("blur");
+
+      self.blur.store(false, Ordering::SeqCst);
+
+      self.set_message(MESSAGE_START);
+
+      self.running = true;
+    }
+
+    let delta: i8 = self.drift.load(Ordering::SeqCst);
+
+    if delta != 0 {
+      // debug!("delta: {delta}");
+
+      self.drift.store(0, Ordering::SeqCst);
+
+      self.adjust_maximum_drift(delta);
+
+      update = true;
+    }
+
+    if self.focus.load(Ordering::SeqCst) {
+      self.focus.store(false, Ordering::SeqCst);
+
+      self.set_message(MESSAGE_CONTROLS);
+
+      repaint = true;
+
+      self.running = false;
+    }
+
+    if self.update.load(Ordering::SeqCst) {
+      // debug!("update requested");
+
+      self.update.store(false, Ordering::SeqCst);
+
+      update = true;
+    }
+
+    if self.running || update {
+      // debug!("running: {running}, update: {update}");
+
+      self.update();
+
+      repaint = true;
+    }
+
+    if repaint {
+      self.paint();
+    }
+
+    self.stop.load(Ordering::SeqCst)
+  }
+}

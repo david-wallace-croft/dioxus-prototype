@@ -1,20 +1,15 @@
 use self::animator::Animator;
-// use ::com_croftsoft_lib_animation::web_sys::{LoopUpdater, spawn_local_loop};
+use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
 use ::std::sync::Arc;
 use ::std::sync::atomic::{AtomicBool, AtomicI8, Ordering};
-use ::std::time::Duration;
 use ::tracing::info;
 
 mod animator;
 mod color;
 
 const CANVAS_ID: &str = "home-page-canvas";
-
-const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
-
-const MESSAGE_START: &str = "Click on or tab to the canvas";
 
 #[allow(non_snake_case)]
 #[component]
@@ -25,7 +20,6 @@ pub fn Animation() -> Element {
 
   let mut click_count: i32 = 0;
 
-  // TODO: Is using Arc<AtomicBool> more efficient than using a Signal<bool>?
   let request_blur: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
   let request_drift: Arc<AtomicI8> = Arc::new(AtomicI8::new(0));
@@ -36,7 +30,6 @@ pub fn Animation() -> Element {
 
   let request_update: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
-  // TODO: Using Signal seems cleaner than repeatedly cloning Arc<AtomicBool>
   // TODO: Revisit when Dioxus supports async closures
   let request_blur_for_closure: Arc<AtomicBool> = request_blur.clone();
 
@@ -49,7 +42,7 @@ pub fn Animation() -> Element {
   let request_update_for_closure: Arc<AtomicBool> = request_update.clone();
 
   let looper_closure = move || {
-    looper(
+    spawn_animator(
       request_blur_for_closure.clone(),
       request_drift_for_closure.clone(),
       request_focus_for_closure.clone(),
@@ -58,18 +51,9 @@ pub fn Animation() -> Element {
     )
   };
 
-  // let looper_closure = async || {
-  //   let animator = Animator::new(CANVAS_ID, MESSAGE_START);
-  //
-  //   spawn_local_loop(animator);
-  // };
-
   use_future(looper_closure);
 
   use_drop(move || {
-    // TODO: Can we use the drop to stop the spawn_local_loop?
-    info!("Child dropped");
-
     request_stop.store(true, Ordering::SeqCst);
   });
 
@@ -99,77 +83,6 @@ pub fn Animation() -> Element {
   }
 }
 
-async fn looper(
-  request_blur: Arc<AtomicBool>,
-  request_drift: Arc<AtomicI8>,
-  request_focus: Arc<AtomicBool>,
-  request_stop: Arc<AtomicBool>,
-  request_update: Arc<AtomicBool>,
-) {
-  let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
-
-  let mut repaint = false;
-  let mut running = true;
-  let mut update = false;
-
-  while request_stop.load(Ordering::SeqCst) == false {
-    info!("looping");
-
-    if request_blur.load(Ordering::SeqCst) {
-      request_blur.store(false, Ordering::SeqCst);
-
-      animator.set_message(MESSAGE_START);
-
-      running = true;
-    }
-
-    let delta: i8 = request_drift.load(Ordering::SeqCst);
-
-    if delta != 0 {
-      request_drift.store(0, Ordering::SeqCst);
-
-      animator.adjust_maximum_drift(delta);
-
-      update = true;
-    }
-
-    if request_focus.load(Ordering::SeqCst) {
-      request_focus.store(false, Ordering::SeqCst);
-
-      animator.set_message(MESSAGE_CONTROLS);
-
-      repaint = true;
-
-      running = false;
-    }
-
-    if request_update.load(Ordering::SeqCst) {
-      request_update.store(false, Ordering::SeqCst);
-
-      update = true;
-    }
-
-    if running || update {
-      update = false;
-
-      animator.update();
-
-      repaint = true;
-    }
-
-    if repaint {
-      repaint = false;
-
-      animator.paint();
-    }
-
-    // TODO: Can we replace this with a request_animation_frame?
-    async_std::task::sleep(Duration::from_millis(17u64)).await;
-  }
-
-  info!("Loop stopped");
-}
-
 fn on_click(
   // TODO: &mut self for click_count instead of passing it in?
   _event: Event<MouseData>,
@@ -197,4 +110,16 @@ fn on_wheel(
   let drift_delta: i8 = delta.clamp(-128., 127.) as i8;
 
   request_drift.store(drift_delta, Ordering::SeqCst);
+}
+
+async fn spawn_animator(
+  blur: Arc<AtomicBool>,
+  drift: Arc<AtomicI8>,
+  focus: Arc<AtomicBool>,
+  stop: Arc<AtomicBool>,
+  update: Arc<AtomicBool>,
+) {
+  let loop_updater = Animator::new(blur, CANVAS_ID, drift, focus, stop, update);
+
+  spawn_local_loop(loop_updater);
 }

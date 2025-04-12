@@ -14,7 +14,7 @@ async fn static_routes() -> Result<Vec<String>, ServerFnError> {
 }
 
 fn main() {
-  logger::init(Level::INFO).expect("Failed to initialize logger");
+  logger::init(Level::DEBUG).expect("Failed to initialize logger");
 
   info!("CroftSoft Dioxus Prototype v{}", env!("CARGO_PKG_VERSION"));
 
