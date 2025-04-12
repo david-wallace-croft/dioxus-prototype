@@ -32,6 +32,8 @@ pub fn Animation() -> Element {
 
   let request_focus: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
+  let request_stop: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+
   let request_update: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
   // TODO: Using Signal seems cleaner than repeatedly cloning Arc<AtomicBool>
@@ -42,6 +44,8 @@ pub fn Animation() -> Element {
 
   let request_focus_for_closure: Arc<AtomicBool> = request_focus.clone();
 
+  let request_stop_for_closure: Arc<AtomicBool> = request_stop.clone();
+
   let request_update_for_closure: Arc<AtomicBool> = request_update.clone();
 
   let looper_closure = move || {
@@ -49,6 +53,7 @@ pub fn Animation() -> Element {
       request_blur_for_closure.clone(),
       request_drift_for_closure.clone(),
       request_focus_for_closure.clone(),
+      request_stop_for_closure.clone(),
       request_update_for_closure.clone(),
     )
   };
@@ -61,9 +66,11 @@ pub fn Animation() -> Element {
 
   use_future(looper_closure);
 
-  use_drop(|| {
+  use_drop(move || {
     // TODO: Can we use the drop to stop the spawn_local_loop?
     info!("Child dropped");
+
+    request_stop.store(true, Ordering::SeqCst);
   });
 
   rsx! {
@@ -96,6 +103,7 @@ async fn looper(
   request_blur: Arc<AtomicBool>,
   request_drift: Arc<AtomicI8>,
   request_focus: Arc<AtomicBool>,
+  request_stop: Arc<AtomicBool>,
   request_update: Arc<AtomicBool>,
 ) {
   let mut animator = Animator::new(CANVAS_ID, MESSAGE_START);
@@ -104,8 +112,8 @@ async fn looper(
   let mut running = true;
   let mut update = false;
 
-  loop {
-    // info!("looping");
+  while request_stop.load(Ordering::SeqCst) == false {
+    info!("looping");
 
     if request_blur.load(Ordering::SeqCst) {
       request_blur.store(false, Ordering::SeqCst);
@@ -158,6 +166,8 @@ async fn looper(
     // TODO: Can we replace this with a request_animation_frame?
     async_std::task::sleep(Duration::from_millis(17u64)).await;
   }
+
+  info!("Loop stopped");
 }
 
 fn on_click(
