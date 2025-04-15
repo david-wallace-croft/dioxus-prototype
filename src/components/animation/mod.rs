@@ -66,9 +66,9 @@ pub fn Animation() -> Element {
       href: CSS
     }
     div {
-      class: "app-fade-in-animation box",
+      class: "app-animation app-fade-in-animation box",
     h1 {
-      "Animation"
+    "Animation"
     }
     canvas {
       background_color: "black",
