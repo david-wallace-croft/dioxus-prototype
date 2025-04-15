@@ -1,4 +1,5 @@
 use self::animator::Animator;
+use self::inputs::Inputs;
 use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
@@ -8,6 +9,7 @@ use ::tracing::info;
 
 mod animator;
 mod color;
+mod inputs;
 
 const CANVAS_ID: &str = "home-page-canvas";
 
@@ -42,13 +44,15 @@ pub fn Animation() -> Element {
   let request_update_for_closure: Arc<AtomicBool> = request_update.clone();
 
   let looper_closure = move || {
-    spawn_animator(
-      request_blur_for_closure.clone(),
-      request_drift_for_closure.clone(),
-      request_focus_for_closure.clone(),
-      request_stop_for_closure.clone(),
-      request_update_for_closure.clone(),
-    )
+    let inputs = Inputs {
+      blur: request_blur_for_closure.clone(),
+      drift: request_drift_for_closure.clone(),
+      focus: request_focus_for_closure.clone(),
+      stop: request_stop_for_closure.clone(),
+      update: request_update_for_closure.clone(),
+    };
+
+    spawn_animator(inputs)
   };
 
   use_future(looper_closure);
@@ -112,14 +116,8 @@ fn on_wheel(
   request_drift.store(drift_delta, Ordering::SeqCst);
 }
 
-async fn spawn_animator(
-  blur: Arc<AtomicBool>,
-  drift: Arc<AtomicI8>,
-  focus: Arc<AtomicBool>,
-  stop: Arc<AtomicBool>,
-  update: Arc<AtomicBool>,
-) {
-  let loop_updater = Animator::new(blur, CANVAS_ID, drift, focus, stop, update);
+async fn spawn_animator(inputs: Inputs) {
+  let loop_updater = Animator::new(CANVAS_ID, inputs);
 
   spawn_local_loop(loop_updater);
 }

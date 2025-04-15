@@ -1,8 +1,7 @@
 use super::color::Color;
+use super::inputs::Inputs;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
-use ::std::sync::Arc;
-use ::std::sync::atomic::AtomicI8;
-use ::std::sync::atomic::{AtomicBool, Ordering};
+use ::std::sync::atomic::Ordering;
 // use ::tracing::{debug, info};
 use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{
@@ -17,31 +16,23 @@ pub struct Animator {
   canvas_height: f64,
   canvas_rendering_context_2d: CanvasRenderingContext2d,
   canvas_width: f64,
-  blur: Arc<AtomicBool>,
   color: Color,
   delta_x: f64,
   delta_y: f64,
-  drift: Arc<AtomicI8>,
-  focus: Arc<AtomicBool>,
   frame_count: usize,
+  inputs: Inputs,
   maximum_drift: u8,
   message: &'static str,
   running: bool,
   square_size: f64,
-  stop: Arc<AtomicBool>,
-  update: Arc<AtomicBool>,
   x: f64,
   y: f64,
 }
 
 impl Animator {
   pub fn new(
-    blur: Arc<AtomicBool>,
     canvas_id: &str,
-    drift: Arc<AtomicI8>,
-    focus: Arc<AtomicBool>,
-    stop: Arc<AtomicBool>,
-    update: Arc<AtomicBool>,
+    inputs: Inputs,
   ) -> Self {
     let window: Window = window().expect("global window does not exists");
 
@@ -67,22 +58,18 @@ impl Animator {
     let canvas_width: f64 = html_canvas_element.width() as f64;
 
     Self {
-      blur,
       canvas_height,
       canvas_rendering_context_2d,
       canvas_width,
       color: Color::random(),
       delta_x: 1.,
       delta_y: 1.,
-      drift,
-      focus,
       frame_count: 0,
+      inputs,
       maximum_drift: 0,
       message: MESSAGE_START,
       running: true,
       square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
-      stop,
-      update,
       x: -1.,
       y: -1.,
     }
@@ -182,30 +169,30 @@ impl LoopUpdater for Animator {
     let mut repaint = false;
     let mut update = false;
 
-    if self.blur.load(Ordering::SeqCst) {
+    if self.inputs.blur.load(Ordering::SeqCst) {
       // debug!("blur");
 
-      self.blur.store(false, Ordering::SeqCst);
+      self.inputs.blur.store(false, Ordering::SeqCst);
 
       self.set_message(MESSAGE_START);
 
       self.running = true;
     }
 
-    let delta: i8 = self.drift.load(Ordering::SeqCst);
+    let delta: i8 = self.inputs.drift.load(Ordering::SeqCst);
 
     if delta != 0 {
       // debug!("delta: {delta}");
 
-      self.drift.store(0, Ordering::SeqCst);
+      self.inputs.drift.store(0, Ordering::SeqCst);
 
       self.adjust_maximum_drift(delta);
 
       update = true;
     }
 
-    if self.focus.load(Ordering::SeqCst) {
-      self.focus.store(false, Ordering::SeqCst);
+    if self.inputs.focus.load(Ordering::SeqCst) {
+      self.inputs.focus.store(false, Ordering::SeqCst);
 
       self.set_message(MESSAGE_CONTROLS);
 
@@ -214,10 +201,10 @@ impl LoopUpdater for Animator {
       self.running = false;
     }
 
-    if self.update.load(Ordering::SeqCst) {
+    if self.inputs.update.load(Ordering::SeqCst) {
       // debug!("update requested");
 
-      self.update.store(false, Ordering::SeqCst);
+      self.inputs.update.store(false, Ordering::SeqCst);
 
       update = true;
     }
@@ -234,6 +221,6 @@ impl LoopUpdater for Animator {
       self.paint();
     }
 
-    self.stop.load(Ordering::SeqCst)
+    self.inputs.stop.load(Ordering::SeqCst)
   }
 }
