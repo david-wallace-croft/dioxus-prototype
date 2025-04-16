@@ -14,7 +14,8 @@ async fn static_routes() -> Result<Vec<String>, ServerFnError> {
 }
 
 fn main() {
-  logger::init(Level::DEBUG).expect("Failed to initialize logger");
+  // WARNING: Setting level to TRACE causes a problem with pre-rendering
+  logger::init(Level::INFO).expect("Failed to initialize logger");
 
   info!("CroftSoft Dioxus Prototype v{}", env!("CARGO_PKG_VERSION"));
 

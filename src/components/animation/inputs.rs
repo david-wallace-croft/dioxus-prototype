@@ -1,13 +1,9 @@
-use ::std::sync::Arc;
-use ::std::sync::atomic::AtomicBool;
-use ::std::sync::atomic::AtomicI8;
-
-// TODO: Can we make this Copy?
+#[derive(Default)]
 pub struct Inputs {
-  // TODO: Can we use Rc instead of Arc?
-  pub blur: Arc<AtomicBool>,
-  pub drift: Arc<AtomicI8>,
-  pub focus: Arc<AtomicBool>,
-  pub stop: Arc<AtomicBool>,
-  pub update: Arc<AtomicBool>,
+  pub blur: bool,
+  pub drift: i8,
+  pub focus: bool,
+  pub pause: bool,
+  pub play: bool,
+  pub stop: bool,
 }

@@ -1,12 +1,13 @@
 use super::color::Color;
 use super::inputs::Inputs;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
-use ::std::sync::atomic::Ordering;
-// use ::tracing::{debug, info};
+use ::tracing::debug;
 use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
+use std::cell::RefCell;
+use std::rc::Rc;
 
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
 
@@ -20,7 +21,7 @@ pub struct Animator {
   delta_x: f64,
   delta_y: f64,
   frame_count: usize,
-  inputs: Inputs,
+  inputs: Rc<RefCell<Inputs>>,
   maximum_drift: u8,
   message: &'static str,
   running: bool,
@@ -32,7 +33,7 @@ pub struct Animator {
 impl Animator {
   pub fn new(
     canvas_id: &str,
-    inputs: Inputs,
+    inputs: Rc<RefCell<Inputs>>,
   ) -> Self {
     let window: Window = window().expect("global window does not exists");
 
@@ -169,30 +170,32 @@ impl LoopUpdater for Animator {
     let mut repaint = false;
     let mut update = false;
 
-    if self.inputs.blur.load(Ordering::SeqCst) {
+    // TODO: Can we just do a single borrow_mut up here?
+
+    if self.inputs.borrow().blur {
       // debug!("blur");
 
-      self.inputs.blur.store(false, Ordering::SeqCst);
+      self.inputs.borrow_mut().blur = false;
 
       self.set_message(MESSAGE_START);
 
       self.running = true;
     }
 
-    let delta: i8 = self.inputs.drift.load(Ordering::SeqCst);
+    let delta: i8 = self.inputs.borrow().drift;
 
     if delta != 0 {
       // debug!("delta: {delta}");
 
-      self.inputs.drift.store(0, Ordering::SeqCst);
+      self.inputs.borrow_mut().drift = 0;
 
       self.adjust_maximum_drift(delta);
 
       update = true;
     }
 
-    if self.inputs.focus.load(Ordering::SeqCst) {
-      self.inputs.focus.store(false, Ordering::SeqCst);
+    if self.inputs.borrow().focus {
+      self.inputs.borrow_mut().focus = false;
 
       self.set_message(MESSAGE_CONTROLS);
 
@@ -201,12 +204,20 @@ impl LoopUpdater for Animator {
       self.running = false;
     }
 
-    if self.inputs.update.load(Ordering::SeqCst) {
-      // debug!("update requested");
+    if self.inputs.borrow().play {
+      debug!("play requested");
 
-      self.inputs.update.store(false, Ordering::SeqCst);
+      self.inputs.borrow_mut().play = false;
 
-      update = true;
+      self.running = true;
+    }
+
+    if self.inputs.borrow().pause {
+      debug!("pause requested");
+
+      self.inputs.borrow_mut().pause = false;
+
+      self.running = false;
     }
 
     if self.running || update {
@@ -221,6 +232,12 @@ impl LoopUpdater for Animator {
       self.paint();
     }
 
-    self.inputs.stop.load(Ordering::SeqCst)
+    let stopping: bool = self.inputs.borrow().stop;
+
+    if stopping {
+      debug!("stopping");
+    }
+
+    stopping
   }
 }
