@@ -1,7 +1,7 @@
 use super::color::Color;
 use super::inputs::Inputs;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
-use ::tracing::debug;
+use ::tracing::{debug, info};
 use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
@@ -17,6 +17,7 @@ pub struct Animator {
   canvas_height: f64,
   canvas_rendering_context_2d: CanvasRenderingContext2d,
   canvas_width: f64,
+  click_count: usize,
   color: Color,
   delta_x: f64,
   delta_y: f64,
@@ -62,6 +63,7 @@ impl Animator {
       canvas_height,
       canvas_rendering_context_2d,
       canvas_width,
+      click_count: 0,
       color: Color::random(),
       delta_x: 1.,
       delta_y: 1.,
@@ -180,6 +182,16 @@ impl LoopUpdater for Animator {
       self.set_message(MESSAGE_START);
 
       self.running = true;
+    }
+
+    if self.inputs.borrow().click {
+      self.inputs.borrow_mut().click = false;
+
+      self.click_count += 1;
+
+      // TODO: Display on the canvas instead of writing to the browser console
+
+      info!("clicks: {}", self.click_count);
     }
 
     let delta: i8 = self.inputs.borrow().drift;

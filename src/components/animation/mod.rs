@@ -20,9 +20,6 @@ pub fn Animation() -> Element {
 
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
-  // TODO: Move click_count into animator
-  let mut click_count: i32 = 0;
-
   let inputs: Rc<RefCell<Inputs>> = Rc::new(RefCell::new(Inputs::default()));
 
   let looper_closure_inputs: Rc<RefCell<Inputs>> = inputs.clone();
@@ -41,11 +38,15 @@ pub fn Animation() -> Element {
 
   let blur_inputs: Rc<RefCell<Inputs>> = inputs.clone();
 
+  let click_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+
   let focus_inputs: Rc<RefCell<Inputs>> = inputs.clone();
 
   let keydown_inputs: Rc<RefCell<Inputs>> = inputs.clone();
 
   let keyup_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+
+  let wheel_inputs: Rc<RefCell<Inputs>> = inputs.clone();
 
   rsx! {
     document::Stylesheet {
@@ -62,11 +63,11 @@ pub fn Animation() -> Element {
       height: "360",
       id: CANVAS_ID,
       onblur: move |event| on_blur(event, blur_inputs.clone()),
-      onclick: move |event| on_click(event, &mut click_count),
+      onclick: move |event| on_click(event, click_inputs.clone()),
       onfocus: move |event| on_focus(event, focus_inputs.clone()),
       onkeydown: move |event| on_keydown(event, keydown_inputs.clone()),
       onkeyup: move |event| on_keyup(event, keyup_inputs.clone()),
-      onwheel: move |event| on_wheel(event, inputs.clone()),
+      onwheel: move |event| on_wheel(event, wheel_inputs.clone()),
       tabindex: 0,
       width: "470",
     }
@@ -82,15 +83,10 @@ fn on_blur(
 }
 
 fn on_click(
-  // TODO: &mut self for click_count instead of passing it in?
   _event: Event<MouseData>,
-  click_count: &mut i32,
+  inputs: Rc<RefCell<Inputs>>,
 ) {
-  *click_count += 1;
-
-  // TODO: Animate the click count
-
-  info!("click count: {click_count:?}");
+  inputs.borrow_mut().click = true;
 }
 
 fn on_focus(
