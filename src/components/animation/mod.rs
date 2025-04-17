@@ -5,7 +5,7 @@ use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
 use ::std::cell::RefCell;
 use ::std::rc::Rc;
-use ::tracing::{debug, info};
+use ::tracing::debug;
 
 mod animator;
 mod color;
@@ -16,8 +16,6 @@ const CANVAS_ID: &str = "home-page-canvas";
 #[allow(non_snake_case)]
 #[component]
 pub fn Animation() -> Element {
-  // TODO: Verify that the animation pauses when the browser is minimized
-
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
   let inputs: Rc<RefCell<Inputs>> = Rc::new(RefCell::new(Inputs::default()));
