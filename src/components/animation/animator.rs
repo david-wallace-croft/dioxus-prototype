@@ -160,8 +160,6 @@ impl LoopUpdater for Animator {
   ) -> bool {
     // TODO: Use update_time
 
-    // TODO: Maintain keypress state
-
     self.frame_count += 1;
 
     // TODO: Display frame_count
