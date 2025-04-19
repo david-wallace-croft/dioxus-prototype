@@ -1,14 +1,14 @@
 use super::color::Color;
-use super::inputs::Inputs;
+use super::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
+use ::std::cell::RefCell;
+use ::std::mem::take;
+use ::std::rc::Rc;
 use ::tracing::{debug, info};
 use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
-use std::cell::{RefCell, RefMut};
-use std::mem::take;
-use std::rc::Rc;
 
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
 
@@ -23,7 +23,7 @@ pub struct Animator {
   delta_x: f64,
   delta_y: f64,
   frame_count: usize,
-  inputs: Rc<RefCell<Inputs>>,
+  inputs: Rc<RefCell<UserInput>>,
   maximum_drift: u8,
   message: &'static str,
   running: bool,
@@ -35,7 +35,7 @@ pub struct Animator {
 impl Animator {
   pub fn new(
     canvas_id: &str,
-    inputs: Rc<RefCell<Inputs>>,
+    inputs: Rc<RefCell<UserInput>>,
   ) -> Self {
     let window: Window = window().expect("global window does not exists");
 
@@ -171,11 +171,11 @@ impl LoopUpdater for Animator {
     let mut repaint = false;
     let mut update = false;
 
-    // Take the user input and replace it with the default to reset
+    // Take the user input and replace it with the default values to reset
 
-    let inputs: Inputs = take(&mut *self.inputs.borrow_mut());
+    let user_input: UserInput = take(&mut *self.inputs.borrow_mut());
 
-    if inputs.blur {
+    if user_input.blur {
       // debug!("blur");
 
       self.set_message(MESSAGE_START);
@@ -183,7 +183,7 @@ impl LoopUpdater for Animator {
       self.running = true;
     }
 
-    if inputs.click {
+    if user_input.click {
       self.click_count += 1;
 
       // TODO: Display on the canvas instead of writing to the browser console
@@ -191,7 +191,7 @@ impl LoopUpdater for Animator {
       info!("clicks: {}", self.click_count);
     }
 
-    let delta: i8 = inputs.drift;
+    let delta: i8 = user_input.drift;
 
     if delta != 0 {
       // debug!("delta: {delta}");
@@ -201,7 +201,7 @@ impl LoopUpdater for Animator {
       update = true;
     }
 
-    if inputs.focus {
+    if user_input.focus {
       self.set_message(MESSAGE_CONTROLS);
 
       repaint = true;
@@ -209,13 +209,13 @@ impl LoopUpdater for Animator {
       self.running = false;
     }
 
-    if inputs.play {
+    if user_input.play {
       debug!("play requested");
 
       self.running = true;
     }
 
-    if inputs.pause {
+    if user_input.pause {
       debug!("pause requested");
 
       self.running = false;
@@ -233,7 +233,7 @@ impl LoopUpdater for Animator {
       self.paint();
     }
 
-    let stopping: bool = inputs.stop;
+    let stopping: bool = user_input.stop;
 
     if stopping {
       debug!("stopping");

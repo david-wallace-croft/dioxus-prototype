@@ -1,5 +1,5 @@
 use self::animator::Animator;
-use self::inputs::Inputs;
+use self::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
@@ -9,7 +9,7 @@ use ::tracing::debug;
 
 mod animator;
 mod color;
-mod inputs;
+mod user_input;
 
 const CANVAS_ID: &str = "home-page-canvas";
 
@@ -18,33 +18,35 @@ const CANVAS_ID: &str = "home-page-canvas";
 pub fn Animation() -> Element {
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
-  let inputs: Rc<RefCell<Inputs>> = Rc::new(RefCell::new(Inputs::default()));
+  let user_input: Rc<RefCell<UserInput>> =
+    Rc::new(RefCell::new(UserInput::default()));
 
-  let looper_closure_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+  let looper_closure_user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
-  let looper_closure = move || spawn_animator(looper_closure_inputs.clone());
+  let looper_closure =
+    move || spawn_animator(looper_closure_user_input.clone());
 
   use_future(looper_closure);
 
-  let drop_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+  let drop_user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
   use_drop(move || {
     debug!("dropping");
 
-    drop_inputs.borrow_mut().stop = true;
+    drop_user_input.borrow_mut().stop = true;
   });
 
-  let blur_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+  let blur_user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
-  let click_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+  let click_user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
-  let focus_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+  let focus_user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
-  let keydown_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+  let keydown_user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
-  let keyup_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+  let keyup_user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
-  let wheel_inputs: Rc<RefCell<Inputs>> = inputs.clone();
+  let wheel_user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
   rsx! {
     document::Stylesheet {
@@ -60,12 +62,12 @@ pub fn Animation() -> Element {
       cursor: "crosshair",
       height: "360",
       id: CANVAS_ID,
-      onblur: move |event| on_blur(event, blur_inputs.clone()),
-      onclick: move |event| on_click(event, click_inputs.clone()),
-      onfocus: move |event| on_focus(event, focus_inputs.clone()),
-      onkeydown: move |event| on_keydown(event, keydown_inputs.clone()),
-      onkeyup: move |event| on_keyup(event, keyup_inputs.clone()),
-      onwheel: move |event| on_wheel(event, wheel_inputs.clone()),
+      onblur: move |event| on_blur(event, blur_user_input.clone()),
+      onclick: move |event| on_click(event, click_user_input.clone()),
+      onfocus: move |event| on_focus(event, focus_user_input.clone()),
+      onkeydown: move |event| on_keydown(event, keydown_user_input.clone()),
+      onkeyup: move |event| on_keyup(event, keyup_user_input.clone()),
+      onwheel: move |event| on_wheel(event, wheel_user_input.clone()),
       tabindex: 0,
       width: "470",
     }
@@ -75,42 +77,42 @@ pub fn Animation() -> Element {
 
 fn on_blur(
   _event: Event<FocusData>,
-  inputs: Rc<RefCell<Inputs>>,
+  user_input: Rc<RefCell<UserInput>>,
 ) {
-  inputs.borrow_mut().blur = true;
+  user_input.borrow_mut().blur = true;
 }
 
 fn on_click(
   _event: Event<MouseData>,
-  inputs: Rc<RefCell<Inputs>>,
+  user_input: Rc<RefCell<UserInput>>,
 ) {
-  inputs.borrow_mut().click = true;
+  user_input.borrow_mut().click = true;
 }
 
 fn on_focus(
   _event: Event<FocusData>,
-  inputs: Rc<RefCell<Inputs>>,
+  user_input: Rc<RefCell<UserInput>>,
 ) {
-  inputs.borrow_mut().focus = true;
+  user_input.borrow_mut().focus = true;
 }
 
 fn on_keydown(
   _event: Event<KeyboardData>,
-  inputs: Rc<RefCell<Inputs>>,
+  user_input: Rc<RefCell<UserInput>>,
 ) {
-  inputs.borrow_mut().play = true;
+  user_input.borrow_mut().play = true;
 }
 
 fn on_keyup(
   _event: Event<KeyboardData>,
-  inputs: Rc<RefCell<Inputs>>,
+  user_input: Rc<RefCell<UserInput>>,
 ) {
-  inputs.borrow_mut().pause = true;
+  user_input.borrow_mut().pause = true;
 }
 
 fn on_wheel(
   event: Event<WheelData>,
-  inputs: Rc<RefCell<Inputs>>,
+  user_input: Rc<RefCell<UserInput>>,
 ) {
   let wheel_delta: WheelDelta = event.delta();
 
@@ -122,11 +124,11 @@ fn on_wheel(
 
   let drift_delta: i8 = delta.clamp(-128., 127.) as i8;
 
-  inputs.borrow_mut().drift = drift_delta;
+  user_input.borrow_mut().drift = drift_delta;
 }
 
-async fn spawn_animator(inputs: Rc<RefCell<Inputs>>) {
-  let loop_updater = Animator::new(CANVAS_ID, inputs);
+async fn spawn_animator(user_input: Rc<RefCell<UserInput>>) {
+  let loop_updater = Animator::new(CANVAS_ID, user_input);
 
   spawn_local_loop(loop_updater);
 }
