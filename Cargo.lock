@@ -710,11 +710,12 @@ dependencies = [
 
 [[package]]
 name = "dioxus-prototype"
-version = "0.6.5-SNAPSHOT"
+version = "0.6.5"
 dependencies = [
  "async-std",
  "com-croftsoft-core",
  "com-croftsoft-lib-animation",
+ "com-croftsoft-lib-role",
  "com-croftsoft-lib-string",
  "dioxus",
  "dioxus-charts",

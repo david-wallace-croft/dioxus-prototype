@@ -9,6 +9,7 @@ use ::tracing::debug;
 
 mod animator;
 mod color;
+mod frame_rater_updater_input;
 mod user_input;
 
 const CANVAS_ID: &str = "home-page-canvas";
