@@ -6,7 +6,8 @@ use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
-use std::cell::RefCell;
+use std::cell::{RefCell, RefMut};
+use std::mem::take;
 use std::rc::Rc;
 
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
@@ -170,21 +171,19 @@ impl LoopUpdater for Animator {
     let mut repaint = false;
     let mut update = false;
 
-    // TODO: Can we just do a single borrow_mut up here?
+    // Take the user input and replace it with the default to reset
 
-    if self.inputs.borrow().blur {
+    let inputs: Inputs = take(&mut *self.inputs.borrow_mut());
+
+    if inputs.blur {
       // debug!("blur");
-
-      self.inputs.borrow_mut().blur = false;
 
       self.set_message(MESSAGE_START);
 
       self.running = true;
     }
 
-    if self.inputs.borrow().click {
-      self.inputs.borrow_mut().click = false;
-
+    if inputs.click {
       self.click_count += 1;
 
       // TODO: Display on the canvas instead of writing to the browser console
@@ -192,21 +191,17 @@ impl LoopUpdater for Animator {
       info!("clicks: {}", self.click_count);
     }
 
-    let delta: i8 = self.inputs.borrow().drift;
+    let delta: i8 = inputs.drift;
 
     if delta != 0 {
       // debug!("delta: {delta}");
-
-      self.inputs.borrow_mut().drift = 0;
 
       self.adjust_maximum_drift(delta);
 
       update = true;
     }
 
-    if self.inputs.borrow().focus {
-      self.inputs.borrow_mut().focus = false;
-
+    if inputs.focus {
       self.set_message(MESSAGE_CONTROLS);
 
       repaint = true;
@@ -214,18 +209,14 @@ impl LoopUpdater for Animator {
       self.running = false;
     }
 
-    if self.inputs.borrow().play {
+    if inputs.play {
       debug!("play requested");
-
-      self.inputs.borrow_mut().play = false;
 
       self.running = true;
     }
 
-    if self.inputs.borrow().pause {
+    if inputs.pause {
       debug!("pause requested");
-
-      self.inputs.borrow_mut().pause = false;
 
       self.running = false;
     }
@@ -242,7 +233,7 @@ impl LoopUpdater for Animator {
       self.paint();
     }
 
-    let stopping: bool = self.inputs.borrow().stop;
+    let stopping: bool = inputs.stop;
 
     if stopping {
       debug!("stopping");
