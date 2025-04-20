@@ -11,7 +11,7 @@ use ::com_croftsoft_lib_role::Updater;
 use ::std::cell::RefCell;
 use ::std::mem::take;
 use ::std::rc::Rc;
-use ::tracing::{debug, info};
+use ::tracing::debug;
 use ::web_sys::wasm_bindgen::JsCast;
 use ::web_sys::wasm_bindgen::JsValue;
 use ::web_sys::{
@@ -27,6 +27,7 @@ pub struct Animator {
   canvas_rendering_context_2d: CanvasRenderingContext2d,
   canvas_width: f64,
   click_count: usize,
+  click_count_text: String,
   color: Color,
   delta_x: f64,
   delta_y: f64,
@@ -96,6 +97,7 @@ impl Animator {
       canvas_rendering_context_2d,
       canvas_width,
       click_count: 0,
+      click_count_text: "Clicks: 0".to_string(),
       color: Color::random(),
       delta_x: 1.,
       delta_y: 1.,
@@ -103,7 +105,7 @@ impl Animator {
       frame_rater,
       frame_rater_updater,
       frame_rater_updater_input,
-      frames_per_second: "---".to_string(),
+      frames_per_second: "Frames per second:".to_string(),
       user_input,
       maximum_drift: 0,
       message: MESSAGE_START,
@@ -149,6 +151,10 @@ impl Animator {
     let _result: Result<(), JsValue> = self
       .canvas_rendering_context_2d
       .fill_text(&self.frames_per_second, 4., self.canvas_height - 12.);
+
+    let _result: Result<(), JsValue> = self
+      .canvas_rendering_context_2d
+      .fill_text(&self.click_count_text, 4., self.canvas_height - 42.);
   }
 
   fn adjust_maximum_drift(
@@ -201,6 +207,10 @@ impl LoopUpdater for Animator {
     &mut self,
     update_time: f64,
   ) -> bool {
+    let mut repaint = false;
+
+    let mut update = false;
+
     self
       .frame_rater_updater_input
       .borrow_mut()
@@ -213,6 +223,8 @@ impl LoopUpdater for Animator {
         "Frames per second: {:.3}",
         self.frame_rater.borrow().get_frames_per_second_sampled()
       );
+
+      repaint = true;
     }
 
     self.frame_count += 1;
@@ -221,9 +233,6 @@ impl LoopUpdater for Animator {
     // TODO: Display frames per second
 
     // info!("{update_time} {}", self.frame_count);
-
-    let mut repaint = false;
-    let mut update = false;
 
     // Take the user input and replace it with the default values to reset
 
@@ -240,9 +249,9 @@ impl LoopUpdater for Animator {
     if user_input.click {
       self.click_count += 1;
 
-      // TODO: Display on the canvas instead of writing to the browser console
+      self.click_count_text = format!("Clicks: {}", self.click_count);
 
-      info!("clicks: {}", self.click_count);
+      repaint = true;
     }
 
     let delta: i8 = user_input.drift;
