@@ -31,7 +31,6 @@ pub struct Animator {
   color: Color,
   delta_x: f64,
   delta_y: f64,
-  frame_count: usize,
   frames_per_second: String,
   frame_rater: Rc<RefCell<dyn FrameRater>>,
   frame_rater_updater: Rc<RefCell<dyn Updater>>,
@@ -101,7 +100,6 @@ impl Animator {
       color: Color::random(),
       delta_x: 1.,
       delta_y: 1.,
-      frame_count: 0,
       frame_rater,
       frame_rater_updater,
       frame_rater_updater_input,
@@ -226,13 +224,6 @@ impl LoopUpdater for Animator {
 
       repaint = true;
     }
-
-    self.frame_count += 1;
-
-    // TODO: Display frame_count
-    // TODO: Display frames per second
-
-    // info!("{update_time} {}", self.frame_count);
 
     // Take the user input and replace it with the default values to reset
 
