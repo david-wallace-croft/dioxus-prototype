@@ -41,6 +41,8 @@ pub struct Animator {
   running: bool,
   square_size: f64,
   user_input: Rc<RefCell<UserInput>>,
+  // TODO: time_current_frame: f64,
+  // TODO: time_previous_frame: f64,
   x: f64,
   y: f64,
 }
@@ -171,6 +173,8 @@ impl Animator {
 
   fn update(&mut self) {
     // TODO: Make distance traveled proportional to time elapsed
+    // TODO: let delta_t: f64 = self.time_current_frame - self.time_previous_frame;
+    // TODO: delta_t should be no greater than some maximum value
 
     if self.delta_x > 0. {
       if self.x + self.delta_x + self.square_size > self.canvas_width {
@@ -205,6 +209,9 @@ impl LoopUpdater for Animator {
     &mut self,
     update_time: f64,
   ) -> bool {
+    // TODO: self.time_previous_frame = self.time_current_frame;
+    // TODO: self.time_current_frame = update_time;
+
     let mut repaint = false;
 
     let mut update = false;
