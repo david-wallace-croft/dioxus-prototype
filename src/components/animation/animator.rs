@@ -18,6 +18,9 @@ use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
 
+const FRAME_PERIOD_MILLIS_DEFAULT: f64 = 1_000. / 60.;
+const FRAME_PERIOD_MILLIS_MAX: f64 = 1.1 * FRAME_PERIOD_MILLIS_DEFAULT;
+// TODO: rename this
 const FRAME_PERIOD_MILLIS_TARGET: f64 = 1_000.;
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
 const MESSAGE_START: &str = "Click on or tab to the canvas";
@@ -40,9 +43,11 @@ pub struct Animator {
   metronome: DeltaMetronome,
   running: bool,
   square_size: f64,
+  /// The timestamp of the current animation frame
+  time_new: f64,
+  /// The timestamp of the previous animation frame
+  time_old: f64,
   user_input: Rc<RefCell<UserInput>>,
-  // TODO: time_current_frame: f64,
-  // TODO: time_previous_frame: f64,
   x: f64,
   y: f64,
 }
@@ -112,6 +117,8 @@ impl Animator {
       metronome,
       running: true,
       square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
+      time_new: 0.,
+      time_old: 0.,
       x: -1.,
       y: -1.,
     }
@@ -172,9 +179,15 @@ impl Animator {
   }
 
   fn update(&mut self) {
-    // TODO: Make distance traveled proportional to time elapsed
-    // TODO: let delta_t: f64 = self.time_current_frame - self.time_previous_frame;
-    // TODO: delta_t should be no greater than some maximum value
+    let mut delta_t: f64 = self.time_new - self.time_old;
+
+    if delta_t > FRAME_PERIOD_MILLIS_MAX {
+      delta_t = FRAME_PERIOD_MILLIS_DEFAULT;
+    }
+
+    // TODO: Make distance traveled proportional to delta_t
+
+    debug!("delta_t: {delta_t}");
 
     if self.delta_x > 0. {
       if self.x + self.delta_x + self.square_size > self.canvas_width {
@@ -209,8 +222,9 @@ impl LoopUpdater for Animator {
     &mut self,
     update_time: f64,
   ) -> bool {
-    // TODO: self.time_previous_frame = self.time_current_frame;
-    // TODO: self.time_current_frame = update_time;
+    self.time_old = self.time_new;
+
+    self.time_new = update_time;
 
     let mut repaint = false;
 
