@@ -19,7 +19,7 @@ use ::web_sys::{
 };
 
 const FRAME_PERIOD_MILLIS_DEFAULT: f64 = 1_000. / 60.;
-const FRAME_PERIOD_MILLIS_MAX: f64 = 1.1 * FRAME_PERIOD_MILLIS_DEFAULT;
+const FRAME_PERIOD_MILLIS_THRESHOLD: f64 = 1_000.;
 // TODO: rename this
 const FRAME_PERIOD_MILLIS_TARGET: f64 = 1_000.;
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
@@ -32,8 +32,6 @@ pub struct Animator {
   click_count: usize,
   click_count_text: String,
   color: Color,
-  delta_x: f64,
-  delta_y: f64,
   frames_per_second: String,
   frame_rater: Rc<RefCell<dyn FrameRater>>,
   frame_rater_updater: Rc<RefCell<dyn Updater>>,
@@ -48,6 +46,8 @@ pub struct Animator {
   /// The timestamp of the previous animation frame
   time_old: f64,
   user_input: Rc<RefCell<UserInput>>,
+  velocity_x: f64,
+  velocity_y: f64,
   x: f64,
   y: f64,
 }
@@ -105,8 +105,6 @@ impl Animator {
       click_count: 0,
       click_count_text: "Clicks: 0".to_string(),
       color: Color::random(),
-      delta_x: 1.,
-      delta_y: 1.,
       frame_rater,
       frame_rater_updater,
       frame_rater_updater_input,
@@ -119,6 +117,8 @@ impl Animator {
       square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
       time_new: 0.,
       time_old: 0.,
+      velocity_x: 60. / 1_000.,
+      velocity_y: 60. / 1_000.,
       x: -1.,
       y: -1.,
     }
@@ -181,33 +181,49 @@ impl Animator {
   fn update(&mut self) {
     let mut delta_t: f64 = self.time_new - self.time_old;
 
-    if delta_t > FRAME_PERIOD_MILLIS_MAX {
+    if delta_t >= FRAME_PERIOD_MILLIS_THRESHOLD {
       delta_t = FRAME_PERIOD_MILLIS_DEFAULT;
     }
 
-    // TODO: Make distance traveled proportional to delta_t
+    // TODO: Move movement update to its own function
 
-    debug!("delta_t: {delta_t}");
+    // TODO: Use a vector instead of scalars
 
-    if self.delta_x > 0. {
-      if self.x + self.delta_x + self.square_size > self.canvas_width {
-        self.delta_x = -self.delta_x;
+    let delta_x: f64 = self.velocity_x * delta_t;
+
+    let delta_y: f64 = self.velocity_y * delta_t;
+
+    if delta_x > 0. {
+      if self.x + delta_x + self.square_size > self.canvas_width {
+        self.velocity_x = -self.velocity_x;
+
+        self.x = self.canvas_width - self.square_size;
+      } else {
+        self.x += delta_x;
       }
-    } else if self.x + self.delta_x < 0. {
-      self.delta_x = -self.delta_x;
+    } else if self.x + delta_x < 0. {
+      self.velocity_x = -self.velocity_x;
+
+      self.x = 0.;
+    } else {
+      self.x += delta_x;
     }
 
-    self.x += self.delta_x;
+    if delta_y > 0. {
+      if self.y + delta_y + self.square_size > self.canvas_height {
+        self.velocity_y = -self.velocity_y;
 
-    if self.delta_y > 0. {
-      if self.y + self.delta_y + self.square_size > self.canvas_height {
-        self.delta_y = -self.delta_y;
+        self.y = self.canvas_height - self.square_size;
+      } else {
+        self.y += delta_y;
       }
-    } else if self.y + self.delta_y < 0. {
-      self.delta_y = -self.delta_y;
-    }
+    } else if self.y + delta_y < 0. {
+      self.velocity_y = -self.velocity_y;
 
-    self.y += self.delta_y;
+      self.y = 0.;
+    } else {
+      self.y += delta_y;
+    }
 
     if self.maximum_drift == 0 {
       self.maximum_drift = 1;
