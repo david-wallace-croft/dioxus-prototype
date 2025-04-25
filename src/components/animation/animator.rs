@@ -179,15 +179,27 @@ impl Animator {
   }
 
   fn update(&mut self) {
+    self.update_color();
+
+    self.update_position();
+  }
+
+  fn update_color(&mut self) {
+    if self.maximum_drift == 0 {
+      self.maximum_drift = 1;
+    }
+
+    self.color.drift(self.maximum_drift);
+  }
+
+  fn update_position(&mut self) {
     let mut delta_t: f64 = self.time_new - self.time_old;
 
     if delta_t >= FRAME_PERIOD_MILLIS_THRESHOLD {
       delta_t = FRAME_PERIOD_MILLIS_DEFAULT;
     }
 
-    // TODO: Move movement update to its own function
-
-    // TODO: Use a vector instead of scalars
+    // TODO: Deduplicate delta_x and delta_y code
 
     let delta_x: f64 = self.velocity_x * delta_t;
 
@@ -224,12 +236,6 @@ impl Animator {
     } else {
       self.y += delta_y;
     }
-
-    if self.maximum_drift == 0 {
-      self.maximum_drift = 1;
-    }
-
-    self.color.drift(self.maximum_drift);
   }
 }
 
