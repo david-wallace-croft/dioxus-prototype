@@ -24,6 +24,7 @@ const FRAME_PERIOD_MILLIS_THRESHOLD: f64 = 1_000.;
 const FRAME_PERIOD_MILLIS_TARGET: f64 = 1_000.;
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
 const MESSAGE_START: &str = "Click on or tab to the canvas";
+const VELOCITY_INITIAL: f64 = 60. / 1_000.;
 
 pub struct Animator {
   canvas_height: f64,
@@ -39,6 +40,7 @@ pub struct Animator {
   maximum_drift: u8,
   message: &'static str,
   metronome: DeltaMetronome,
+  position: [f64; 2],
   running: bool,
   square_size: f64,
   /// The timestamp of the current animation frame
@@ -46,10 +48,7 @@ pub struct Animator {
   /// The timestamp of the previous animation frame
   time_old: f64,
   user_input: Rc<RefCell<UserInput>>,
-  velocity_x: f64,
-  velocity_y: f64,
-  x: f64,
-  y: f64,
+  velocity: [f64; 2],
 }
 
 impl Animator {
@@ -113,14 +112,12 @@ impl Animator {
       maximum_drift: 0,
       message: MESSAGE_START,
       metronome,
+      position: [0.; 2],
       running: true,
       square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
       time_new: 0.,
       time_old: 0.,
-      velocity_x: 60. / 1_000.,
-      velocity_y: 60. / 1_000.,
-      x: -1.,
-      y: -1.,
+      velocity: [VELOCITY_INITIAL; 2],
     }
   }
 
@@ -141,8 +138,8 @@ impl Animator {
       .set_fill_style_str(&fill_style);
 
     self.canvas_rendering_context_2d.fill_rect(
-      self.x,
-      self.y,
+      self.position[0],
+      self.position[1],
       self.square_size,
       self.square_size,
     );
@@ -193,48 +190,39 @@ impl Animator {
   }
 
   fn update_position(&mut self) {
-    let mut delta_t: f64 = self.time_new - self.time_old;
+    let mut delta_time: f64 = self.time_new - self.time_old;
 
-    if delta_t >= FRAME_PERIOD_MILLIS_THRESHOLD {
-      delta_t = FRAME_PERIOD_MILLIS_DEFAULT;
+    if delta_time >= FRAME_PERIOD_MILLIS_THRESHOLD {
+      delta_time = FRAME_PERIOD_MILLIS_DEFAULT;
     }
 
-    // TODO: Deduplicate delta_x and delta_y code
+    self.update_position_bounce(self.canvas_width, delta_time, 0);
 
-    let delta_x: f64 = self.velocity_x * delta_t;
+    self.update_position_bounce(self.canvas_height, delta_time, 1);
+  }
 
-    let delta_y: f64 = self.velocity_y * delta_t;
+  fn update_position_bounce(
+    &mut self,
+    boundary: f64,
+    delta_time: f64,
+    index: usize,
+  ) {
+    let delta_space: f64 = self.velocity[index] * delta_time;
 
-    if delta_x > 0. {
-      if self.x + delta_x + self.square_size > self.canvas_width {
-        self.velocity_x = -self.velocity_x;
+    if delta_space > 0. {
+      if self.position[index] + delta_space + self.square_size > boundary {
+        self.velocity[index] = -self.velocity[index];
 
-        self.x = self.canvas_width - self.square_size;
+        self.position[index] = boundary - self.square_size;
       } else {
-        self.x += delta_x;
+        self.position[index] += delta_space;
       }
-    } else if self.x + delta_x < 0. {
-      self.velocity_x = -self.velocity_x;
+    } else if self.position[index] + delta_space < 0. {
+      self.velocity[index] = -self.velocity[index];
 
-      self.x = 0.;
+      self.position[index] = 0.;
     } else {
-      self.x += delta_x;
-    }
-
-    if delta_y > 0. {
-      if self.y + delta_y + self.square_size > self.canvas_height {
-        self.velocity_y = -self.velocity_y;
-
-        self.y = self.canvas_height - self.square_size;
-      } else {
-        self.y += delta_y;
-      }
-    } else if self.y + delta_y < 0. {
-      self.velocity_y = -self.velocity_y;
-
-      self.y = 0.;
-    } else {
-      self.y += delta_y;
+      self.position[index] += delta_space;
     }
   }
 }
