@@ -95,13 +95,19 @@ pub fn Slideshow() -> Element {
     fullscreen_event_listener_option_signal.set(Some(event_listener));
   });
 
+  let onmousemove = move |_event: MouseEvent| {
+    slideshow_state_signal.with_mut(|state: &mut SlideshowState| {
+      state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
+    })
+  };
+
   rsx! {
     document::Stylesheet {
       href: CSS
     }
     div {
       class: "app-fade-in-animation app-slideshow box",
-      onmousemove: move |_event| on_mouse_move(&mut slideshow_state_signal),
+      onmousemove,
     h1 {
       class: "app-title",
       "Slideshow"
@@ -152,15 +158,4 @@ fn next_image(state: &mut SlideshowState) {
   state.image_source = IMAGE_ASSETS[state.image_index];
 
   state.image_time_remaining = IMAGE_DISPLAY_TIME;
-}
-
-fn on_mouse_move(slideshow_state_signal: &mut Signal<SlideshowState>) {
-  // TODO: Can we simplify?
-
-  let mut slideshow_state: SlideshowState =
-    slideshow_state_signal.read().clone();
-
-  slideshow_state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
-
-  slideshow_state_signal.set(slideshow_state)
 }
