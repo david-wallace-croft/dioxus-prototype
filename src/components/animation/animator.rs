@@ -18,13 +18,17 @@ use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
 
-const FRAME_PERIOD_MILLIS_DEFAULT: f64 = 1_000. / 60.;
-const FRAME_PERIOD_MILLIS_THRESHOLD: f64 = 1_000.;
-// TODO: rename this
-const FRAME_PERIOD_MILLIS_TARGET: f64 = 1_000.;
+const FRAMES_PER_SECOND_DEFAULT: f64 = 60.;
+const FRAME_PERIOD_MILLISECONDS_DEFAULT: f64 =
+  MILLISECONDS_PER_SECOND / FRAMES_PER_SECOND_DEFAULT;
+const FRAME_PERIOD_MILLIS_THRESHOLD: f64 = MILLISECONDS_PER_SECOND;
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
 const MESSAGE_START: &str = "Click on or tab to the canvas";
-const VELOCITY_INITIAL: f64 = 60. / 1_000.;
+const MILLISECONDS_PER_SECOND: f64 = 1_000.;
+const VELOCITY_PIXELS_PER_FRAME: f64 = 1.;
+// pixels per millisecond = pixels per frame / milliseconds per frame
+const VELOCITY_PIXELS_PER_MILLISECOND: f64 =
+  VELOCITY_PIXELS_PER_FRAME / FRAME_PERIOD_MILLISECONDS_DEFAULT;
 
 pub struct Animator {
   canvas_height: f64,
@@ -80,7 +84,7 @@ impl Animator {
     let canvas_width: f64 = html_canvas_element.width() as f64;
 
     let frame_rater: Rc<RefCell<dyn FrameRater>> = Rc::new(RefCell::new(
-      SimpleFrameRater::new(FRAME_PERIOD_MILLIS_TARGET),
+      SimpleFrameRater::new(FRAME_PERIOD_MILLISECONDS_DEFAULT),
     ));
 
     let frame_rater_updater_input: Rc<RefCell<FrameRaterUpdaterInput>> =
@@ -93,7 +97,7 @@ impl Animator {
     )));
 
     let metronome = DeltaMetronome {
-      period_millis: 1_000.,
+      period_millis: MILLISECONDS_PER_SECOND,
       time_millis_next_tick: 0.,
     };
 
@@ -117,7 +121,7 @@ impl Animator {
       square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
       time_new: 0.,
       time_old: 0.,
-      velocity: [VELOCITY_INITIAL; 2],
+      velocity: [VELOCITY_PIXELS_PER_MILLISECOND; 2],
     }
   }
 
@@ -193,7 +197,7 @@ impl Animator {
     let mut delta_time: f64 = self.time_new - self.time_old;
 
     if delta_time >= FRAME_PERIOD_MILLIS_THRESHOLD {
-      delta_time = FRAME_PERIOD_MILLIS_DEFAULT;
+      delta_time = FRAME_PERIOD_MILLISECONDS_DEFAULT;
     }
 
     self.update_position_bounce(self.canvas_width, delta_time, 0);
