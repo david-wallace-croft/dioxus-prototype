@@ -28,6 +28,7 @@ static IMAGE_ASSETS: [Asset; 5] = [
 
 #[derive(Clone)]
 struct SlideshowState {
+  // TODO: Move time remaining values out of the Signal to reduce renders
   control_panel_time_remaining: u64,
   image_index: usize,
   image_source: Asset,
@@ -95,6 +96,12 @@ pub fn Slideshow() -> Element {
     fullscreen_event_listener_option_signal.set(Some(event_listener));
   });
 
+  let on_click_skip = move |_event: MouseEvent| {
+    slideshow_state_signal.with_mut(|state: &mut SlideshowState| {
+      next_image(state);
+    })
+  };
+
   let onmousemove = move |_event: MouseEvent| {
     slideshow_state_signal.with_mut(|state: &mut SlideshowState| {
       state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
@@ -121,10 +128,7 @@ pub fn Slideshow() -> Element {
           state.control_panel_time_remaining < CONTROL_PANEL_FADE_TIME),
         fullscreen: *fullscreen_signal.read(),
         on_click_fullscreen: move |_event| fullscreen(),
-        on_click_skip: move |_event|
-          slideshow_state_signal.with_mut(|state: &mut SlideshowState| {
-            next_image(state);
-          }),
+        on_click_skip,
       }
     }
     img {
