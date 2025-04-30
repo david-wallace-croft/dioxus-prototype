@@ -1,12 +1,20 @@
+use self::input_handler::InputHandler;
+use self::user_input::UserInput;
 use super::super::components::slideshow::control_panel::ControlPanel;
 use ::async_std::task::sleep;
+use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
 use ::dioxus::prelude::*;
 use ::gloo_events::EventListener;
+use ::std::cell::RefCell;
+use ::std::rc::Rc;
 use ::std::time::Duration;
+use ::tracing::debug;
 use ::web_sys::Document;
 use ::web_sys::wasm_bindgen::JsValue;
 
 mod control_panel;
+mod input_handler;
+mod user_input;
 
 const CONTROL_PANEL_DISPLAY_TIME: u64 = 10 * 1_000;
 
@@ -38,6 +46,28 @@ struct SlideshowState {
 #[allow(non_snake_case)]
 #[component]
 pub fn Slideshow() -> Element {
+  let user_input_0: Rc<RefCell<UserInput>> = Default::default();
+
+  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
+
+  use_drop(move || {
+    debug!("dropping");
+
+    user_input.borrow_mut().stop = true;
+  });
+
+  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
+
+  use_future(move || {
+    let user_input: Rc<RefCell<UserInput>> = user_input.clone();
+
+    async move {
+      let loop_updater = InputHandler::new(user_input);
+
+      spawn_local_loop(loop_updater);
+    }
+  });
+
   let mut fullscreen_event_listener_option_signal: Signal<
     Option<EventListener>,
   > = use_signal(|| None);
