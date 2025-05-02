@@ -7,16 +7,14 @@ use ::std::mem::take;
 use ::std::rc::Rc;
 use ::tracing::debug;
 
-// TODO: maybe rename this to controller
-
-pub struct InputHandler {
+pub struct Controller {
   slideshow_state_signal: Signal<SlideshowState>,
   time_new: f64,
   time_old: f64,
   user_input: Rc<RefCell<UserInput>>,
 }
 
-impl InputHandler {
+impl Controller {
   pub fn new(
     slideshow_state_signal: Signal<SlideshowState>,
     user_input: Rc<RefCell<UserInput>>,
@@ -30,7 +28,7 @@ impl InputHandler {
   }
 }
 
-impl LoopUpdater for InputHandler {
+impl LoopUpdater for Controller {
   fn update_loop(
     &mut self,
     update_time: f64,
@@ -50,6 +48,10 @@ impl LoopUpdater for InputHandler {
     let user_input: UserInput = take(&mut *self.user_input.borrow_mut());
 
     // TODO: Move input handling into here
+
+    if user_input.skip {
+      debug!("Controller.update_loop() skip");
+    }
 
     let stopping: bool = user_input.stop;
 

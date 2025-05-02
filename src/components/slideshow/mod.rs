@@ -1,4 +1,8 @@
-use self::input_handler::InputHandler;
+use self::constants::{
+  CONTROL_PANEL_DISPLAY_TIME, CONTROL_PANEL_FADE_TIME, CSS, POLLING_PERIOD,
+};
+use self::controller::Controller;
+use self::slideshow_state::SlideshowState;
 use self::user_input::UserInput;
 use super::super::components::slideshow::control_panel::ControlPanel;
 use ::async_std::task::sleep;
@@ -12,36 +16,11 @@ use ::tracing::debug;
 use ::web_sys::Document;
 use ::web_sys::wasm_bindgen::JsValue;
 
+mod constants;
 mod control_panel;
-mod input_handler;
+mod controller;
+mod slideshow_state;
 mod user_input;
-
-const CONTROL_PANEL_DISPLAY_TIME: u64 = 10 * 1_000;
-
-const CONTROL_PANEL_FADE_TIME: u64 = 5 * 1_000;
-
-const IMAGE_DISPLAY_TIME: u64 = 15 * 1_000;
-
-const POLLING_PERIOD: u64 = 100;
-
-static CSS: Asset = asset!("/assets/slideshow/app-slideshow.css");
-
-static IMAGE_ASSETS: [Asset; 5] = [
-  asset!("/assets/slideshow/nature-a.jpg"),
-  asset!("/assets/slideshow/nature-b.jpg"),
-  asset!("/assets/slideshow/nature-c.jpg"),
-  asset!("/assets/slideshow/nature-d.jpg"),
-  asset!("/assets/slideshow/nature-e.jpg"),
-];
-
-#[derive(Clone)]
-struct SlideshowState {
-  // TODO: Move time remaining values out of the Signal to reduce renders
-  control_panel_time_remaining: u64,
-  image_index: usize,
-  image_source: Asset,
-  image_time_remaining: u64,
-}
 
 #[allow(non_snake_case)]
 #[component]
@@ -53,12 +32,7 @@ pub fn Slideshow() -> Element {
   let mut fullscreen_signal: Signal<bool> = use_signal(|| false);
 
   let mut slideshow_state_signal: Signal<SlideshowState> =
-    use_signal(|| SlideshowState {
-      control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
-      image_index: 0,
-      image_source: IMAGE_ASSETS[0],
-      image_time_remaining: IMAGE_DISPLAY_TIME,
-    });
+    use_signal(|| SlideshowState::default());
 
   let user_input_0: Rc<RefCell<UserInput>> = Default::default();
 
@@ -76,7 +50,7 @@ pub fn Slideshow() -> Element {
     let user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
     async move {
-      let loop_updater = InputHandler::new(slideshow_state_signal, user_input);
+      let loop_updater = Controller::new(slideshow_state_signal, user_input);
 
       spawn_local_loop(loop_updater);
     }
@@ -97,7 +71,7 @@ pub fn Slideshow() -> Element {
             .saturating_sub(POLLING_PERIOD);
 
           if slideshow_state.image_time_remaining == 0 {
-            next_image(slideshow_state);
+            slideshow_state.next_image();
           }
         },
       );
@@ -128,7 +102,7 @@ pub fn Slideshow() -> Element {
 
   let on_click_skip = move |_event: MouseEvent| {
     slideshow_state_signal.with_mut(|state: &mut SlideshowState| {
-      next_image(state);
+      state.next_image();
     })
   };
 
@@ -184,12 +158,4 @@ fn fullscreen() {
 
     let _result: Result<(), JsValue> = slideshow_element.request_fullscreen();
   }
-}
-
-fn next_image(state: &mut SlideshowState) {
-  state.image_index = (state.image_index + 1) % IMAGE_ASSETS.len();
-
-  state.image_source = IMAGE_ASSETS[state.image_index];
-
-  state.image_time_remaining = IMAGE_DISPLAY_TIME;
 }
