@@ -1,19 +1,28 @@
+use super::SlideshowState;
 use super::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
+use ::dioxus::prelude::*;
 use ::std::cell::RefCell;
+use ::std::mem::take;
 use ::std::rc::Rc;
-use std::mem::take;
-use tracing::debug;
+use ::tracing::debug;
+
+// TODO: maybe rename this to controller
 
 pub struct InputHandler {
+  slideshow_state_signal: Signal<SlideshowState>,
   time_new: f64,
   time_old: f64,
   user_input: Rc<RefCell<UserInput>>,
 }
 
 impl InputHandler {
-  pub fn new(user_input: Rc<RefCell<UserInput>>) -> Self {
+  pub fn new(
+    slideshow_state_signal: Signal<SlideshowState>,
+    user_input: Rc<RefCell<UserInput>>,
+  ) -> Self {
     Self {
+      slideshow_state_signal,
       time_new: 0.,
       time_old: 0.,
       user_input,
@@ -26,11 +35,15 @@ impl LoopUpdater for InputHandler {
     &mut self,
     update_time: f64,
   ) -> bool {
-    debug!("update_time: {update_time}");
+    // debug!("update_time: {update_time}");
 
     self.time_old = self.time_new;
 
     self.time_new = update_time;
+
+    if let Ok(state) = self.slideshow_state_signal.try_read() {
+      debug!("image time remaining: {}", state.image_time_remaining);
+    }
 
     // Take the user input and replace it with the default values to reset
 

@@ -46,6 +46,20 @@ struct SlideshowState {
 #[allow(non_snake_case)]
 #[component]
 pub fn Slideshow() -> Element {
+  let mut fullscreen_event_listener_option_signal: Signal<
+    Option<EventListener>,
+  > = use_signal(|| None);
+
+  let mut fullscreen_signal: Signal<bool> = use_signal(|| false);
+
+  let mut slideshow_state_signal: Signal<SlideshowState> =
+    use_signal(|| SlideshowState {
+      control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
+      image_index: 0,
+      image_source: IMAGE_ASSETS[0],
+      image_time_remaining: IMAGE_DISPLAY_TIME,
+    });
+
   let user_input_0: Rc<RefCell<UserInput>> = Default::default();
 
   let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
@@ -62,25 +76,11 @@ pub fn Slideshow() -> Element {
     let user_input: Rc<RefCell<UserInput>> = user_input.clone();
 
     async move {
-      let loop_updater = InputHandler::new(user_input);
+      let loop_updater = InputHandler::new(slideshow_state_signal, user_input);
 
       spawn_local_loop(loop_updater);
     }
   });
-
-  let mut fullscreen_event_listener_option_signal: Signal<
-    Option<EventListener>,
-  > = use_signal(|| None);
-
-  let mut fullscreen_signal: Signal<bool> = use_signal(|| false);
-
-  let mut slideshow_state_signal: Signal<SlideshowState> =
-    use_signal(|| SlideshowState {
-      control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
-      image_index: 0,
-      image_source: IMAGE_ASSETS[0],
-      image_time_remaining: IMAGE_DISPLAY_TIME,
-    });
 
   use_future(move || async move {
     loop {
