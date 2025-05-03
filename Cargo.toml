@@ -10,7 +10,7 @@ publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
 rust-version = "1.86.0"
-version = "0.6.7-SNAPSHOT"
+version = "0.6.7"
 
 [dependencies]
 com-croftsoft-core = "0.14.0"

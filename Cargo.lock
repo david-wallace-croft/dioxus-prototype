@@ -563,7 +563,7 @@ dependencies = [
 
 [[package]]
 name = "dioxus-prototype"
-version = "0.6.7-SNAPSHOT"
+version = "0.6.7"
 dependencies = [
  "com-croftsoft-core",
  "com-croftsoft-lib-animation",
