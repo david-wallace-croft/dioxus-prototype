@@ -53,15 +53,17 @@ impl LoopUpdater for Controller {
     &mut self,
     update_time: f64,
   ) -> bool {
-    let user_input: UserInput = {
-      let Ok(_) = self.user_input_signal.try_write() else {
-        debug!("stopping");
+    if self.user_input_signal.try_write().is_err() {
+      // Stop looping when the component and its signals have been dropped
 
-        return true;
-      };
+      debug!("stopping");
 
-      self.user_input_signal.take()
+      return true;
     };
+
+    // Take the user input and replace it with the default values to reset
+
+    let user_input: UserInput = self.user_input_signal.take();
 
     self.time_old = self.time_new;
 
