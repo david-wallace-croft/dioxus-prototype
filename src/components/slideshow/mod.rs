@@ -36,8 +36,6 @@ pub fn Slideshow() -> Element {
 
   use_drop(move || {
     debug!("dropping");
-
-    user_input_signal.with_mut(|user_input| user_input.stop = true);
   });
 
   use_future(move || async move {

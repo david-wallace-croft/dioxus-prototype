@@ -53,15 +53,15 @@ impl LoopUpdater for Controller {
     &mut self,
     update_time: f64,
   ) -> bool {
-    // debug!("update_time: {update_time}");
+    let user_input: UserInput = {
+      let Ok(_) = self.user_input_signal.try_write() else {
+        debug!("stopping");
 
-    let user_input: UserInput = self.user_input_signal.take();
+        return true;
+      };
 
-    if user_input.stop {
-      debug!("stopping");
-
-      return true;
-    }
+      self.user_input_signal.take()
+    };
 
     self.time_old = self.time_new;
 
