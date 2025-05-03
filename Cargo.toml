@@ -13,7 +13,6 @@ rust-version = "1.86.0"
 version = "0.6.7-SNAPSHOT"
 
 [dependencies]
-async-std = "1.13.1"
 com-croftsoft-core = "0.14.0"
 # com-croftsoft-lib-animation = { path = "../com-croftsoft-lib-animation" }
 com-croftsoft-lib-animation = "0.1.0"
