@@ -1,17 +1,10 @@
-use self::constants::{
-  CONTROL_PANEL_DISPLAY_TIME, CONTROL_PANEL_FADE_TIME, CSS, POLLING_PERIOD,
-};
+use self::constants::{CSS, IMAGE_ASSETS};
 use self::controller::Controller;
-use self::slideshow_state::SlideshowState;
 use self::user_input::UserInput;
 use super::super::components::slideshow::control_panel::ControlPanel;
-use ::async_std::task::sleep;
 use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
 use ::dioxus::prelude::*;
 use ::gloo_events::EventListener;
-use ::std::cell::RefCell;
-use ::std::rc::Rc;
-use ::std::time::Duration;
 use ::tracing::debug;
 use ::web_sys::Document;
 use ::web_sys::wasm_bindgen::JsValue;
@@ -19,63 +12,43 @@ use ::web_sys::wasm_bindgen::JsValue;
 mod constants;
 mod control_panel;
 mod controller;
-mod slideshow_state;
 mod user_input;
 
 #[allow(non_snake_case)]
 #[component]
 pub fn Slideshow() -> Element {
+  debug!("Slideshow() render");
+
   let mut fullscreen_event_listener_option_signal: Signal<
     Option<EventListener>,
   > = use_signal(|| None);
 
   let mut fullscreen_signal: Signal<bool> = use_signal(|| false);
 
-  let mut slideshow_state_signal: Signal<SlideshowState> =
-    use_signal(|| SlideshowState::default());
+  let control_panel_fade_signal: Signal<bool> = use_signal(|| false);
 
-  let user_input_0: Rc<RefCell<UserInput>> = Default::default();
+  let control_panel_show_signal: Signal<bool> = use_signal(|| false);
 
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
+  let image_source_signal: Signal<Asset> = use_signal(|| IMAGE_ASSETS[0]);
+
+  let mut user_input_signal: Signal<UserInput> =
+    use_signal(|| Default::default());
 
   use_drop(move || {
     debug!("dropping");
 
-    user_input.borrow_mut().stop = true;
-  });
-
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
-
-  use_future(move || {
-    let user_input: Rc<RefCell<UserInput>> = user_input.clone();
-
-    async move {
-      let loop_updater = Controller::new(slideshow_state_signal, user_input);
-
-      spawn_local_loop(loop_updater);
-    }
+    user_input_signal.with_mut(|user_input| user_input.stop = true);
   });
 
   use_future(move || async move {
-    loop {
-      sleep(Duration::from_millis(POLLING_PERIOD)).await;
+    let loop_updater = Controller::new(
+      control_panel_fade_signal,
+      control_panel_show_signal,
+      image_source_signal,
+      user_input_signal,
+    );
 
-      slideshow_state_signal.with_mut(
-        |slideshow_state: &mut SlideshowState| {
-          slideshow_state.control_panel_time_remaining = slideshow_state
-            .control_panel_time_remaining
-            .saturating_sub(POLLING_PERIOD);
-
-          slideshow_state.image_time_remaining = slideshow_state
-            .image_time_remaining
-            .saturating_sub(POLLING_PERIOD);
-
-          if slideshow_state.image_time_remaining == 0 {
-            slideshow_state.next_image();
-          }
-        },
-      );
-    }
+    spawn_local_loop(loop_updater);
   });
 
   use_future(move || async move {
@@ -101,15 +74,11 @@ pub fn Slideshow() -> Element {
   });
 
   let on_click_skip = move |_event: MouseEvent| {
-    slideshow_state_signal.with_mut(|state: &mut SlideshowState| {
-      state.next_image();
-    })
+    user_input_signal.with_mut(|user_input| user_input.skip = true);
   };
 
   let onmousemove = move |_event: MouseEvent| {
-    slideshow_state_signal.with_mut(|state: &mut SlideshowState| {
-      state.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
-    })
+    user_input_signal.with_mut(|user_input| user_input.show = true);
   };
 
   rsx! {
@@ -125,18 +94,16 @@ pub fn Slideshow() -> Element {
     }
     div {
       id: "slideshow",
-    if slideshow_state_signal.with(
-      |state| state.control_panel_time_remaining > 0) {
+    if *control_panel_show_signal.read() {
       ControlPanel {
-        fading: slideshow_state_signal.with(|state|
-          state.control_panel_time_remaining < CONTROL_PANEL_FADE_TIME),
+        fading: *control_panel_fade_signal.read(),
         fullscreen: *fullscreen_signal.read(),
         on_click_fullscreen: move |_event| fullscreen(),
         on_click_skip,
       }
     }
     img {
-      src: "{slideshow_state_signal.with(|state| state.image_source.clone())}",
+      src: "{image_source_signal}",
     }
     }
     }

@@ -1,30 +1,50 @@
-use super::SlideshowState;
+use super::constants::{
+  CONTROL_PANEL_DISPLAY_TIME, CONTROL_PANEL_FADE_TIME, IMAGE_ASSETS,
+  IMAGE_DISPLAY_TIME,
+};
 use super::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
 use ::dioxus::prelude::*;
-use ::std::cell::RefCell;
-use ::std::mem::take;
-use ::std::rc::Rc;
 use ::tracing::debug;
 
 pub struct Controller {
-  slideshow_state_signal: Signal<SlideshowState>,
+  control_panel_fade_signal: Signal<bool>,
+  control_panel_show_signal: Signal<bool>,
+  control_panel_time_remaining: f64,
+  image_index: usize,
+  image_source_signal: Signal<Asset>,
+  image_time_remaining: f64,
   time_new: f64,
   time_old: f64,
-  user_input: Rc<RefCell<UserInput>>,
+  user_input_signal: Signal<UserInput>,
 }
 
 impl Controller {
   pub fn new(
-    slideshow_state_signal: Signal<SlideshowState>,
-    user_input: Rc<RefCell<UserInput>>,
+    control_panel_fade_signal: Signal<bool>,
+    control_panel_show_signal: Signal<bool>,
+    image_source_signal: Signal<Asset>,
+    user_input_signal: Signal<UserInput>,
   ) -> Self {
     Self {
-      slideshow_state_signal,
+      control_panel_fade_signal,
+      control_panel_show_signal,
+      control_panel_time_remaining: CONTROL_PANEL_DISPLAY_TIME,
+      image_index: 0,
+      image_source_signal,
+      image_time_remaining: IMAGE_DISPLAY_TIME,
       time_new: 0.,
       time_old: 0.,
-      user_input,
+      user_input_signal,
     }
+  }
+
+  fn next_image(&mut self) {
+    self.image_time_remaining = IMAGE_DISPLAY_TIME;
+
+    self.image_index = (self.image_index + 1) % IMAGE_ASSETS.len();
+
+    self.image_source_signal.set(IMAGE_ASSETS[self.image_index]);
   }
 }
 
@@ -35,30 +55,72 @@ impl LoopUpdater for Controller {
   ) -> bool {
     // debug!("update_time: {update_time}");
 
+    let user_input: UserInput = self.user_input_signal.take();
+
+    if user_input.stop {
+      debug!("stopping");
+
+      return true;
+    }
+
     self.time_old = self.time_new;
 
     self.time_new = update_time;
 
-    if let Ok(state) = self.slideshow_state_signal.try_read() {
-      debug!("image time remaining: {}", state.image_time_remaining);
+    let mut delta_time: f64 = self.time_new - self.time_old;
+
+    if delta_time >= 1_000. {
+      delta_time = 0.;
     }
 
-    // Take the user input and replace it with the default values to reset
+    if self.control_panel_time_remaining > 0. {
+      self.control_panel_time_remaining =
+        self.control_panel_time_remaining - delta_time;
+    }
 
-    let user_input: UserInput = take(&mut *self.user_input.borrow_mut());
+    if user_input.show {
+      self.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
 
-    // TODO: Move input handling into here
+      if *self.control_panel_fade_signal.read() {
+        self.control_panel_fade_signal.set(false);
+      }
+    }
+
+    if self.control_panel_time_remaining > 0. {
+      if !*self.control_panel_show_signal.read() {
+        self.control_panel_show_signal.set(true);
+      }
+
+      if self.control_panel_time_remaining < CONTROL_PANEL_FADE_TIME {
+        if !*self.control_panel_fade_signal.read() {
+          self.control_panel_fade_signal.set(true);
+        }
+      }
+    } else {
+      if *self.control_panel_fade_signal.read() {
+        self.control_panel_fade_signal.set(false);
+      }
+      if *self.control_panel_show_signal.read() {
+        self.control_panel_show_signal.set(false);
+      }
+    }
+
+    self.image_time_remaining = self.image_time_remaining - delta_time;
+
+    let mut select_next_image = false;
+
+    if self.image_time_remaining <= 0. {
+      select_next_image = true;
+    }
 
     if user_input.skip {
-      debug!("Controller.update_loop() skip");
+      select_next_image = true;
     }
 
-    let stopping: bool = user_input.stop;
-
-    if stopping {
-      debug!("stopping");
+    if select_next_image {
+      self.next_image();
     }
 
-    stopping
+    false
   }
 }
