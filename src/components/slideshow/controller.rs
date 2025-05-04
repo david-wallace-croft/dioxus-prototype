@@ -3,9 +3,7 @@ use super::constants::{
   IMAGE_DISPLAY_TIME,
 };
 use super::user_input::UserInput;
-use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
 use ::dioxus::prelude::*;
-use ::tracing::debug;
 
 pub struct Controller {
   control_panel_fade_signal: Signal<bool>,
@@ -14,9 +12,6 @@ pub struct Controller {
   image_index: usize,
   image_source_signal: Signal<Asset>,
   image_time_remaining: f64,
-  time_new: f64,
-  time_old: f64,
-  user_input_signal: Signal<UserInput>,
 }
 
 impl Controller {
@@ -24,7 +19,6 @@ impl Controller {
     control_panel_fade_signal: Signal<bool>,
     control_panel_show_signal: Signal<bool>,
     image_source_signal: Signal<Asset>,
-    user_input_signal: Signal<UserInput>,
   ) -> Self {
     Self {
       control_panel_fade_signal,
@@ -33,9 +27,6 @@ impl Controller {
       image_index: 0,
       image_source_signal,
       image_time_remaining: IMAGE_DISPLAY_TIME,
-      time_new: 0.,
-      time_old: 0.,
-      user_input_signal,
     }
   }
 
@@ -46,35 +37,12 @@ impl Controller {
 
     self.image_source_signal.set(IMAGE_ASSETS[self.image_index]);
   }
-}
 
-impl LoopUpdater for Controller {
-  fn update_loop(
+  pub fn update(
     &mut self,
-    update_time: f64,
-  ) -> bool {
-    if self.user_input_signal.try_write().is_err() {
-      // Stop looping when the component and its signals have been dropped
-
-      debug!("stopping");
-
-      return true;
-    };
-
-    // Take the user input and replace it with the default values to reset
-
-    let user_input: UserInput = self.user_input_signal.take();
-
-    self.time_old = self.time_new;
-
-    self.time_new = update_time;
-
-    let mut delta_time: f64 = self.time_new - self.time_old;
-
-    if delta_time >= 1_000. {
-      delta_time = 0.;
-    }
-
+    delta_time: f64,
+    user_input: UserInput,
+  ) {
     if self.control_panel_time_remaining > 0. {
       self.control_panel_time_remaining =
         self.control_panel_time_remaining - delta_time;
@@ -122,7 +90,5 @@ impl LoopUpdater for Controller {
     if select_next_image {
       self.next_image();
     }
-
-    false
   }
 }

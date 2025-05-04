@@ -1,5 +1,6 @@
 use self::constants::{CSS, IMAGE_ASSETS};
 use self::controller::Controller;
+use self::looper::Looper;
 use self::user_input::UserInput;
 use super::super::components::slideshow::control_panel::ControlPanel;
 use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
@@ -12,6 +13,7 @@ use ::web_sys::wasm_bindgen::JsValue;
 mod constants;
 mod control_panel;
 mod controller;
+mod looper;
 mod user_input;
 
 #[allow(non_snake_case)]
@@ -39,14 +41,15 @@ pub fn Slideshow() -> Element {
   });
 
   use_future(move || async move {
-    let loop_updater = Controller::new(
+    let controller = Controller::new(
       control_panel_fade_signal,
       control_panel_show_signal,
       image_source_signal,
-      user_input_signal,
     );
 
-    spawn_local_loop(loop_updater);
+    let looper = Looper::new(controller, user_input_signal);
+
+    spawn_local_loop(looper);
   });
 
   use_future(move || async move {
@@ -108,6 +111,7 @@ pub fn Slideshow() -> Element {
   }
 }
 
+// TODO: Maybe move this into the Controller
 fn fullscreen() {
   let document: Document = web_sys::window().unwrap().document().unwrap();
 

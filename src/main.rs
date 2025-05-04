@@ -22,7 +22,6 @@ fn main() {
   LaunchBuilder::new()
     .with_cfg(server_only! {
       ServeConfig::builder()
-        // turn on incremental site generation with the .incremental() method
         .incremental(IncrementalRendererConfig::new())
         .build()
         .unwrap()
