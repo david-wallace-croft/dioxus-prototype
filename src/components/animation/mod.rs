@@ -19,6 +19,8 @@ const CANVAS_ID: &str = "home-page-canvas";
 pub fn Animation() -> Element {
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
+  // TODO: Switch to using Signal; use Slideshow as an example
+
   let user_input_0: Rc<RefCell<UserInput>> = Default::default();
 
   let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();

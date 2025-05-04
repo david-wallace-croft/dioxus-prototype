@@ -1,3 +1,4 @@
+use super::constants::MILLISECONDS_PER_SECOND;
 use super::controller::Controller;
 use super::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
@@ -48,11 +49,11 @@ impl LoopUpdater for Looper {
 
     let mut delta_time: f64 = self.time_new - self.time_old;
 
-    if delta_time >= 1_000. {
+    if delta_time >= MILLISECONDS_PER_SECOND {
       delta_time = 0.;
     }
 
-    self.controller.update(delta_time, user_input);
+    self.controller.update(delta_time, &user_input);
 
     false
   }

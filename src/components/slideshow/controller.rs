@@ -30,18 +30,20 @@ impl Controller {
     }
   }
 
-  fn next_image(&mut self) {
-    self.image_time_remaining = IMAGE_DISPLAY_TIME;
-
-    self.image_index = (self.image_index + 1) % IMAGE_ASSETS.len();
-
-    self.image_source_signal.set(IMAGE_ASSETS[self.image_index]);
-  }
-
   pub fn update(
     &mut self,
     delta_time: f64,
-    user_input: UserInput,
+    user_input: &UserInput,
+  ) {
+    self.update_control_panel(delta_time, &user_input);
+
+    self.update_image(delta_time, &user_input);
+  }
+
+  fn update_control_panel(
+    &mut self,
+    delta_time: f64,
+    user_input: &UserInput,
   ) {
     if self.control_panel_time_remaining > 0. {
       self.control_panel_time_remaining =
@@ -50,45 +52,44 @@ impl Controller {
 
     if user_input.show {
       self.control_panel_time_remaining = CONTROL_PANEL_DISPLAY_TIME;
-
-      if *self.control_panel_fade_signal.read() {
-        self.control_panel_fade_signal.set(false);
-      }
     }
+
+    let fade: bool = *self.control_panel_fade_signal.read();
+
+    if self.control_panel_time_remaining <= CONTROL_PANEL_FADE_TIME {
+      if !fade {
+        self.control_panel_fade_signal.set(true);
+      }
+    } else if fade {
+      self.control_panel_fade_signal.set(false);
+    }
+
+    let show: bool = *self.control_panel_show_signal.read();
 
     if self.control_panel_time_remaining > 0. {
-      if !*self.control_panel_show_signal.read() {
+      if !show {
         self.control_panel_show_signal.set(true);
       }
-
-      if self.control_panel_time_remaining < CONTROL_PANEL_FADE_TIME {
-        if !*self.control_panel_fade_signal.read() {
-          self.control_panel_fade_signal.set(true);
-        }
-      }
-    } else {
-      if *self.control_panel_fade_signal.read() {
-        self.control_panel_fade_signal.set(false);
-      }
-      if *self.control_panel_show_signal.read() {
-        self.control_panel_show_signal.set(false);
-      }
+    } else if show {
+      self.control_panel_show_signal.set(false);
     }
+  }
 
+  fn update_image(
+    &mut self,
+    delta_time: f64,
+    user_input: &UserInput,
+  ) {
     self.image_time_remaining = self.image_time_remaining - delta_time;
 
-    let mut select_next_image = false;
-
-    if self.image_time_remaining <= 0. {
-      select_next_image = true;
+    if !user_input.skip && self.image_time_remaining > 0. {
+      return;
     }
 
-    if user_input.skip {
-      select_next_image = true;
-    }
+    self.image_time_remaining = IMAGE_DISPLAY_TIME;
 
-    if select_next_image {
-      self.next_image();
-    }
+    self.image_index = (self.image_index + 1) % IMAGE_ASSETS.len();
+
+    self.image_source_signal.set(IMAGE_ASSETS[self.image_index]);
   }
 }
