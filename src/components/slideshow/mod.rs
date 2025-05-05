@@ -19,7 +19,7 @@ mod user_input;
 #[allow(non_snake_case)]
 #[component]
 pub fn Slideshow() -> Element {
-  debug!("Slideshow() render");
+  debug!("Slideshow() component render");
 
   let mut fullscreen_event_listener_option_signal: Signal<
     Option<EventListener>,

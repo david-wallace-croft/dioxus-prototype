@@ -3,8 +3,6 @@ use self::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
 use ::dioxus::prelude::*;
-use ::std::cell::RefCell;
-use ::std::rc::Rc;
 use ::tracing::debug;
 
 mod animator;
@@ -17,58 +15,49 @@ const CANVAS_ID: &str = "home-page-canvas";
 #[allow(non_snake_case)]
 #[component]
 pub fn Animation() -> Element {
+  debug!("Animaton() component render");
+
   static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
-  // TODO: Switch to using Signal; use Slideshow as an example
-
-  let user_input_0: Rc<RefCell<UserInput>> = Default::default();
-
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
+  let mut user_input_signal: Signal<UserInput> =
+    use_signal(|| Default::default());
 
   use_drop(move || {
     debug!("dropping");
-
-    user_input.borrow_mut().stop = true;
   });
 
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
+  use_future(move || async move {
+    // TODO: split into Controller and Looper using Slideshow as an example
 
-  use_future(move || {
-    let user_input: Rc<RefCell<UserInput>> = user_input.clone();
+    let loop_updater: Animator = Animator::new(CANVAS_ID, user_input_signal);
 
-    async move {
-      let loop_updater = Animator::new(CANVAS_ID, user_input);
-
-      spawn_local_loop(loop_updater);
-    }
+    spawn_local_loop(loop_updater);
   });
 
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
+  let onblur = move |_event: Event<FocusData>| {
+    user_input_signal
+      .with_mut(|user_input: &mut UserInput| user_input.blur = true);
+  };
 
-  let onblur =
-    move |_event: Event<FocusData>| user_input.borrow_mut().blur = true;
+  let onclick = move |_event: Event<MouseData>| {
+    user_input_signal
+      .with_mut(|user_input: &mut UserInput| user_input.click = true);
+  };
 
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
+  let onfocus = move |_event: Event<FocusData>| {
+    user_input_signal
+      .with_mut(|user_input: &mut UserInput| user_input.focus = true);
+  };
 
-  let onclick =
-    move |_event: Event<MouseData>| user_input.borrow_mut().click = true;
+  let onkeydown = move |_event: Event<KeyboardData>| {
+    user_input_signal
+      .with_mut(|user_input: &mut UserInput| user_input.play = true);
+  };
 
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
-
-  let onfocus =
-    move |_event: Event<FocusData>| user_input.borrow_mut().focus = true;
-
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
-
-  let onkeydown =
-    move |_event: Event<KeyboardData>| user_input.borrow_mut().play = true;
-
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
-
-  let onkeyup =
-    move |_event: Event<KeyboardData>| user_input.borrow_mut().pause = true;
-
-  let user_input: Rc<RefCell<UserInput>> = user_input_0.clone();
+  let onkeyup = move |_event: Event<KeyboardData>| {
+    user_input_signal
+      .with_mut(|user_input: &mut UserInput| user_input.pause = true);
+  };
 
   let onwheel = move |event: Event<WheelData>| {
     let wheel_delta: WheelDelta = event.delta();
@@ -81,7 +70,8 @@ pub fn Animation() -> Element {
 
     let drift_delta: i8 = delta.clamp(-128., 127.) as i8;
 
-    user_input.borrow_mut().drift = drift_delta;
+    user_input_signal
+      .with_mut(|user_input: &mut UserInput| user_input.drift = drift_delta);
   };
 
   rsx! {

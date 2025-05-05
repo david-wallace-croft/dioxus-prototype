@@ -8,8 +8,8 @@ use ::com_croftsoft_lib_animation::metronome::Metronome;
 use ::com_croftsoft_lib_animation::metronome::delta::DeltaMetronome;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
 use ::com_croftsoft_lib_role::Updater;
+use ::dioxus::prelude::*;
 use ::std::cell::RefCell;
-use ::std::mem::take;
 use ::std::rc::Rc;
 use ::tracing::debug;
 use ::web_sys::wasm_bindgen::JsCast;
@@ -51,14 +51,14 @@ pub struct Animator {
   time_new: f64,
   /// The timestamp of the previous animation frame
   time_old: f64,
-  user_input: Rc<RefCell<UserInput>>,
+  user_input_signal: Signal<UserInput>,
   velocity: [f64; 2],
 }
 
 impl Animator {
   pub fn new(
     canvas_id: &str,
-    user_input: Rc<RefCell<UserInput>>,
+    user_input_signal: Signal<UserInput>,
   ) -> Self {
     let window: Window = window().expect("global window does not exists");
 
@@ -112,7 +112,6 @@ impl Animator {
       frame_rater_updater,
       frame_rater_updater_input,
       frames_per_second: "Frames per second:".to_string(),
-      user_input,
       maximum_drift: 0,
       message: MESSAGE_START,
       metronome,
@@ -121,6 +120,7 @@ impl Animator {
       square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
       time_new: 0.,
       time_old: 0.,
+      user_input_signal,
       velocity: [VELOCITY_PIXELS_PER_MILLISECOND; 2],
     }
   }
@@ -236,6 +236,18 @@ impl LoopUpdater for Animator {
     &mut self,
     update_time: f64,
   ) -> bool {
+    if self.user_input_signal.try_write().is_err() {
+      // Stop looping when the component and its signals have been dropped
+
+      debug!("stopping");
+
+      return true;
+    };
+
+    // Take the user input and replace it with the default values to reset
+
+    let user_input: UserInput = self.user_input_signal.take();
+
     self.time_old = self.time_new;
 
     self.time_new = update_time;
@@ -259,10 +271,6 @@ impl LoopUpdater for Animator {
 
       repaint = true;
     }
-
-    // Take the user input and replace it with the default values to reset
-
-    let user_input: UserInput = take(&mut *self.user_input.borrow_mut());
 
     if user_input.blur {
       // debug!("blur");
