@@ -1,4 +1,5 @@
 use self::animator::Animator;
+use self::looper::Looper;
 use self::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
 use ::dioxus::html::geometry::WheelDelta::{self, Lines, Pages, Pixels};
@@ -8,6 +9,7 @@ use ::tracing::debug;
 mod animator;
 mod color;
 mod frame_rater_updater_input;
+mod looper;
 mod user_input;
 
 const CANVAS_ID: &str = "home-page-canvas";
@@ -27,11 +29,11 @@ pub fn Animation() -> Element {
   });
 
   use_future(move || async move {
-    // TODO: split into Controller and Looper using Slideshow as an example
+    let animator: Animator = Animator::new(CANVAS_ID);
 
-    let loop_updater: Animator = Animator::new(CANVAS_ID, user_input_signal);
+    let looper: Looper = Looper::new(animator, user_input_signal);
 
-    spawn_local_loop(loop_updater);
+    spawn_local_loop(looper);
   });
 
   let onblur = move |_event: Event<FocusData>| {

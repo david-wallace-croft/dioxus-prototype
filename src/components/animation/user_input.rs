@@ -6,5 +6,4 @@ pub struct UserInput {
   pub focus: bool,
   pub pause: bool,
   pub play: bool,
-  pub stop: bool,
 }

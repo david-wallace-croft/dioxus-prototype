@@ -6,9 +6,7 @@ use ::com_croftsoft_lib_animation::frame_rater::simple::SimpleFrameRater;
 use ::com_croftsoft_lib_animation::frame_rater::updater::FrameRaterUpdater;
 use ::com_croftsoft_lib_animation::metronome::Metronome;
 use ::com_croftsoft_lib_animation::metronome::delta::DeltaMetronome;
-use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
 use ::com_croftsoft_lib_role::Updater;
-use ::dioxus::prelude::*;
 use ::std::cell::RefCell;
 use ::std::rc::Rc;
 use ::tracing::debug;
@@ -51,15 +49,11 @@ pub struct Animator {
   time_new: f64,
   /// The timestamp of the previous animation frame
   time_old: f64,
-  user_input_signal: Signal<UserInput>,
   velocity: [f64; 2],
 }
 
 impl Animator {
-  pub fn new(
-    canvas_id: &str,
-    user_input_signal: Signal<UserInput>,
-  ) -> Self {
+  pub fn new(canvas_id: &str) -> Self {
     let window: Window = window().expect("global window does not exists");
 
     let document: Document =
@@ -120,7 +114,6 @@ impl Animator {
       square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
       time_new: 0.,
       time_old: 0.,
-      user_input_signal,
       velocity: [VELOCITY_PIXELS_PER_MILLISECOND; 2],
     }
   }
@@ -165,13 +158,6 @@ impl Animator {
       .fill_text(&self.click_count_text, 4., self.canvas_height - 42.);
   }
 
-  fn adjust_maximum_drift(
-    &mut self,
-    delta: i8,
-  ) {
-    self.maximum_drift = self.maximum_drift.saturating_add_signed(delta);
-  }
-
   fn set_message(
     &mut self,
     message: &'static str,
@@ -179,75 +165,11 @@ impl Animator {
     self.message = message;
   }
 
-  fn update(&mut self) {
-    self.update_color();
-
-    self.update_position();
-  }
-
-  fn update_color(&mut self) {
-    if self.maximum_drift == 0 {
-      self.maximum_drift = 1;
-    }
-
-    self.color.drift(self.maximum_drift);
-  }
-
-  fn update_position(&mut self) {
-    let mut delta_time: f64 = self.time_new - self.time_old;
-
-    if delta_time >= FRAME_PERIOD_MILLIS_THRESHOLD {
-      delta_time = FRAME_PERIOD_MILLISECONDS_DEFAULT;
-    }
-
-    self.update_position_bounce(self.canvas_width, delta_time, 0);
-
-    self.update_position_bounce(self.canvas_height, delta_time, 1);
-  }
-
-  fn update_position_bounce(
-    &mut self,
-    boundary: f64,
-    delta_time: f64,
-    index: usize,
-  ) {
-    let delta_space: f64 = self.velocity[index] * delta_time;
-
-    if delta_space > 0. {
-      if self.position[index] + delta_space + self.square_size > boundary {
-        self.velocity[index] = -self.velocity[index];
-
-        self.position[index] = boundary - self.square_size;
-      } else {
-        self.position[index] += delta_space;
-      }
-    } else if self.position[index] + delta_space < 0. {
-      self.velocity[index] = -self.velocity[index];
-
-      self.position[index] = 0.;
-    } else {
-      self.position[index] += delta_space;
-    }
-  }
-}
-
-impl LoopUpdater for Animator {
-  fn update_loop(
+  pub fn update(
     &mut self,
     update_time: f64,
-  ) -> bool {
-    if self.user_input_signal.try_write().is_err() {
-      // Stop looping when the component and its signals have been dropped
-
-      debug!("stopping");
-
-      return true;
-    };
-
-    // Take the user input and replace it with the default values to reset
-
-    let user_input: UserInput = self.user_input_signal.take();
-
+    user_input: &UserInput,
+  ) {
     self.time_old = self.time_new;
 
     self.time_new = update_time;
@@ -293,7 +215,7 @@ impl LoopUpdater for Animator {
     if delta != 0 {
       // debug!("delta: {delta}");
 
-      self.adjust_maximum_drift(delta);
+      self.maximum_drift = self.maximum_drift.saturating_add_signed(delta);
 
       update = true;
     }
@@ -321,7 +243,9 @@ impl LoopUpdater for Animator {
     if self.running || update {
       // debug!("running: {running}, update: {update}");
 
-      self.update();
+      self.update_color();
+
+      self.update_position();
 
       repaint = true;
     }
@@ -329,13 +253,50 @@ impl LoopUpdater for Animator {
     if repaint {
       self.paint();
     }
+  }
 
-    let stopping: bool = user_input.stop;
-
-    if stopping {
-      debug!("stopping");
+  fn update_color(&mut self) {
+    if self.maximum_drift == 0 {
+      self.maximum_drift = 1;
     }
 
-    stopping
+    self.color.drift(self.maximum_drift);
+  }
+
+  fn update_position(&mut self) {
+    let mut delta_time: f64 = self.time_new - self.time_old;
+
+    if delta_time >= FRAME_PERIOD_MILLIS_THRESHOLD {
+      delta_time = FRAME_PERIOD_MILLISECONDS_DEFAULT;
+    }
+
+    self.update_position_bounce(self.canvas_width, delta_time, 0);
+
+    self.update_position_bounce(self.canvas_height, delta_time, 1);
+  }
+
+  fn update_position_bounce(
+    &mut self,
+    boundary: f64,
+    delta_time: f64,
+    index: usize,
+  ) {
+    let delta_space: f64 = self.velocity[index] * delta_time;
+
+    if delta_space > 0. {
+      if self.position[index] + delta_space + self.square_size > boundary {
+        self.velocity[index] = -self.velocity[index];
+
+        self.position[index] = boundary - self.square_size;
+      } else {
+        self.position[index] += delta_space;
+      }
+    } else if self.position[index] + delta_space < 0. {
+      self.velocity[index] = -self.velocity[index];
+
+      self.position[index] = 0.;
+    } else {
+      self.position[index] += delta_space;
+    }
   }
 }
