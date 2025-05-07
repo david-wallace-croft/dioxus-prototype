@@ -1,4 +1,3 @@
-use super::constants::MILLISECONDS_PER_SECOND;
 use super::controller::Controller;
 use super::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::LoopUpdater;
@@ -7,8 +6,6 @@ use ::tracing::debug;
 
 pub struct Looper {
   controller: Controller,
-  time_new: f64,
-  time_old: f64,
   user_input_signal: Signal<UserInput>,
 }
 
@@ -19,8 +16,6 @@ impl Looper {
   ) -> Self {
     Self {
       controller,
-      time_new: 0.,
-      time_old: 0.,
       user_input_signal,
     }
   }
@@ -29,7 +24,7 @@ impl Looper {
 impl LoopUpdater for Looper {
   fn update_loop(
     &mut self,
-    update_time: f64,
+    frame_time_millis: f64,
   ) -> bool {
     if self.user_input_signal.try_write().is_err() {
       // Stop looping when the component and its signals have been dropped
@@ -43,17 +38,7 @@ impl LoopUpdater for Looper {
 
     let user_input: UserInput = self.user_input_signal.take();
 
-    self.time_old = self.time_new;
-
-    self.time_new = update_time;
-
-    let mut delta_time: f64 = self.time_new - self.time_old;
-
-    if delta_time >= MILLISECONDS_PER_SECOND {
-      delta_time = 0.;
-    }
-
-    self.controller.update(delta_time, &user_input);
+    self.controller.update(frame_time_millis, &user_input);
 
     false
   }
