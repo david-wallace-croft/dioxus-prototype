@@ -17,7 +17,7 @@ use ::web_sys::{
 };
 
 const FRAMES_PER_SECOND_DEFAULT: f64 = 60.;
-const FRAME_PERIOD_MILLISECONDS_DEFAULT: f64 =
+const FRAME_PERIOD_MILLIS_TARGET: f64 =
   MILLISECONDS_PER_SECOND / FRAMES_PER_SECOND_DEFAULT;
 const FRAME_PERIOD_MILLIS_THRESHOLD: f64 = MILLISECONDS_PER_SECOND;
 const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
@@ -26,7 +26,7 @@ const MILLISECONDS_PER_SECOND: f64 = 1_000.;
 const VELOCITY_PIXELS_PER_FRAME: f64 = 1.;
 // pixels per millisecond = pixels per frame / milliseconds per frame
 const VELOCITY_PIXELS_PER_MILLISECOND: f64 =
-  VELOCITY_PIXELS_PER_FRAME / FRAME_PERIOD_MILLISECONDS_DEFAULT;
+  VELOCITY_PIXELS_PER_FRAME / FRAME_PERIOD_MILLIS_TARGET;
 
 pub struct Animator {
   canvas_height: f64,
@@ -39,16 +39,16 @@ pub struct Animator {
   frame_rater: Rc<RefCell<dyn FrameRater>>,
   frame_rater_updater: Rc<RefCell<dyn Updater>>,
   frame_rater_updater_input: Rc<RefCell<FrameRaterUpdaterInput>>,
+  /// The timestamp of the current animation frame in milliseconds
+  frame_time_millis_new: f64,
+  /// The timestamp of the previous animation frame in milliseconds
+  frame_time_millis_old: f64,
   maximum_drift: u8,
   message: &'static str,
   metronome: DeltaMetronome,
   position: [f64; 2],
   running: bool,
   square_size: f64,
-  /// The timestamp of the current animation frame
-  time_new: f64,
-  /// The timestamp of the previous animation frame
-  time_old: f64,
   velocity: [f64; 2],
 }
 
@@ -78,17 +78,18 @@ impl Animator {
     let canvas_width: f64 = html_canvas_element.width() as f64;
 
     let frame_rater: Rc<RefCell<dyn FrameRater>> = Rc::new(RefCell::new(
-      SimpleFrameRater::new(FRAME_PERIOD_MILLISECONDS_DEFAULT),
+      SimpleFrameRater::new(FRAME_PERIOD_MILLIS_TARGET),
     ));
 
     let frame_rater_updater_input: Rc<RefCell<FrameRaterUpdaterInput>> =
       Default::default();
 
-    let frame_rater_updater = Rc::new(RefCell::new(FrameRaterUpdater::new(
-      true,
-      frame_rater.clone(),
-      frame_rater_updater_input.clone(),
-    )));
+    let frame_rater_updater: Rc<RefCell<FrameRaterUpdater>> =
+      Rc::new(RefCell::new(FrameRaterUpdater::new(
+        true,
+        frame_rater.clone(),
+        frame_rater_updater_input.clone(),
+      )));
 
     let metronome = DeltaMetronome {
       period_millis: MILLISECONDS_PER_SECOND,
@@ -112,8 +113,8 @@ impl Animator {
       position: [0.; 2],
       running: true,
       square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
-      time_new: 0.,
-      time_old: 0.,
+      frame_time_millis_new: 0.,
+      frame_time_millis_old: 0.,
       velocity: [VELOCITY_PIXELS_PER_MILLISECOND; 2],
     }
   }
@@ -167,25 +168,25 @@ impl Animator {
 
   pub fn update(
     &mut self,
-    update_time: f64,
+    frame_time_millis: f64,
     user_input: &UserInput,
   ) {
-    self.time_old = self.time_new;
+    self.frame_time_millis_old = self.frame_time_millis_new;
 
-    self.time_new = update_time;
+    self.frame_time_millis_new = frame_time_millis;
 
-    let mut repaint = false;
+    let mut repaint: bool = false;
 
-    let mut update = false;
+    let mut update: bool = false;
 
     self
       .frame_rater_updater_input
       .borrow_mut()
-      .update_time_millis = update_time;
+      .update_time_millis = frame_time_millis;
 
     self.frame_rater_updater.borrow().update();
 
-    if self.metronome.tick(update_time) {
+    if self.metronome.tick(frame_time_millis) {
       self.frames_per_second = format!(
         "Frames per second: {:.3}",
         self.frame_rater.borrow().get_frames_per_second_sampled()
@@ -264,10 +265,11 @@ impl Animator {
   }
 
   fn update_position(&mut self) {
-    let mut delta_time: f64 = self.time_new - self.time_old;
+    let mut delta_time: f64 =
+      self.frame_time_millis_new - self.frame_time_millis_old;
 
     if delta_time >= FRAME_PERIOD_MILLIS_THRESHOLD {
-      delta_time = FRAME_PERIOD_MILLISECONDS_DEFAULT;
+      delta_time = FRAME_PERIOD_MILLIS_TARGET;
     }
 
     self.update_position_bounce(self.canvas_width, delta_time, 0);
