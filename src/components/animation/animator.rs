@@ -264,6 +264,8 @@ impl Animator {
     self.color.drift(self.maximum_drift);
   }
 
+  // TODO: Move this to a PositionUpdater which implements Updater
+
   fn update_position(&mut self) {
     let mut delta_time: f64 =
       self.frame_time_millis_new - self.frame_time_millis_old;
