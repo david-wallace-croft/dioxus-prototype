@@ -1,4 +1,8 @@
 use self::animator::Animator;
+use self::constants::{
+  CANVAS_BACKGROUND_COLOR, CANVAS_CURSOR, CANVAS_HEIGHT, CANVAS_ID,
+  CANVAS_WIDTH, CSS,
+};
 use self::looper::Looper;
 use self::user_input::UserInput;
 use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
@@ -8,18 +12,15 @@ use ::tracing::debug;
 
 mod animator;
 mod color;
+mod constants;
 mod frame_rater_updater_input;
 mod looper;
 mod user_input;
-
-const CANVAS_ID: &str = "home-page-canvas";
 
 #[allow(non_snake_case)]
 #[component]
 pub fn Animation() -> Element {
   debug!("Animaton() component render");
-
-  static CSS: Asset = asset!("/assets/animation/app-animation.css");
 
   let mut user_input_signal: Signal<UserInput> =
     use_signal(|| Default::default());
@@ -70,7 +71,7 @@ pub fn Animation() -> Element {
       Pixels(pixels_vector) => pixels_vector.y,
     };
 
-    let drift_delta: i8 = delta.clamp(-128., 127.) as i8;
+    let drift_delta: i8 = delta.clamp(i8::MIN as f64, i8::MAX as f64) as i8;
 
     user_input_signal
       .with_mut(|user_input: &mut UserInput| user_input.drift = drift_delta);
@@ -86,9 +87,9 @@ pub fn Animation() -> Element {
     "Animation"
     }
     canvas {
-      background_color: "black",
-      cursor: "crosshair",
-      height: "360",
+      background_color: CANVAS_BACKGROUND_COLOR,
+      cursor: CANVAS_CURSOR,
+      height: CANVAS_HEIGHT,
       id: CANVAS_ID,
       onblur,
       onclick,
@@ -97,7 +98,7 @@ pub fn Animation() -> Element {
       onkeyup,
       onwheel,
       tabindex: 0,
-      width: "470",
+      width: CANVAS_WIDTH,
     }
     }
   }

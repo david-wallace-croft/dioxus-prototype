@@ -1,4 +1,9 @@
 use super::color::Color;
+use super::constants::{
+  CONTEXT_ID_2D, FILL_STYLE_BACKGROUND, FILL_STYLE_FOREGROUND, FONT,
+  FRAME_PERIOD_MILLIS_TARGET, FRAME_PERIOD_MILLIS_THRESHOLD, MESSAGE_CONTROLS,
+  MESSAGE_START, MILLISECONDS_PER_SECOND, VELOCITY_PIXELS_PER_MILLISECOND,
+};
 use super::frame_rater_updater_input::FrameRaterUpdaterInput;
 use super::user_input::UserInput;
 use ::com_croftsoft_lib_animation::frame_rater::FrameRater;
@@ -15,18 +20,6 @@ use ::web_sys::wasm_bindgen::JsValue;
 use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
-
-const FRAMES_PER_SECOND_DEFAULT: f64 = 60.;
-const FRAME_PERIOD_MILLIS_TARGET: f64 =
-  MILLISECONDS_PER_SECOND / FRAMES_PER_SECOND_DEFAULT;
-const FRAME_PERIOD_MILLIS_THRESHOLD: f64 = MILLISECONDS_PER_SECOND;
-const MESSAGE_CONTROLS: &str = "Hold a key or scroll the mouse wheel";
-const MESSAGE_START: &str = "Click on or tab to the canvas";
-const MILLISECONDS_PER_SECOND: f64 = 1_000.;
-const VELOCITY_PIXELS_PER_FRAME: f64 = 1.;
-// pixels per millisecond = pixels per frame / milliseconds per frame
-const VELOCITY_PIXELS_PER_MILLISECOND: f64 =
-  VELOCITY_PIXELS_PER_FRAME / FRAME_PERIOD_MILLIS_TARGET;
 
 pub struct Animator {
   canvas_height: f64,
@@ -67,7 +60,7 @@ impl Animator {
 
     let canvas_rendering_context_2d: CanvasRenderingContext2d =
       html_canvas_element
-        .get_context("2d")
+        .get_context(CONTEXT_ID_2D)
         .unwrap()
         .unwrap()
         .dyn_into::<CanvasRenderingContext2d>()
@@ -120,7 +113,9 @@ impl Animator {
   }
 
   fn paint(&self) {
-    self.canvas_rendering_context_2d.set_fill_style_str("black");
+    self
+      .canvas_rendering_context_2d
+      .set_fill_style_str(FILL_STYLE_BACKGROUND);
 
     self.canvas_rendering_context_2d.fill_rect(
       0.,
@@ -142,9 +137,11 @@ impl Animator {
       self.square_size,
     );
 
-    self.canvas_rendering_context_2d.set_font("30px Verdana");
+    self.canvas_rendering_context_2d.set_font(FONT);
 
-    self.canvas_rendering_context_2d.set_fill_style_str("white");
+    self
+      .canvas_rendering_context_2d
+      .set_fill_style_str(FILL_STYLE_FOREGROUND);
 
     let _result: Result<(), JsValue> = self
       .canvas_rendering_context_2d
@@ -264,7 +261,7 @@ impl Animator {
     self.color.drift(self.maximum_drift);
   }
 
-  // TODO: Move this to a PositionUpdater which implements Updater
+  // TODO: Move this to a PositionSprite which implements Painter and Updater
 
   fn update_position(&mut self) {
     let mut delta_time: f64 =
