@@ -1,8 +1,8 @@
-use super::color::Color;
+use self::square_sprite::SquareSprite;
 use super::constants::{
   CONTEXT_ID_2D, FILL_STYLE_BACKGROUND, FILL_STYLE_FOREGROUND, FONT,
   FRAME_PERIOD_MILLIS_TARGET, FRAME_PERIOD_MILLIS_THRESHOLD, MESSAGE_CONTROLS,
-  MESSAGE_START, MILLISECONDS_PER_SECOND, VELOCITY_PIXELS_PER_MILLISECOND,
+  MESSAGE_START, MILLISECONDS_PER_SECOND,
 };
 use super::frame_rater_updater_input::FrameRaterUpdaterInput;
 use super::user_input::UserInput;
@@ -21,13 +21,14 @@ use ::web_sys::{
   CanvasRenderingContext2d, Document, HtmlCanvasElement, Window, window,
 };
 
+mod square_sprite;
+
 pub struct Animator {
   canvas_height: f64,
   canvas_rendering_context_2d: CanvasRenderingContext2d,
   canvas_width: f64,
   click_count: usize,
   click_count_text: String,
-  color: Color,
   frames_per_second: String,
   frame_rater: Rc<RefCell<dyn FrameRater>>,
   frame_rater_updater: Rc<RefCell<dyn Updater>>,
@@ -36,13 +37,10 @@ pub struct Animator {
   frame_time_millis_new: f64,
   /// The timestamp of the previous animation frame in milliseconds
   frame_time_millis_old: f64,
-  maximum_drift: u8,
   message: &'static str,
   metronome: DeltaMetronome,
-  position: [f64; 2],
   running: bool,
-  square_size: f64,
-  velocity: [f64; 2],
+  square_sprite: SquareSprite,
 }
 
 impl Animator {
@@ -89,26 +87,27 @@ impl Animator {
       time_millis_next_tick: 0.,
     };
 
+    let square_size = 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.);
+
+    let square_sprite =
+      SquareSprite::new(canvas_width, canvas_height, square_size);
+
     Self {
       canvas_height,
       canvas_rendering_context_2d,
       canvas_width,
       click_count: 0,
       click_count_text: "Clicks: 0".to_string(),
-      color: Color::random(),
       frame_rater,
       frame_rater_updater,
       frame_rater_updater_input,
-      frames_per_second: "Frames per second:".to_string(),
-      maximum_drift: 0,
-      message: MESSAGE_START,
-      metronome,
-      position: [0.; 2],
-      running: true,
-      square_size: 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.),
       frame_time_millis_new: 0.,
       frame_time_millis_old: 0.,
-      velocity: [VELOCITY_PIXELS_PER_MILLISECOND; 2],
+      frames_per_second: "Frames per second:".to_string(),
+      message: MESSAGE_START,
+      metronome,
+      running: true,
+      square_sprite,
     }
   }
 
@@ -124,18 +123,7 @@ impl Animator {
       self.canvas_height,
     );
 
-    let fill_style: String = self.color.as_fill_style_string();
-
-    self
-      .canvas_rendering_context_2d
-      .set_fill_style_str(&fill_style);
-
-    self.canvas_rendering_context_2d.fill_rect(
-      self.position[0],
-      self.position[1],
-      self.square_size,
-      self.square_size,
-    );
+    self.square_sprite.paint(&self.canvas_rendering_context_2d);
 
     self.canvas_rendering_context_2d.set_font(FONT);
 
@@ -171,6 +159,13 @@ impl Animator {
     self.frame_time_millis_old = self.frame_time_millis_new;
 
     self.frame_time_millis_new = frame_time_millis;
+
+    let mut delta_time: f64 =
+      self.frame_time_millis_new - self.frame_time_millis_old;
+
+    if delta_time >= FRAME_PERIOD_MILLIS_THRESHOLD {
+      delta_time = FRAME_PERIOD_MILLIS_TARGET;
+    }
 
     let mut repaint: bool = false;
 
@@ -211,10 +206,6 @@ impl Animator {
     let delta: i8 = user_input.drift;
 
     if delta != 0 {
-      // debug!("delta: {delta}");
-
-      self.maximum_drift = self.maximum_drift.saturating_add_signed(delta);
-
       update = true;
     }
 
@@ -241,63 +232,13 @@ impl Animator {
     if self.running || update {
       // debug!("running: {running}, update: {update}");
 
-      self.update_color();
-
-      self.update_position();
+      self.square_sprite.update(delta_time, user_input);
 
       repaint = true;
     }
 
     if repaint {
       self.paint();
-    }
-  }
-
-  fn update_color(&mut self) {
-    if self.maximum_drift == 0 {
-      self.maximum_drift = 1;
-    }
-
-    self.color.drift(self.maximum_drift);
-  }
-
-  // TODO: Move this to a PositionSprite which implements Painter and Updater
-
-  fn update_position(&mut self) {
-    let mut delta_time: f64 =
-      self.frame_time_millis_new - self.frame_time_millis_old;
-
-    if delta_time >= FRAME_PERIOD_MILLIS_THRESHOLD {
-      delta_time = FRAME_PERIOD_MILLIS_TARGET;
-    }
-
-    self.update_position_bounce(self.canvas_width, delta_time, 0);
-
-    self.update_position_bounce(self.canvas_height, delta_time, 1);
-  }
-
-  fn update_position_bounce(
-    &mut self,
-    boundary: f64,
-    delta_time: f64,
-    index: usize,
-  ) {
-    let delta_space: f64 = self.velocity[index] * delta_time;
-
-    if delta_space > 0. {
-      if self.position[index] + delta_space + self.square_size > boundary {
-        self.velocity[index] = -self.velocity[index];
-
-        self.position[index] = boundary - self.square_size;
-      } else {
-        self.position[index] += delta_space;
-      }
-    } else if self.position[index] + delta_space < 0. {
-      self.velocity[index] = -self.velocity[index];
-
-      self.position[index] = 0.;
-    } else {
-      self.position[index] += delta_space;
     }
   }
 }
