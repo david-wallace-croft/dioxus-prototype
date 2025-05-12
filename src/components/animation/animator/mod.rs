@@ -89,7 +89,7 @@ impl Animator {
 
     let square_size = 100.0_f64.min(canvas_width / 2.).min(canvas_height / 2.);
 
-    let square_sprite =
+    let square_sprite: SquareSprite =
       SquareSprite::new(canvas_width, canvas_height, square_size);
 
     Self {
@@ -231,6 +231,8 @@ impl Animator {
 
     if self.running || update {
       // debug!("running: {running}, update: {update}");
+
+      // TODO: Pass in canvas or pass in canvas bounds to permit resizing
 
       self.square_sprite.update(delta_time, user_input);
 

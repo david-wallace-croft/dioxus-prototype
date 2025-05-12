@@ -5,8 +5,10 @@ use super::super::constants::VELOCITY_PIXELS_PER_MILLISECOND;
 use ::web_sys::CanvasRenderingContext2d;
 
 pub struct SquareSprite {
-  boundary_x: f64,
-  boundary_y: f64,
+  boundary_max_x: f64,
+  boundary_max_y: f64,
+  boundary_min_x: f64,
+  boundary_min_y: f64,
   color: Color,
   maximum_drift: u8,
   position: [f64; 2],
@@ -16,13 +18,15 @@ pub struct SquareSprite {
 
 impl SquareSprite {
   pub fn new(
-    boundary_x: f64,
-    boundary_y: f64,
+    boundary_max_x: f64,
+    boundary_max_y: f64,
     square_size: f64,
   ) -> Self {
     Self {
-      boundary_x,
-      boundary_y,
+      boundary_max_x,
+      boundary_max_y,
+      boundary_min_x: 0.,
+      boundary_min_y: 0.,
       color: Color::random(),
       maximum_drift: 0,
       position: [0.; 2],
@@ -78,31 +82,42 @@ impl SquareSprite {
     &mut self,
     delta_time: f64,
   ) {
-    self.update_position_bounce(self.boundary_x, delta_time, 0);
+    self.update_position_bounce(
+      self.boundary_max_x,
+      self.boundary_min_x,
+      delta_time,
+      0,
+    );
 
-    self.update_position_bounce(self.boundary_y, delta_time, 1);
+    self.update_position_bounce(
+      self.boundary_max_y,
+      self.boundary_min_y,
+      delta_time,
+      1,
+    );
   }
 
   fn update_position_bounce(
     &mut self,
-    boundary: f64,
+    boundary_max: f64,
+    boundary_min: f64,
     delta_time: f64,
     index: usize,
   ) {
     let delta_space: f64 = self.velocity[index] * delta_time;
 
     if delta_space > 0. {
-      if self.position[index] + delta_space + self.square_size > boundary {
+      if self.position[index] + delta_space + self.square_size > boundary_max {
         self.velocity[index] = -self.velocity[index];
 
-        self.position[index] = boundary - self.square_size;
+        self.position[index] = boundary_max - self.square_size;
       } else {
         self.position[index] += delta_space;
       }
-    } else if self.position[index] + delta_space < 0. {
+    } else if self.position[index] + delta_space < boundary_min {
       self.velocity[index] = -self.velocity[index];
 
-      self.position[index] = 0.;
+      self.position[index] = boundary_min;
     } else {
       self.position[index] += delta_space;
     }
