@@ -27,9 +27,10 @@ pub fn Flashcard() -> Element {
   let mut modes_signal: Signal<Vec<Mode>> =
     use_signal(|| vec![Mode::Untouched; card.answers.len()]);
 
-  let mut show_button_disabled_signal: Signal<bool> = use_signal(|| false);
+  let mut show_button_disabled_signal: Signal<bool> =
+    use_signal(Default::default);
 
-  let mut message_signal: Signal<String> = use_signal(|| "".to_owned());
+  let mut message_signal: Signal<String> = use_signal(Default::default);
 
   rsx! {
   document::Stylesheet {

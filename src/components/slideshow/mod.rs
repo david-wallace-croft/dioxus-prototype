@@ -23,18 +23,17 @@ pub fn Slideshow() -> Element {
 
   let mut fullscreen_event_listener_option_signal: Signal<
     Option<EventListener>,
-  > = use_signal(|| None);
+  > = use_signal(Default::default);
 
-  let mut fullscreen_signal: Signal<bool> = use_signal(|| false);
+  let mut fullscreen_signal: Signal<bool> = use_signal(Default::default);
 
-  let control_panel_fade_signal: Signal<bool> = use_signal(|| false);
+  let control_panel_fade_signal: Signal<bool> = use_signal(Default::default);
 
-  let control_panel_show_signal: Signal<bool> = use_signal(|| false);
+  let control_panel_show_signal: Signal<bool> = use_signal(Default::default);
 
   let image_source_signal: Signal<Asset> = use_signal(|| IMAGE_ASSETS[0]);
 
-  let mut user_input_signal: Signal<UserInput> =
-    use_signal(|| Default::default());
+  let mut user_input_signal: Signal<UserInput> = use_signal(Default::default);
 
   use_drop(move || {
     debug!("dropping");

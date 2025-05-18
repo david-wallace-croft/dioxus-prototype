@@ -22,8 +22,7 @@ mod user_input;
 pub fn Animation() -> Element {
   debug!("Animaton() component render");
 
-  let mut user_input_signal: Signal<UserInput> =
-    use_signal(|| Default::default());
+  let mut user_input_signal: Signal<UserInput> = use_signal(Default::default);
 
   use_drop(move || {
     debug!("dropping");

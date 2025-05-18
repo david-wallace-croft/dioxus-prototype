@@ -52,9 +52,9 @@ impl Controller {
       delta_time_millis = 0.;
     }
 
-    self.update_control_panel(delta_time_millis, &user_input);
+    self.update_control_panel(delta_time_millis, user_input);
 
-    self.update_image(delta_time_millis, &user_input);
+    self.update_image(delta_time_millis, user_input);
   }
 
   fn update_control_panel(
@@ -63,8 +63,7 @@ impl Controller {
     user_input: &UserInput,
   ) {
     if self.control_panel_time_remaining > 0. {
-      self.control_panel_time_remaining =
-        self.control_panel_time_remaining - delta_time;
+      self.control_panel_time_remaining -= delta_time;
     }
 
     if user_input.show {
@@ -97,7 +96,7 @@ impl Controller {
     delta_time: f64,
     user_input: &UserInput,
   ) {
-    self.image_time_remaining = self.image_time_remaining - delta_time;
+    self.image_time_remaining -= delta_time;
 
     if !user_input.skip && self.image_time_remaining > 0. {
       return;
