@@ -12,7 +12,7 @@ pub const CANVAS_WIDTH: &str = "470";
 
 pub const CONTEXT_ID_2D: &str = "2d";
 
-pub static CSS: Asset = asset!("/assets/animation/app-animation.css");
+pub static CSS: Asset = asset!("/public/animation/app-animation.css");
 
 pub const FILL_STYLE_BACKGROUND: &str = "black";
 

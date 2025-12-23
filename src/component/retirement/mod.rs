@@ -1,5 +1,5 @@
 use self::reset_button::ResetButton;
-use super::super::components::language_select::LanguageSelector;
+use super::super::component::language_select::LanguageSelector;
 use super::translator::Translator;
 use ::com_croftsoft_core::math::finance_lib::PeriodicSavingsNeeded;
 use ::com_croftsoft_lib_string::to_dollars;
@@ -17,7 +17,7 @@ static RETIREMENT_TAX_RATE: &str = "10.0";
 #[allow(non_snake_case)]
 #[component]
 pub fn Retirement() -> Element {
-  static CSS: Asset = asset!("/assets/retirement/app-retirement.css");
+  static CSS: Asset = asset!("/public/retirement/app-retirement.css");
 
   let mut investment_interest: Signal<String> =
     use_signal(|| INVESTMENT_INTEREST.to_string());

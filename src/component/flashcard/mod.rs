@@ -1,9 +1,9 @@
+use self::answer_button::AnswerButton;
 use self::card::Card;
+use self::link_button::LinkButton;
 use self::mode::Mode;
-use super::super::components::flashcard::answer_button::AnswerButton;
-use super::super::components::flashcard::link_button::LinkButton;
-use super::super::components::flashcard::question_text::QuestionText;
-use super::super::components::flashcard::show_button::ShowButton;
+use self::question_text::QuestionText;
+use self::show_button::ShowButton;
 use ::dioxus::prelude::*;
 use ::tracing::info;
 use ::web_sys::window;
@@ -18,7 +18,7 @@ mod show_button;
 #[allow(non_snake_case)]
 #[component]
 pub fn Flashcard() -> Element {
-  static CSS: Asset = asset!("/assets/flashcard/app-flashcard.css");
+  static CSS: Asset = asset!("/public/flashcard/app-flashcard.css");
 
   let card = Card::default();
 

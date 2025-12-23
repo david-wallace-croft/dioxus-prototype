@@ -1,20 +1,21 @@
 {
   "devDependencies": {
     "http-server": "^14.1.1",
-    "prettier": "3.5.3",
-    "rimraf": "^6.0.1"
+    "prettier": "^3.7.4",
+    "shx": "^0.4.0"
   },
   "scripts": {
     "build": "dx build --release --ssg",
-    "clean": "rimraf dist/ && rimraf static/ && rimraf target/dx/",
-    "dist": "npm run clean && npm run build && npm run merge",
+    "clean": "npm run clean1 && npm run clean2 && npm run clean3",
+    "clean1": "shx rm -rf target/dx/dioxus-prototype/release",
+    "clean2": "shx rm -rf target/server-release",
+    "clean3": "shx rm -rf dist",
+    "copy": "shx cp -r target/dx/dioxus-prototype/release/web/public dist/",
+    "dist": "npm run clean && npm run build && npm run copy && npm run merge",
     "format": "prettier dist --ignore-path .prettierignore --write",
-    "merge": "mkdir dist && npm run merge1 && npm run merge2 && npm run merge3",
-    "merge1": "cp -r target/dx/dioxus-prototype/release/web/public/* dist/",
-    "merge2": "cp -r static/* dist/",
-    "merge3": "cp -r merge/* dist/",
+    "merge": "shx cp -r merge/* dist/",
     "serve": "http-server dist -c-1 -o",
-    "start": "dx serve --addr=127.0.0.1 --open",
+    "start": "dx serve --open",
     "test": "npm run dist && npm run serve"
   }
 }

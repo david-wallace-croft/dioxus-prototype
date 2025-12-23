@@ -1,5 +1,5 @@
 [application]
-asset_dir = "assets"
+asset_dir = "public"
 default_platform = "web"
 name = "dioxus-prototype"
 out_dir = "dist"
@@ -17,7 +17,7 @@ long_description = """
 CroftSoft Dioxus Prototype
 """
 publisher = "dioxus-prototype"
-resources = ["assets/*"]
+resources = ["public/*"]
 short_description = "CroftSoft Dioxus Prototype"
 
 [web.app]
@@ -25,7 +25,7 @@ title = "CroftSoft Dioxus Prototype"
 
 [web.watcher]
 reload_html = true
-watch_path = ["src", "assets"]
+watch_path = ["src", "public"]
 
 [web.resource]
 script = []

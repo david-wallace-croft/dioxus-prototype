@@ -1,8 +1,8 @@
 use self::constants::{CSS, IMAGE_ASSETS};
+use self::control_panel::ControlPanel;
 use self::controller::Controller;
 use self::looper::Looper;
 use self::user_input::UserInput;
-use super::super::components::slideshow::control_panel::ControlPanel;
 use ::com_croftsoft_lib_animation::web_sys::spawn_local_loop;
 use ::dioxus::prelude::*;
 use ::gloo_events::EventListener;

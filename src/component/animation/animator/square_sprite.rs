@@ -1,7 +1,6 @@
-use crate::components::animation::user_input::UserInput;
-
 use super::super::color::Color;
 use super::super::constants::VELOCITY_PIXELS_PER_MILLISECOND;
+use super::super::user_input::UserInput;
 use ::web_sys::CanvasRenderingContext2d;
 
 pub struct SquareSprite {

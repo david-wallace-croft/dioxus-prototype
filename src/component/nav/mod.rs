@@ -4,7 +4,7 @@ use ::dioxus::prelude::*;
 #[allow(non_snake_case)]
 #[component]
 pub fn Nav() -> Element {
-  static CSS: Asset = asset!("/assets/nav/app-nav.css");
+  static CSS: Asset = asset!("/public/nav/app-nav.css");
 
   rsx! {
     document::Stylesheet {
@@ -27,13 +27,13 @@ pub fn Nav() -> Element {
     "Animation",
     }
     }
-    li {
-    Link {
-      active_class: "app-nav-active",
-      to: Route::Barchart {},
-    "Barchart",
-    }
-    }
+    // li {
+    // Link {
+    //   active_class: "app-nav-active",
+    //   to: Route::Barchart {},
+    // "Barchart",
+    // }
+    // }
     li {
     Link {
       active_class: "app-nav-active",

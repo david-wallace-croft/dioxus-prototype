@@ -5,7 +5,7 @@ use ::dioxus_charts::BarChart;
 #[allow(non_snake_case)]
 #[component]
 pub fn Barchart() -> Element {
-  static CSS: Asset = asset!("/assets/barchart/app-barchart.css");
+  static CSS: Asset = asset!("/public/barchart/app-barchart.css");
 
   let labels: Vec<String> = vec![
     "GOAL".into(),
@@ -23,7 +23,8 @@ pub fn Barchart() -> Element {
 
   rsx! {
   document::Stylesheet {
-    href: CSS
+    href: CSS,
+    rel: "stylesheet",
   }
   div {
     class: "app-barchart app-fade-in-animation box",

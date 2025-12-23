@@ -4,7 +4,7 @@ use ::dioxus::prelude::*;
 #[allow(non_snake_case)]
 #[component]
 pub fn Home() -> Element {
-  static CSS: Asset = asset!("/assets/home/app-home.css");
+  static CSS: Asset = asset!("/public/home/app-home.css");
 
   rsx! {
   document::Stylesheet {
@@ -42,27 +42,27 @@ pub fn Home() -> Element {
   }
   }
   }
-  li {
-  "The "
-  Link {
-    to: Route::Barchart {},
-  "Barchart"
-  }
-  " component demonstrates"
-  ul {
-  li {
-  "using crate "
-  a {
-    href: "https://github.com/dioxus-community/dioxus-charts",
-    target: "_blank",
-  "dioxus-charts"
-  }
-  }
-  li {
-  "with CSS customization"
-  }
-  }
-  }
+  // li {
+  // "The "
+  // Link {
+  //   to: Route::Barchart {},
+  // "Barchart"
+  // }
+  // " component demonstrates"
+  // ul {
+  // li {
+  // "using crate "
+  // a {
+  //   href: "https://github.com/dioxus-community/dioxus-charts",
+  //   target: "_blank",
+  // "dioxus-charts"
+  // }
+  // }
+  // li {
+  // "with CSS customization"
+  // }
+  // }
+  // }
   li {
   "The "
   Link {

@@ -1,2 +1,2 @@
-pub mod components;
+pub mod component;
 pub mod route;

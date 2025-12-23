@@ -1,15 +1,14 @@
-use super::components::animation::Animation;
-use super::components::barchart::Barchart;
-use super::components::colophon::Colophon;
-use super::components::flashcard::Flashcard;
-use super::components::home::Home;
-use super::components::retirement::Retirement;
-use super::components::slideshow::Slideshow;
-use super::components::template::Template;
+use super::component::animation::Animation;
+// use super::component::barchart::Barchart;
+use super::component::colophon::Colophon;
+use super::component::flashcard::Flashcard;
+use super::component::home::Home;
+use super::component::retirement::Retirement;
+use super::component::slideshow::Slideshow;
+use super::component::template::Template;
 use ::dioxus::prelude::*;
-use ::serde::{Deserialize, Serialize};
 
-#[derive(Clone, Routable, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Routable)]
 #[rustfmt::skip]
 pub enum Route {
   #[layout(Template)]
@@ -17,8 +16,8 @@ pub enum Route {
   Home {},
   #[route("/animation")]
   Animation {},
-  #[route("/barchart")]
-  Barchart {},
+  // #[route("/barchart")]
+  // Barchart {},
   #[route("/colophon")]
   Colophon {},
   #[route("/flashcard")]
