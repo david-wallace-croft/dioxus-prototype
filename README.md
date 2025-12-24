@@ -39,6 +39,7 @@
 
 ## Quick Start
 
+- cd dioxus-prototype/
 - npm install
 - npm test
 
