@@ -89,6 +89,7 @@
   - Described in a previous section
 - npm test
   - Described in a previous section
+
 ## History
 
 - 2022-08-21: Initial release
