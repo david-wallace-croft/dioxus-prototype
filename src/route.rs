@@ -1,5 +1,5 @@
 use super::component::animation::Animation;
-// use super::component::barchart::Barchart;
+use super::component::barchart::Barchart;
 use super::component::colophon::Colophon;
 use super::component::flashcard::Flashcard;
 use super::component::home::Home;
@@ -16,8 +16,8 @@ pub enum Route {
   Home {},
   #[route("/animation")]
   Animation {},
-  // #[route("/barchart")]
-  // Barchart {},
+  #[route("/barchart")]
+  Barchart {},
   #[route("/colophon")]
   Colophon {},
   #[route("/flashcard")]

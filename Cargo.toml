@@ -9,8 +9,8 @@ name = "dioxus-prototype"
 publish = false
 readme = "README.md"
 repository = "https://github.com/david-wallace-croft/dioxus-prototype"
-rust-version = "1.87"
-version = "0.7.1-SNAPSHOT"
+rust-version = "1.92"
+version = "0.7.1"
 
 [dependencies]
 com-croftsoft-core = "0.14.0"

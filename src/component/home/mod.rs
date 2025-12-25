@@ -42,27 +42,25 @@ pub fn Home() -> Element {
   }
   }
   }
-  // li {
-  // "The "
-  // Link {
-  //   to: Route::Barchart {},
-  // "Barchart"
-  // }
-  // " component demonstrates"
-  // ul {
-  // li {
-  // "using crate "
-  // a {
-  //   href: "https://github.com/dioxus-community/dioxus-charts",
-  //   target: "_blank",
-  // "dioxus-charts"
-  // }
-  // }
-  // li {
-  // "with CSS customization"
-  // }
-  // }
-  // }
+  li {
+  "The "
+  Link {
+    to: Route::Barchart {},
+  "Barchart"
+  }
+  " component demonstrates"
+  ul {
+  li {
+  "using "
+  a {
+    href: "https://developer.mozilla.org/en-US/docs/Web/SVG",
+    target: "_blank",
+  "Scalable Vector Graphics"
+  }
+  " (SVG)"
+  }
+  }
+  }
   li {
   "The "
   Link {

@@ -1,6 +1,6 @@
 pub mod animation;
 pub mod app;
-// pub mod barchart;
+pub mod barchart;
 pub mod colophon;
 pub mod flashcard;
 pub mod footer;

@@ -27,13 +27,13 @@ pub fn Nav() -> Element {
     "Animation",
     }
     }
-    // li {
-    // Link {
-    //   active_class: "app-nav-active",
-    //   to: Route::Barchart {},
-    // "Barchart",
-    // }
-    // }
+    li {
+    Link {
+      active_class: "app-nav-active",
+      to: Route::Barchart {},
+    "Barchart",
+    }
+    }
     li {
     Link {
       active_class: "app-nav-active",

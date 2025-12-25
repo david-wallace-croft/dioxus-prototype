@@ -1,57 +1,98 @@
+use self::barchart_row::BarchartRow;
 use ::com_croftsoft_lib_string::to_dollars;
 use ::dioxus::prelude::*;
-use ::dioxus_charts::BarChart;
+
+mod barchart_row;
+
+static CSS: Asset = asset!("/public/barchart/app-barchart.css");
+
+const BAR_HEIGHT: usize = 2 * FONT_SIZE;
+
+const BAR_WIDTH_GOAL: usize = FONT_SIZE * 15;
+
+const BAR_WIDTH_TOTAL_RAISED: usize =
+  (BAR_WIDTH_GOAL as f64 * DOLLARS_TOTAL_RAISED / DOLLARS_GOAL) as usize;
+
+const BAR_WIDTH_CORPORATE_PLEDGES: usize =
+  (BAR_WIDTH_GOAL as f64 * DOLLARS_CORPORATE_PLEDGES / DOLLARS_GOAL) as usize;
+
+const BAR_WIDTH_INDIVIDUAL_DONATIONS: usize = (BAR_WIDTH_GOAL as f64
+  * DOLLARS_INDIVIDUAL_DONATIONS
+  / DOLLARS_GOAL) as usize;
+
+const BAR_X: usize = TEXT_X + FONT_SIZE / 4;
+
+const DOLLARS_GOAL: f64 = 50_000.;
+
+const DOLLARS_CORPORATE_PLEDGES: f64 = 17_000.;
+
+const DOLLARS_INDIVIDUAL_DONATIONS: f64 = 15_677.49;
+
+const DOLLARS_TOTAL_RAISED: f64 =
+  DOLLARS_CORPORATE_PLEDGES + DOLLARS_INDIVIDUAL_DONATIONS;
+
+// TODO: Convert everything to f32 or f64
+const FONT_SIZE: usize = 20;
+
+const MARGIN_X: usize = FONT_SIZE / 5;
+
+const MARGIN_Y: usize = FONT_SIZE / 2;
+
+const SVG_HEIGHT: usize = 4 * BAR_HEIGHT + 3 * MARGIN_Y;
+
+const SVG_WIDTH: usize =
+  BAR_X + BAR_WIDTH_GOAL + MARGIN_X + FONT_SIZE * 390 / 100;
+
+const TEXT_X: usize = FONT_SIZE * 605 / 100;
 
 #[allow(non_snake_case)]
 #[component]
 pub fn Barchart() -> Element {
-  static CSS: Asset = asset!("/public/barchart/app-barchart.css");
-
-  let labels: Vec<String> = vec![
-    "GOAL".into(),
-    "TOTAL RAISED".into(),
-    "CORPORATE PLEDGES".into(),
-    "INDIVIDUAL DONATIONS".into(),
-  ];
-
-  fn label_interpolation(v: f32) -> String {
-    to_dollars(v as f64)
-  }
-
-  let label_interpolation_option: Option<fn(f32) -> String> =
-    Some(label_interpolation);
-
   rsx! {
-  document::Stylesheet {
-    href: CSS,
-    rel: "stylesheet",
-  }
-  div {
-    class: "app-barchart app-fade-in-animation box",
-  h1 {
-    style: "text-align: center",
-  "Barchart"
-  }
-  BarChart {
-    bar_width: "10%",
-    highest: 50_000.,
-    horizontal_bars: true,
-    label_interpolation: label_interpolation_option,
-    label_size: 120,
-    labels: labels,
-    max_ticks: 0,
-    padding_left: 130,
-    padding_right: 75,
-    series: vec![
-      vec![50_000., 23_483.78, 11_000., 12_483.78],
-    ],
-    show_dotted_grid: false,
-    show_grid: false,
-    show_grid_ticks: false,
-    show_labels: true,
-    show_series_labels: true,
-    viewbox_height: 200,
-  }
-  }
+    document::Stylesheet {
+      href: CSS,
+      rel: "stylesheet",
+    }
+    div {
+      class: "app-barchart app-fade-in-animation box",
+    h1 {
+      style: "text-align: center",
+    "Barchart"
+    }
+    // TODO: Move svg and children into a separate component
+    // TODO: Scale everything based on component width
+    svg {
+      height: SVG_HEIGHT,
+      width: SVG_WIDTH,
+    BarchartRow {
+      amount: to_dollars(DOLLARS_GOAL),
+      bar_width: BAR_WIDTH_GOAL,
+      fill: "rgb(56, 182, 255)",
+      row_index: 0,
+      s: &["GOAL"],
+    }
+    BarchartRow {
+      amount: to_dollars(DOLLARS_TOTAL_RAISED),
+      bar_width: BAR_WIDTH_TOTAL_RAISED,
+      fill: "rgb(92, 134, 214)",
+      row_index: 1,
+      s: &["TOTAL", "RAISED"],
+    }
+    BarchartRow {
+      amount: to_dollars(DOLLARS_CORPORATE_PLEDGES),
+      bar_width: BAR_WIDTH_CORPORATE_PLEDGES,
+      fill: "rgb(103, 89, 162)",
+      row_index: 2,
+      s: &["CORPORATE", "PLEDGES"],
+    }
+    BarchartRow {
+      amount: to_dollars(DOLLARS_INDIVIDUAL_DONATIONS),
+      bar_width: BAR_WIDTH_INDIVIDUAL_DONATIONS,
+      fill: "rgb(96, 45, 105)",
+      row_index: 3,
+      s: &["INDIVIDUAL", "DONATIONS"],
+    }
+    }
+    }
   }
 }
