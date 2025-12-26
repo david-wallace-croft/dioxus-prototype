@@ -1,6 +1,7 @@
 use self::barchart_row::BarchartRow;
 use ::com_croftsoft_lib_string::to_dollars;
 use ::dioxus::prelude::*;
+use ::tracing::info;
 
 mod barchart_row;
 
@@ -60,10 +61,19 @@ pub fn Barchart() -> Element {
     "Barchart"
     }
     // TODO: Move svg and children into a separate component
-    // TODO: Scale everything based on component width
     svg {
       height: SVG_HEIGHT,
       width: SVG_WIDTH,
+      // TODO: Scale everything based on SVG width
+      onresize: move |cx| {
+        let data = cx.data();
+
+        let border_box_size = data.get_border_box_size();
+        info!("border_box_size={:?}", border_box_size);
+
+        let content_box_size = data.get_content_box_size();
+        info!("content_box_size={:?}", content_box_size);
+      },
     BarchartRow {
       amount: to_dollars(DOLLARS_GOAL),
       bar_width: BAR_WIDTH_GOAL,

@@ -19,8 +19,6 @@ com-croftsoft-lib-animation = "0.1.0"
 com-croftsoft-lib-role = "0.5.1"
 com-croftsoft-lib-string = "0.1.0"
 dioxus = { version = "0.7.2", features = ["fullstack", "router"] }
-# TODO: Re-enable barchart when dioxus-charts supports Dioxus 0.7
-# dioxus-charts = "0.3.1"
 gloo-events = "0.2.0"
 tracing = "0.1.44"
 
