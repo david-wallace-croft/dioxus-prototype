@@ -1,10 +1,13 @@
+use ::com_croftsoft_lib_string::to_dollars;
 use ::dioxus::prelude::*;
 
 const BAR_HEIGHT: usize = 2 * FONT_SIZE;
 
+const BAR_WIDTH_GOAL: usize = FONT_SIZE * 15;
+
 const BAR_X: usize = TEXT_X + FONT_SIZE / 4;
 
-const FONT_SIZE: usize = 20;
+const FONT_SIZE: usize = 19;
 
 const MARGIN_X: usize = FONT_SIZE / 5;
 
@@ -30,12 +33,16 @@ const TEXT_X: usize = FONT_SIZE * 605 / 100;
 
 #[component]
 pub fn BarchartRow(
-  amount: String,
-  bar_width: usize,
+  amount: f64,
   fill: String,
+  maximum: f64,
   row_index: usize,
   s: &'static [&'static str],
 ) -> Element {
+  let bar_width: usize = (BAR_WIDTH_GOAL as f64 * amount / maximum) as usize;
+
+  let dollars: String = to_dollars(amount);
+
   rsx! {
     if s.len() > 1 {
       text {
@@ -77,7 +84,7 @@ pub fn BarchartRow(
       font_size: FONT_SIZE,
       text_anchor: TEXT_ANCHOR_START,
       fill: TEXT_FILL,
-    "{amount}"
+    "{dollars}"
     }
   }
 }
