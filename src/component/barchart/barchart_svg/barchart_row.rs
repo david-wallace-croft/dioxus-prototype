@@ -1,87 +1,90 @@
 use ::com_croftsoft_lib_string::to_dollars;
 use ::dioxus::prelude::*;
 
-const BAR_HEIGHT: usize = 2 * FONT_SIZE;
-
-const BAR_WIDTH_GOAL: usize = FONT_SIZE * 15;
-
-const BAR_X: usize = TEXT_X + FONT_SIZE / 4;
-
-const FONT_SIZE: usize = 19;
-
-const MARGIN_X: usize = FONT_SIZE / 5;
-
-const MARGIN_Y: usize = FONT_SIZE / 2;
-
-const ROW_HEIGHT: usize = BAR_HEIGHT + MARGIN_Y;
-
 static TEXT_ANCHOR_END: &str = "end";
 
 static TEXT_ANCHOR_START: &str = "start";
 
 static TEXT_FILL: &str = "black";
 
-const TEXT_HEIGHT: usize = FONT_SIZE;
-
-const TEXT_OFFSET_Y0: usize = (BAR_HEIGHT + TEXT_HEIGHT) * 44 / 100;
-
-const TEXT_OFFSET_Y1: usize = TEXT_HEIGHT * 85 / 100;
-
-const TEXT_OFFSET_Y2: usize = TEXT_OFFSET_Y1 + TEXT_HEIGHT;
-
-const TEXT_X: usize = FONT_SIZE * 605 / 100;
-
 #[component]
 pub fn BarchartRow(
   amount: f64,
   fill: String,
+  font_size_signal: Signal<usize>,
   maximum: f64,
   row_index: usize,
   s: &'static [&'static str],
 ) -> Element {
-  let bar_width: usize = (BAR_WIDTH_GOAL as f64 * amount / maximum) as usize;
+  let font_size: usize = *font_size_signal.read();
+
+  info!("font_size: {font_size}");
+
+  let bar_height: usize = 2 * font_size;
+
+  let bar_width_goal: usize = font_size * 15;
+
+  let text_x: usize = font_size * 605 / 100;
+
+  let bar_x: usize = text_x + font_size / 4;
+
+  let margin_x: usize = font_size / 5;
+
+  let margin_y: usize = font_size / 2;
+
+  let row_height: usize = bar_height + margin_y;
+
+  let text_height: usize = font_size;
+
+  let text_offset_y0: usize = (bar_height + text_height) * 44 / 100;
+
+  let text_offset_y1: usize = text_height * 85 / 100;
+
+  let text_offset_y2: usize = text_offset_y1 + text_height;
+
+  let bar_width: usize = (bar_width_goal as f64 * amount / maximum) as usize;
 
   let dollars: String = to_dollars(amount);
 
   rsx! {
     if s.len() > 1 {
       text {
-        x: TEXT_X,
-        y: row_index * ROW_HEIGHT + TEXT_OFFSET_Y1,
-        font_size: FONT_SIZE,
+        x: text_x,
+        y: row_index * row_height + text_offset_y1,
+        font_size,
         text_anchor: TEXT_ANCHOR_END,
         fill: TEXT_FILL,
       "{s[0]}"
       }
       text {
-        x: TEXT_X,
-        y: row_index * ROW_HEIGHT + TEXT_OFFSET_Y2,
-        font_size: FONT_SIZE,
+        x: text_x,
+        y: row_index * row_height + text_offset_y2,
+        font_size,
         text_anchor: TEXT_ANCHOR_END,
         fill: TEXT_FILL,
         "{s[1]}"
       }
     } else {
       text {
-        x: TEXT_X,
-        y: row_index * ROW_HEIGHT + TEXT_OFFSET_Y0,
-        font_size: FONT_SIZE,
+        x: text_x,
+        y: row_index * row_height + text_offset_y0,
+        font_size,
         text_anchor: TEXT_ANCHOR_END,
         fill: TEXT_FILL,
       "{s[0]}"
       }
     }
     rect {
-      height: BAR_HEIGHT,
+      height: bar_height,
       width: bar_width,
-      x: BAR_X,
-      y: row_index * ROW_HEIGHT,
+      x: bar_x,
+      y: row_index * row_height,
       fill,
     }
     text {
-      x: BAR_X + bar_width + MARGIN_X,
-      y: row_index * ROW_HEIGHT + TEXT_OFFSET_Y0,
-      font_size: FONT_SIZE,
+      x: bar_x + bar_width + margin_x,
+      y: row_index * row_height + text_offset_y0,
+      font_size,
       text_anchor: TEXT_ANCHOR_START,
       fill: TEXT_FILL,
     "{dollars}"
