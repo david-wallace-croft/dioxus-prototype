@@ -59,6 +59,9 @@ pub fn Home() -> Element {
   }
   " (SVG)"
   }
+  li {
+  "rescaling as the browser width changes"
+  }
   }
   }
   li {

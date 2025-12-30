@@ -18,13 +18,11 @@ pub fn BarchartRow(
 ) -> Element {
   let font_size: usize = *font_size_signal.read();
 
-  info!("font_size: {font_size}");
-
   let bar_height: usize = 2 * font_size;
 
-  let bar_width_goal: usize = font_size * 15;
+  let bar_width_goal: usize = font_size * 14;
 
-  let text_x: usize = font_size * 605 / 100;
+  let text_x: usize = font_size * 650 / 100;
 
   let bar_x: usize = text_x + font_size / 4;
 

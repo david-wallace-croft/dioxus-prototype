@@ -3,7 +3,6 @@ use super::barchart_data::BarchartData;
 use ::dioxus::html::geometry::Pixels;
 use ::dioxus::html::geometry::euclid::Size2D;
 use ::dioxus::prelude::*;
-use ::tracing::info;
 
 mod barchart_row;
 
@@ -32,11 +31,7 @@ pub fn BarchartSvg(barchart_data: BarchartData) -> Element {
 
         let Ok(size2d) = content_box_size else { return; };
 
-        let Size2D { height, width, .. } = size2d;
-
-        font_size_signal.set((width / 25.) as usize);
-
-        info!("height: {height}, width: {width}, font_size: {font_size_signal}");
+        font_size_signal.set((size2d.width / 25.) as usize);
       },
     BarchartRow {
       amount: goal,
