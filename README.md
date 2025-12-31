@@ -63,7 +63,6 @@
 - npm test
   - Deletes the build and distribution directories to start clean
   - Makes the index.html page with the hydration code
-  - Inserts the prerendered HTML
   - Launches http-server to serve the HTML
   - Opens your browser to the home page
 
