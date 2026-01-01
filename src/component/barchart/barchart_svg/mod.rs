@@ -23,6 +23,7 @@ pub fn BarchartSvg(barchart_data: BarchartData) -> Element {
 
   rsx! {
     svg {
+      height: *font_size_signal.read() * 940 / 100,
       onresize: move |cx| {
         let data = cx.data();
 

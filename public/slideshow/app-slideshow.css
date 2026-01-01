@@ -11,6 +11,10 @@
   transition: opacity 5s;
 }
 
+.app-slideshow {
+  height: min-content;
+}
+
 .app-slideshow .app-control-panel {
   margin-top: 0.5rem;
   position: absolute;

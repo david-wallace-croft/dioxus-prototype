@@ -1,3 +1,7 @@
+.app-animation {
+  height: min-content;
+}
+
 .app-animation h1 {
   text-align: center;
 }

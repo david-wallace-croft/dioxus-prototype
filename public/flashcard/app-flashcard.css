@@ -1,3 +1,7 @@
+.app-flashcard {
+  height: min-content;
+}
+
 .app-flashcard .app-answer-button {
   appearance: none;
   border-color: var(--app-button-border-color);
