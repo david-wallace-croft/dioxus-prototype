@@ -19,11 +19,11 @@ pub fn BarchartSvg(barchart_data: BarchartData) -> Element {
 
   let maximum: f64 = goal.max(total_raised);
 
-  let mut font_size_signal: Signal<usize> = use_signal(|| 19);
+  let mut font_size_signal: Signal<f64> = use_signal(|| 19.);
 
   rsx! {
     svg {
-      height: *font_size_signal.read() * 940 / 100,
+      height: *font_size_signal.read() * 9.4,
       onresize: move |cx| {
         let data = cx.data();
 
@@ -32,7 +32,7 @@ pub fn BarchartSvg(barchart_data: BarchartData) -> Element {
 
         let Ok(size2d) = content_box_size else { return; };
 
-        font_size_signal.set((size2d.width / 25.) as usize);
+        font_size_signal.set(size2d.width / 25.);
       },
     BarchartRow {
       amount: goal,
