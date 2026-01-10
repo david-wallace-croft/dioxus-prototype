@@ -10,14 +10,12 @@ static TEXT_FILL: &str = "black";
 #[component]
 pub fn BarchartRow(
   amount: f64,
+  amount_maximum: f64,
   fill: String,
-  font_size_signal: Signal<f64>,
-  maximum: f64,
+  font_size: f64,
   row_index: usize,
   s: &'static [&'static str],
 ) -> Element {
-  let font_size: f64 = *font_size_signal.read();
-
   let bar_height: f64 = 2. * font_size;
 
   let bar_width_goal: f64 = font_size * 14.;
@@ -40,7 +38,7 @@ pub fn BarchartRow(
 
   let text_offset_y2: f64 = text_offset_y1 + text_height;
 
-  let bar_width: f64 = bar_width_goal * amount / maximum;
+  let bar_width: f64 = bar_width_goal * amount / amount_maximum;
 
   let dollars: String = to_dollars(amount);
 
