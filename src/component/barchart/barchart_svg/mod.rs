@@ -49,7 +49,7 @@ const BARCHART_ROW_STATIC_DATA: [BarchartRowData; 4] = [
   },
 ];
 
-const AMOUNT_MAXIMUM: LazyLock<f64> = LazyLock::new(|| {
+static AMOUNT_MAXIMUM: LazyLock<f64> = LazyLock::new(|| {
   BARCHART_ROW_STATIC_DATA
     .into_iter()
     .max_by(|x: &BarchartRowData, y: &BarchartRowData| {
